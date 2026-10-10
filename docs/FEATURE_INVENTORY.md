@@ -1,5 +1,8 @@
 # FEATURE_INVENTORY
 
+> Phase 2: the shared theme/media/UI/service foundation is in place. The feature descriptions below inventory the preserved demo, not a claim that photo-led feature redesigns or backend integrations are complete. See `TEST_REPORT.md` for observed workflow limitations; shell/Home/auth/feature work follows the agreed phase sequence.
+
+
 ## Implemented modules (functional frontend)
 - Onboarding: step flow, skip/back/continue, progress, persistence, replay from settings
 - Authentication UI: sign-in/register/forgot-password with validation and role demo switch

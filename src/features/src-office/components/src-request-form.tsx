@@ -31,25 +31,47 @@ export function SrcRequestForm() {
           form.reset(DEFAULT_VALUES);
         })}
       >
-        <Input placeholder="Request title" {...form.register("title")} />
-        {form.formState.errors.title ? <p className="text-xs text-rose-600">{form.formState.errors.title.message}</p> : null}
-        <Select {...form.register("category")}>
+        <Input
+          aria-label="Request title"
+          aria-invalid={!!form.formState.errors.title}
+          placeholder="Request title"
+          {...form.register("title")}
+        />
+        {form.formState.errors.title ? (
+          <p className="text-xs text-danger">{form.formState.errors.title.message}</p>
+        ) : null}
+        <Select aria-label="Request category" {...form.register("category")}>
           <option value="Academic support">Academic support</option>
           <option value="Welfare">Welfare</option>
           <option value="Infrastructure">Infrastructure</option>
         </Select>
-        <Textarea rows={3} placeholder="Describe your request..." {...form.register("description")} />
-        {form.formState.errors.description ? <p className="text-xs text-rose-600">{form.formState.errors.description.message}</p> : null}
+        <Textarea
+          aria-label="Request description"
+          aria-invalid={!!form.formState.errors.description}
+          rows={3}
+          placeholder="Describe your request..."
+          {...form.register("description")}
+        />
+        {form.formState.errors.description ? (
+          <p className="text-xs text-danger">{form.formState.errors.description.message}</p>
+        ) : null}
         <Button type="submit">Submit request</Button>
       </form>
-      <p className="mt-2 text-xs text-slate-500">Demo submission only until backend SRC workflow is integrated.</p>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Demo submission only until backend SRC workflow is integrated.
+      </p>
 
       <div className="mt-4 space-y-2">
         <h3 className="text-sm font-semibold">Recent request statuses</h3>
         {requests.slice(0, 3).map((request) => (
-          <div key={request.id} className="rounded-lg border border-[var(--color-border)] p-2 text-xs">
-            <p className="font-medium text-slate-900">{request.title}</p>
-            <p className="text-slate-600">{request.category} • {request.status} • {request.createdAt}</p>
+          <div
+            key={request.id}
+            className="rounded-lg border border-[var(--color-border)] p-2 text-xs"
+          >
+            <p className="font-medium text-foreground">{request.title}</p>
+            <p className="text-muted-foreground">
+              {request.category} • {request.status} • {request.createdAt}
+            </p>
           </div>
         ))}
       </div>

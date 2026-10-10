@@ -1,2 +1,7 @@
+import { routeMetadata } from "@/config/metadata";
 import { MarketplaceFeature } from "@/features/marketplace";
-export default function MarketplacePage() { return <MarketplaceFeature />; }
+export const metadata = routeMetadata("marketplace");
+
+export default function MarketplacePage() {
+  return <MarketplaceFeature />;
+}

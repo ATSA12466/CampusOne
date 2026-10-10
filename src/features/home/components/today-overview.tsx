@@ -7,23 +7,31 @@ export function TodayOverview({ tasks, events }: { tasks: TaskItem[]; events: Ev
 
   return (
     <Card>
-      <h3 className="text-base font-semibold text-slate-900">Today&apos;s overview</h3>
+      <h3 className="text-base font-semibold text-foreground">Today&apos;s overview</h3>
       <div className="mt-3 space-y-3 text-sm">
         <div>
           <p className="font-medium">Tasks due</p>
           {dueToday.length ? (
-            <ul className="mt-1 list-disc pl-5 text-slate-600">
+            <ul className="mt-1 list-disc pl-5 text-muted-foreground">
               {dueToday.map((task) => (
                 <li key={task.id}>{task.title}</li>
               ))}
             </ul>
           ) : (
-            <p className="mt-1 text-slate-500">No urgent tasks. <Link href="/tasks" className="text-blue-700">Add one</Link>.</p>
+            <p className="mt-1 text-muted-foreground">
+              No urgent tasks.{" "}
+              <Link prefetch={false} href="/tasks" className="text-brand">
+                Add one
+              </Link>
+              .
+            </p>
           )}
         </div>
         <div>
           <p className="font-medium">Upcoming events</p>
-          <p className="text-slate-600">{events[0] ? `${events[0].title} • ${events[0].date}` : "No upcoming events"}</p>
+          <p className="text-muted-foreground">
+            {events[0] ? `${events[0].title} • ${events[0].date}` : "No upcoming events"}
+          </p>
         </div>
       </div>
     </Card>

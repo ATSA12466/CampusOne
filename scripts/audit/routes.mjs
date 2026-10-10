@@ -22,7 +22,7 @@ export async function listScreens(directory = "src/app") {
       if (!id) throw new Error(`Add a detail-screen demo ID for ${pattern}`);
       return { pattern, path: pattern.replace("[id]", id) };
     }
-    return { pattern, path: pattern };
+    return { pattern, path: pattern, ...(pattern === "/design" ? { expectedStatus: process.env.AUDIT_DESIGN_DEV === "1" ? 200 : 404 } : {}) };
   }).filter((screen) => screen.path !== "/").sort((a, b) => a.path.localeCompare(b.path));
 }
 

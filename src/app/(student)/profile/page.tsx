@@ -1,2 +1,7 @@
+import { routeMetadata } from "@/config/metadata";
 import { ProfileFeature } from "@/features/profile";
-export default function ProfilePage() { return <ProfileFeature />; }
+export const metadata = routeMetadata("profile");
+
+export default function ProfilePage() {
+  return <ProfileFeature />;
+}

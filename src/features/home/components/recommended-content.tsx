@@ -9,12 +9,15 @@ export function RecommendedContent({ opportunities }: { opportunities: Opportuni
       <div className="mt-3 space-y-2">
         {opportunities.slice(0, 3).map((item) => (
           <Link
+            prefetch={false}
             href="/opportunities"
             key={item.id}
-            className="block rounded-xl border border-[var(--color-border)] p-3 text-sm transition hover:bg-slate-50"
+            className="block rounded-xl border border-[var(--color-border)] p-3 text-sm transition hover:bg-surface-muted"
           >
-            <p className="font-medium text-slate-900">{item.title}</p>
-            <p className="text-slate-500">{item.provider} • Deadline {item.deadline}</p>
+            <p className="font-medium text-foreground">{item.title}</p>
+            <p className="text-muted-foreground">
+              {item.provider} • Deadline {item.deadline}
+            </p>
           </Link>
         ))}
       </div>

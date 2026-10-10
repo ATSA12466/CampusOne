@@ -2,11 +2,13 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { memberships as initialMemberships } from "@/data/demo/engagement/clubs";
-import { notifications as initialNotifications } from "@/data/demo/community/social";
-import { initialTasks } from "@/data/demo/productivity/tasks";
-import { initialStudentRequests } from "@/data/demo/engagement/src-office";
 import type { Bookmark, ClubMembership, NotificationItem, StudentRequest, TaskItem } from "@/types";
+import { engagementService, communityService, productivityService } from "@/services";
+
+const initialMemberships = structuredClone(engagementService.listMemberships());
+const initialNotifications = structuredClone(communityService.listNotifications());
+const initialTasks = structuredClone(productivityService.listInitialTasks());
+const initialStudentRequests = structuredClone(engagementService.listInitialStudentRequests());
 
 interface AppState {
   tasks: TaskItem[];
@@ -40,23 +42,42 @@ export const useAppStore = create<AppState>()(
         set((state) => ({
           tasks: [...state.tasks, { ...task, id: crypto.randomUUID(), completed: false }],
         })),
-      toggleTask: (id) => set((state) => ({ tasks: state.tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)) })),
+      toggleTask: (id) =>
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, completed: !task.completed } : task,
+          ),
+        })),
       removeTask: (id) => set((state) => ({ tasks: state.tasks.filter((task) => task.id !== id) })),
-      updateTask: (task) => set((state) => ({ tasks: state.tasks.map((t) => (t.id === task.id ? task : t)) })),
+      updateTask: (task) =>
+        set((state) => ({ tasks: state.tasks.map((t) => (t.id === task.id ? task : t)) })),
       toggleBookmark: (item) =>
         set((state) => {
-          const exists = state.bookmarks.some((bookmark) => bookmark.entityId === item.entityId && bookmark.entityType === item.entityType);
+          const exists = state.bookmarks.some(
+            (bookmark) =>
+              bookmark.entityId === item.entityId && bookmark.entityType === item.entityType,
+          );
           return {
             bookmarks: exists
-              ? state.bookmarks.filter((bookmark) => !(bookmark.entityId === item.entityId && bookmark.entityType === item.entityType))
+              ? state.bookmarks.filter(
+                  (bookmark) =>
+                    !(
+                      bookmark.entityId === item.entityId && bookmark.entityType === item.entityType
+                    ),
+                )
               : [...state.bookmarks, item],
           };
         }),
       requestMembership: (clubId, userId) => {
-        const existing = get().memberships.find((membership) => membership.clubId === clubId && membership.userId === userId);
+        const existing = get().memberships.find(
+          (membership) => membership.clubId === clubId && membership.userId === userId,
+        );
         if (existing) return;
         set((state) => ({
-          memberships: [...state.memberships, { id: crypto.randomUUID(), clubId, userId, status: "pending" }],
+          memberships: [
+            ...state.memberships,
+            { id: crypto.randomUUID(), clubId, userId, status: "pending" },
+          ],
         }));
       },
       reviewMembership: (membershipId, status) =>

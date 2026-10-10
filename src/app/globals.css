@@ -1,55 +1,157 @@
 @import "tailwindcss";
+@import "./styles/foundation.css";
 
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --background: #f6f5f2;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-muted: #ecefee;
+  --surface-inset: #e5e9ec;
+  --foreground: #102339;
+  --muted-foreground: #526174;
+  --subtle-foreground: #637083;
+  --border: #dce2e5;
+  --control-border: #7c8b99;
+  --brand: #2254d5;
+  --brand-hover: #1844b7;
+  --brand-soft: #e9efff;
+  --brand-foreground: #ffffff;
+  --accent: #ffcc66;
+  --accent-foreground: #513400;
+  --accent-soft: #fff2d6;
+  --success: #126347;
+  --success-soft: #e2f4eb;
+  --warning: #825207;
+  --warning-soft: #fff0cf;
+  --danger: #b62842;
+  --danger-soft: #fce8ee;
+  --focus: #2254d5;
+  --overlay: rgba(2, 23, 48, 0.6);
+  --elevation-low: 0 2px 8px rgba(2, 23, 48, 0.04);
+  --elevation-raised: 0 12px 32px -16px rgba(2, 23, 48, 0.2);
+  --elevation-overlay: 0 24px 80px -20px rgba(2, 23, 48, 0.3);
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0b1523;
+  --surface: #142132;
+  --surface-raised: #1b2a3d;
+  --surface-muted: #203045;
+  --surface-inset: #0f1c2c;
+  --foreground: #f0f4fa;
+  --muted-foreground: #b2bfd0;
+  --subtle-foreground: #a1b0c3;
+  --border: #35455a;
+  --control-border: #7d90aa;
+  --brand: #98b7ff;
+  --brand-hover: #bdd0ff;
+  --brand-soft: #243963;
+  --brand-foreground: #102339;
+  --accent: #ffcc66;
+  --accent-foreground: #513400;
+  --accent-soft: #463619;
+  --success: #80deb5;
+  --success-soft: #173c32;
+  --warning: #ffd48b;
+  --warning-soft: #463719;
+  --danger: #ff9eb0;
+  --danger-soft: #4c2533;
+  --focus: #abc5ff;
+  --overlay: rgba(0, 7, 17, 0.76);
+  --elevation-low: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --elevation-raised: 0 12px 32px -16px rgba(0, 0, 0, 0.5);
+  --elevation-overlay: 0 24px 80px -20px rgba(0, 0, 0, 0.7);
+}
 :root {
-  --color-midnight-navy: #021730;
-  --color-royal-blue: #2563eb;
-  --color-bright-blue: #3b82f6;
-  --color-gold: #ffcc66;
-  --color-teal: #0f766e;
-  --color-white: #ffffff;
-  --color-bg: #f5f7fb;
-  --color-text-primary: #111827;
-  --color-text-secondary: #64748b;
-  --color-border: #e2e8f0;
-  --color-success: #16a34a;
-  --color-warning: #d97706;
-  --color-error: #dc2626;
-  --radius-base: 0.75rem;
-  --shadow-card: 0 12px 30px rgba(2, 23, 48, 0.08);
+  --nav: #021730;
+  --nav-foreground: #f0f4fa;
+  --nav-muted: #bac8d8;
+  --nav-hover: #203a56;
+  --on-photo: #ffffff;
+  --hero-start: #021730;
+  --hero-end: #164486;
+  --photo-scrim-start: rgba(2, 23, 48, 0.72);
+  --photo-scrim-end: rgba(2, 23, 48, 0.94);
+  --photo-scrim-edge: rgba(2, 23, 48, 0.08);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --r-control: 0.875rem;
+  --r-card: 1.25rem;
+  --r-media: 1.5rem;
+  --motion-fast: 150ms;
+  --motion-normal: 200ms;
+  --motion-slow: 250ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Compatibility aliases until feature compositions are replaced. */
+  --color-midnight-navy: var(--nav);
+  --color-royal-blue: var(--brand);
+  --color-bright-blue: var(--brand-hover);
+  --color-gold: var(--accent);
+  --color-teal: var(--success);
+  --color-white: var(--on-photo);
+  --color-bg: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-text-secondary: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--danger);
+  --radius-base: var(--r-card);
+  --shadow-card: var(--elevation-low);
 }
-
-* {
-  border-color: var(--color-border);
-}
-
-html,
-body {
-  min-height: 100%;
-}
-
-body {
-  background: var(--color-bg);
-  color: var(--color-text-primary);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-bright-blue);
-  outline-offset: 2px;
-}
-
-.campus-card {
-  border: 1px solid var(--color-border);
-  background: #fff;
-  border-radius: var(--radius-base);
-  box-shadow: var(--shadow-card);
-}
-
-.text-balance {
-  text-wrap: balance;
+@theme inline {
+  --spacing: var(--space-1);
+  --default-transition-duration: var(--motion-normal);
+  --default-transition-timing-function: var(--ease-out);
+  --font-sans: var(--font-text), var(--font-text-extended), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-editorial), Georgia, serif;
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-inset: var(--surface-inset);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-border: var(--border);
+  --color-control-border: var(--control-border);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-soft: var(--brand-soft);
+  --color-on-brand: var(--brand-foreground);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-overlay: var(--overlay);
+  --color-nav: var(--nav);
+  --color-nav-foreground: var(--nav-foreground);
+  --color-nav-muted: var(--nav-muted);
+  --color-nav-hover: var(--nav-hover);
+  --color-on-photo: var(--on-photo);
+  --radius-control: var(--r-control);
+  --radius-card: var(--r-card);
+  --radius-media: var(--r-media);
+  --shadow-low: var(--elevation-low);
+  --shadow-raised: var(--elevation-raised);
+  --shadow-overlay: var(--elevation-overlay);
+  --text-display: clamp(2.75rem, 7vw, 5.25rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.045em;
+  --text-title: clamp(2rem, 4vw, 3.25rem);
+  --text-title--line-height: 1.1;
+  --text-title--letter-spacing: -0.035em;
 }

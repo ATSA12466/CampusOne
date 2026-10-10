@@ -1,2 +1,7 @@
+import { routeMetadata } from "@/config/metadata";
 import { MediaFeature } from "@/features/media";
-export default function MediaPage() { return <MediaFeature />; }
+export const metadata = routeMetadata("media");
+
+export default function MediaPage() {
+  return <MediaFeature />;
+}

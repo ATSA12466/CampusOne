@@ -1,6 +1,6 @@
 "use client";
 
-import { homeService, engagementService } from "@/services/demo";
+import { homeService, engagementService } from "@/services";
 import { useAuthStore } from "@/stores/auth-store";
 import { useAppStore } from "@/stores/app-store";
 import { FeaturedContentCarousel } from "./components/featured-content-carousel";

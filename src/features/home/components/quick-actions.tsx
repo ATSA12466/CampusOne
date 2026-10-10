@@ -19,11 +19,12 @@ export function QuickActions() {
           const Icon = action.icon;
           return (
             <Link
+              prefetch={false}
               key={action.href}
               href={action.href}
-              className="rounded-xl border border-[var(--color-border)] p-3 text-sm transition hover:border-blue-200 hover:bg-blue-50"
+              className="rounded-xl border border-[var(--color-border)] p-3 text-sm transition hover:border-brand/25 hover:bg-brand-soft"
             >
-              <Icon size={16} className="mb-1 text-blue-700" />
+              <Icon size={16} className="mb-1 text-brand" />
               {action.label}
             </Link>
           );

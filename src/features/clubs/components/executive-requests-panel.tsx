@@ -7,27 +7,48 @@ interface ExecutiveRequestsPanelProps {
   onReview: (membershipId: string, status: "approved" | "rejected") => void;
 }
 
-export function ExecutiveRequestsPanel({ pendingRequests, clubs, onReview }: ExecutiveRequestsPanelProps) {
+export function ExecutiveRequestsPanel({
+  pendingRequests,
+  clubs,
+  onReview,
+}: ExecutiveRequestsPanelProps) {
   return (
     <Card>
       <h3 className="font-semibold">Club executive demo panel</h3>
-      <p className="mt-1 text-sm text-slate-600">Review pending membership requests (demo only).</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Review pending membership requests (demo only).
+      </p>
       <div className="mt-3 space-y-2">
         {pendingRequests.length ? (
           pendingRequests.map((membership) => (
-            <div key={membership.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--color-border)] p-3">
+            <div
+              key={membership.id}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--color-border)] p-3"
+            >
               <div className="text-sm">
-                <p className="font-medium">{clubs.find((club) => club.id === membership.clubId)?.name}</p>
-                <Badge tone="warning" className="mt-1">Pending review</Badge>
+                <p className="font-medium">
+                  {clubs.find((club) => club.id === membership.clubId)?.name}
+                </p>
+                <Badge tone="warning" className="mt-1">
+                  Pending review
+                </Badge>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" onClick={() => onReview(membership.id, "approved")}>Approve</Button>
-                <Button size="sm" variant="danger" onClick={() => onReview(membership.id, "rejected")}>Reject</Button>
+                <Button size="sm" onClick={() => onReview(membership.id, "approved")}>
+                  Approve
+                </Button>
+                <Button
+                  size="sm"
+                  variant="danger"
+                  onClick={() => onReview(membership.id, "rejected")}
+                >
+                  Reject
+                </Button>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-sm text-slate-500">No pending requests right now.</p>
+          <p className="text-sm text-muted-foreground">No pending requests right now.</p>
         )}
       </div>
     </Card>

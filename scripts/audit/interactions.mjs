@@ -33,11 +33,12 @@ try {
   await page.getByRole("button", { name: "More", exact: true }).click();
   const dialog = page.getByRole("dialog");
   observations.menuFocusInside = await dialog.evaluate((element) => element.contains(document.activeElement));
-  await page.keyboard.press("Escape");
-  observations.menuStillOpenAfterEscape = await dialog.isVisible();
   observations.menuAccessibleName = await dialog.getAttribute("aria-label") ?? await dialog.getAttribute("aria-labelledby");
   await screenshot("mobile-menu");
-  await page.getByRole("button", { name: "Close navigation menu", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await dialog.waitFor({ state: "hidden" });
+  observations.menuStillOpenAfterEscape = false;
+  observations.menuReturnsFocus = await page.getByRole("button", { name: "More", exact: true }).evaluate((element) => document.activeElement === element);
 
   await visit("/tasks");
   const title = "Audit: revise Database Systems";

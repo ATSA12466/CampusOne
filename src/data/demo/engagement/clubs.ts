@@ -1,3 +1,4 @@
+import { images } from "@/config/images";
 import type { Announcement, Campaign, Club, ClubMembership, EventItem, Opportunity } from "@/types";
 
 export const clubs: Club[] = [
@@ -6,7 +7,7 @@ export const clubs: Club[] = [
     name: "Code Collective",
     category: "Technology",
     description: "Peer coding sessions, hackathons, and product showcases.",
-    cover: "/images/placeholders/club-code.svg",
+    cover: images.clubCode.src,
     objectives: ["Build practical projects", "Mentor freshers", "Host coding events"],
   },
   {
@@ -14,7 +15,7 @@ export const clubs: Club[] = [
     name: "Debate Assembly",
     category: "Public Speaking",
     description: "Weekly debate and communication mastery workshops.",
-    cover: "/images/placeholders/club-debate.svg",
+    cover: images.clubDebate.src,
     objectives: ["Critical thinking", "Confident public speaking"],
   },
 ];

@@ -1,95 +1,87 @@
-# FRONTEND_ARCHITECTURE
+# Frontend architecture
 
-## 1) Architecture overview
-CampusOne uses a feature-first architecture where routes compose feature modules and avoid embedding business logic in page files.
+## Product and phase boundary
 
-## 2) Responsibility layers
-- `src/app/`
-  - Route groups: `(public)`, `(auth)`, `(student)`
-  - Contains page entry files, layouts, and route boundaries (`loading`, `error`, `not-found`)
-- `src/features/<feature>/`
-  - Feature UI composition and feature-specific logic
-  - Optional internal folders: `components/`, `hooks/`, `validation/`, `types/`
-- `src/components/ui/`
-  - Shared design-system primitives only
-- `src/components/shared/`
-  - Shared page patterns (header, empty state, search)
-- `src/components/layout|navigation/`
-  - Shell and navigation orchestration
-- `src/data/demo/`
-  - Domain-organized synthetic data
-- `src/services/demo/`
-  - Feature data adapters over demo datasets
-- `src/services/api/`
-  - Backend-ready API utility
-- `src/services/auth/`
-  - Authentication abstraction
-- `src/stores/`
-  - Persisted client state slices
-- `src/types/`
-  - Shared cross-feature models
+CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Later phases replace the information architecture and feature experiences in the agreed order; this is not a finished live campus platform.
 
-## 3) Example feature structure
+## Directory map
+
 ```text
-src/features/tasks/
-├── components/
-│   ├── task-form-card.tsx
-│   ├── task-list.tsx
-│   └── task-stats.tsx
-├── hooks/
-│   └── use-task-filter.ts
-├── validation/
-│   └── task.schema.ts
-└── index.tsx
+src/
+  app/                      # Route composition, metadata, boundaries, fonts/CSS
+    (student)/              # Existing URL group + shared student shell
+    design/                 # Development-only component/media examples
+    api/health/             # Existing optional PostgreSQL health probe
+  proxy.ts                  # Narrow pre-stream production /design 404 guard
+  features/<name>/
+    components/             # Small feature compositions
+    hooks/                  # Feature interaction state
+    validation/             # Zod form schemas
+    index.tsx               # Feature entry point
+  components/
+    ui/                     # CVA + native/Radix primitives
+    media/                  # CampusImage, cards/hero/gallery/uploader + scoped hooks
+    shared/                 # Brand, page header, loading/empty/error/404 states
+    theme/                  # Pre-paint bootstrap + external store/controls
+    layout/, navigation/    # Compatible shell; Phase 3 redesign pending
+  config/                   # App/env, theme, image registry, metadata, API paths
+  types/                    # Shared entities, media/UI/theme/service contracts
+  services/
+    index.ts                # Public consumer boundary + lazy async catalog
+    demo/                   # Deterministic/read-only typed fixtures + compatibility
+    api/                    # Validated requests and provisional backend adapter
+    auth/                   # Explicit local demo authentication
+    validation/             # Runtime entity/page/query schemas
+  data/demo/                # Fixture storage; UI never imports it directly
+  stores/                   # Zustand auth/app demo state; small serializable data
+  hooks/                    # Existing shared utility hooks
+  lib/media/                # Pure crop geometry + native canvas compression
 ```
 
-## 4) Route composition rule
-Route files should import feature entrypoints:
-- `src/app/(student)/tasks/page.tsx` -> `features/tasks`
-- `src/app/(student)/clubs/page.tsx` -> `features/clubs`
-- `src/app/(student)/src-office/page.tsx` -> `features/src-office`
+## Server/client boundaries
 
-## 5) How to work with this architecture
-### Find a feature
-1. Start at `src/app/(student)/<route>/page.tsx`
-2. Open referenced `src/features/<feature>/index.tsx`
+Prefer Server Components for initial entity reads, metadata and page composition. Pass serializable DTOs into the smallest interactive client subtree. Do not send schemas, request headers, Files or browser APIs through server/client props.
 
-### Modify UI for a feature
-- Prefer editing feature-local components in `src/features/<feature>/components`
-- Keep shared patterns in `src/components/shared`
+The `/design` feature illustrates this separation: the server reads catalog data and composes sections; interactive controls, overlays, gallery and uploader are separate small client modules. Existing feature entries remain largely client components for compatibility. Their scheduled phases will migrate reads/layouts rather than performing a risky app-wide async rewrite in the foundation phase.
 
-### Change a data model
-- Shared entity: `src/types/*`
-- Feature-only type: colocate inside `src/features/<feature>/types`
+Navigation and Home/composed discovery links disable automatic off-route prefetch: the baseline eager policy fetched untouched route schemas on initial Home. Future intent-based prefetch should respect device/network constraints. Use leaf imports for client components where practical. No animation or image-processing library was introduced: CSS transitions/snap, ImageBitmap, canvas and existing Next/sharp handle those jobs. Radix is used for appropriate focus, choice, menu, tooltip and overlay semantics.
 
-### Update service behavior
-- Demo mode: `src/services/demo/<domain>/*.service.ts`
-- Backend mode: add/extend `src/services/api/<domain>.service.ts`
+## Data boundaries
 
-### Add a new route
-1. Add `src/app/(student)/new-route/page.tsx`
-2. Create `src/features/new-feature/index.tsx`
-3. Add navigation entry in `src/components/navigation/nav-config.ts`
+- All UI and initial store seeds use `@/services`.
+- `campusService.list/get` is asynchronous and selects demo/API from app config; unused adapter/schema code loads only when a consumer calls it.
+- The generic typed collection map contains 17 preserved entity collections.
+- Demo list results are cloned; search/category/sort/pagination/abort are predictable.
+- API response/query schemas validate the boundary. HTTP/offline/invalid-envelope/abort are distinct outcomes.
+- Legacy synchronous exports remain demo-only. API mode is **not** a promise that all old UI now uses a real server.
+- Mutations, auth, uploads, real-time/AI and authoritative academic data require actual backend contracts and future feature integration.
 
-### Add a new feature module
-1. Create `src/features/<feature>`
-2. Split into subcomponents/hooks/validation when complexity justifies it
-3. Avoid placing full implementation in route file
+Small serializable local state is suitable for a labelled demo. Do not persist image files, blob URLs, private tokens or pretend client role changes are authorization. Legacy sign-out/persistence limitations remain documented in the test report/audit and are scheduled auth/feature work.
 
-### Debug a broken interaction
-1. Route -> feature entrypoint
-2. Feature component event handlers
-3. Zustand state updates (`src/stores`)
-4. Service adapter responses (`src/services/demo` / `src/services/api`)
+## Design and media boundaries
 
-### Prepare feature for PHP API integration
-1. Keep UI contract intact
-2. Replace demo service calls with typed API service
-3. Preserve fallback demo states during migration
+Semantic raw values exist only in central CSS; typed references live in `config/theme.ts`. Components use role utilities, not literal palettes. The inline bootstrap resolves appearance before paint; the root provider synchronizes the same preference across reloads/tabs/device changes.
 
-## 6) Refactoring completed in audit
-- Tasks split into smaller components + filtering hook
-- Clubs split into card + executive panel with search/filter
-- SRC Office moved from hardcoded inline data to typed service-backed panels and validated form
-- Home carousel split and enhanced with swipe + indicators
-- Student shell improved with mobile “More” drawer and grouped navigation
+All static photo URLs are centralized in `config/images.ts`. `CampusImage` owns aspect/fit/focal/sizes/loading/source policy/fallback. Meaningful media uses `next/image`, not CSS backgrounds. `CampusMedia` also records alt/provenance and optional source notes. Generated photos depict fictional people/a campus, and existing SVG stand-ins are labelled.
+
+Uploader validation/crop/compression is independent of transport. The hook protects asynchronous replacement/unmount work; native geometry/encoding has a small unit-testable core. An upload callback must call a real service and validate its result when available. Both source and consumer-owned output URLs need cleanup.
+
+## Routing, metadata and boundaries
+
+Existing URLs are unchanged. A central metadata map supplies static titles/descriptions and seven entity-detail generators; a root template supplies the CampusOne suffix. Set a real app origin for absolute social images; private/demo content is noindex by default.
+
+Root/student loading and not-found boundaries share the kit. Student boundaries do not nest another main inside the shell. Root error offers a friendly retry, not exception details. Next streaming can emit HTTP 200 before a detail calls `notFound()`; the audit records that behaviour honestly. The dev showcase needs a strict production 404, so its proxy guard runs before streaming and is narrowly matched to `/design` and subpaths.
+
+## Environment, health and preview
+
+Public API base `/api` → server-only proxy target `http://127.0.0.1:4000`. The browser never needs sandbox localhost; a configured loopback public base is rejected. Existing local `/api/health` takes priority over the fallback proxy and returns 503 without a DB. Real API/DB connectivity is unverified.
+
+Development binds to `0.0.0.0`; Next accepts localhost, 127.0.0.1 and Arena's `*.e2b.app` preview origins. No iframe-blocking headers were introduced. Environment files are ignored; `config/env.example` plus a no-overwrite generator document configuration without committing `.env*`.
+
+## Verification and dependency policy
+
+Native Node tests cover pure TypeScript geometry, contracts, adapters, theme/bootstrap/contrast and ignore rules. Isolated Playwright/Chromium/axe/Lighthouse tooling is outside app dependencies. Route and showcase browser harnesses capture hydrated screens and exercise actual controls. Measure Lighthouse sequentially against production, not a dev build. Keep generated screenshots/binaries in ignored cache paths.
+
+Use the installed Next/React/TypeScript/Tailwind/Zustand/RHF/Zod/Lucide/CVA stack. Before adding a dependency, justify its shipped bundle cost and why native/installed capabilities are insufficient. Keep modules small, strict and explicit; there is no need for `any`, a duplicate design palette, arbitrary photo hosts or direct UI fixture imports.
+
+See [design system](DESIGN_SYSTEM.md), [API integration guide](API_INTEGRATION_GUIDE.md), [audit](DESIGN_AUDIT.md) and [test report](TEST_REPORT.md) for contracts, observed limitations and the latest measured evidence.

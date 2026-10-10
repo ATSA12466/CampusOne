@@ -29,20 +29,48 @@ export function SignInForm() {
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+    <form noValidate className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
       <div>
-        <label className="mb-1 block text-sm font-medium">Email</label>
-        <Input type="email" {...register("email")} />
-        {errors.email ? <p className="mt-1 text-xs text-rose-600">{errors.email.message}</p> : null}
+        <label htmlFor="auth-email" className="mb-1 block text-sm font-medium">
+          Email
+        </label>
+        <Input
+          id="auth-email"
+          autoComplete="email"
+          aria-invalid={!!errors.email}
+          aria-describedby={errors.email ? "auth-email-error" : undefined}
+          type="email"
+          {...register("email")}
+        />
+        {errors.email ? (
+          <p id="auth-email-error" role="alert" className="mt-1 text-xs text-danger">
+            {errors.email.message}
+          </p>
+        ) : null}
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Password</label>
-        <Input type="password" {...register("password")} />
-        {errors.password ? <p className="mt-1 text-xs text-rose-600">{errors.password.message}</p> : null}
+        <label htmlFor="auth-password" className="mb-1 block text-sm font-medium">
+          Password
+        </label>
+        <Input
+          id="auth-password"
+          autoComplete="current-password"
+          aria-invalid={!!errors.password}
+          aria-describedby={errors.password ? "auth-password-error" : undefined}
+          type="password"
+          {...register("password")}
+        />
+        {errors.password ? (
+          <p id="auth-password-error" role="alert" className="mt-1 text-xs text-danger">
+            {errors.password.message}
+          </p>
+        ) : null}
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Role (demo switch)</label>
-        <Select {...register("role")}>
+        <label htmlFor="auth-role" className="mb-1 block text-sm font-medium">
+          Role (demo switch)
+        </label>
+        <Select id="auth-role" {...register("role")}>
           <option value="student">Student</option>
           <option value="club-executive">Club Executive</option>
           <option value="committee-member">Committee Member</option>
@@ -53,9 +81,19 @@ export function SignInForm() {
       <Button className="w-full" type="submit" disabled={isSubmitting}>
         Sign in (demo)
       </Button>
-      <div className="flex justify-between text-xs text-slate-600">
-        <Link href="/register">Create account</Link>
-        <Link href="/forgot-password">Forgot password?</Link>
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <Link
+          href="/register"
+          className="inline-flex min-h-11 items-center underline underline-offset-4"
+        >
+          Create account
+        </Link>
+        <Link
+          href="/forgot-password"
+          className="inline-flex min-h-11 items-center underline underline-offset-4"
+        >
+          Forgot password?
+        </Link>
       </div>
     </form>
   );

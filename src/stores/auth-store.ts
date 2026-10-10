@@ -2,9 +2,10 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { demoUser } from "@/data/demo/core/user";
-import { demoAuthService } from "@/services/auth/demo-auth.service";
 import type { UserProfile, UserRole } from "@/types";
+import { demoAuthService } from "@/services";
+
+const demoUser = demoAuthService.initialUser();
 
 interface AuthState {
   user: UserProfile | null;

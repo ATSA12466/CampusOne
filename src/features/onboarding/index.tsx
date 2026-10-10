@@ -6,6 +6,8 @@ import { Button } from "@/components/ui";
 import { useOnboardingStore } from "@/stores/onboarding-store";
 import { onboardingSteps } from "./data/onboarding-steps";
 import { StepCard } from "./components/step-card";
+import { BrandMark } from "@/components/shared/brand-mark";
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 
 export function OnboardingExperience() {
   const router = useRouter();
@@ -22,31 +24,64 @@ export function OnboardingExperience() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 md:py-14">
-      <header className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between">
+        <BrandMark />
+        <ThemeSwitcher compact />
+      </div>
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">CampusOne onboarding</h1>
-          <p className="text-sm text-slate-600">Step {index + 1} of {onboardingSteps.length}</p>
+          <h1 className="text-2xl font-bold text-foreground">CampusOne onboarding</h1>
+          <p className="text-sm text-muted-foreground">
+            Step {index + 1} of {onboardingSteps.length}
+          </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => router.push("/sign-in")}>Sign in</Button>
-          <Button variant="ghost" onClick={finish}>Skip introduction</Button>
+          <Button variant="secondary" onClick={() => router.push("/sign-in")}>
+            Sign in
+          </Button>
+          <Button variant="ghost" onClick={finish}>
+            Skip introduction
+          </Button>
         </div>
       </header>
 
-      <div className="mb-5 h-2 overflow-hidden rounded-full bg-slate-200">
-        <div className="h-full rounded-full bg-[var(--color-royal-blue)] transition-all" style={{ width: `${progress}%` }} />
+      <div
+        role="progressbar"
+        aria-label="Onboarding progress"
+        aria-valuenow={index + 1}
+        aria-valuemin={0}
+        aria-valuemax={onboardingSteps.length}
+        className="mb-5 h-2 overflow-hidden rounded-full bg-surface-inset"
+      >
+        <div
+          className="h-full rounded-full bg-[var(--color-royal-blue)] transition-all"
+          style={{ width: `${progress}%` }}
+        />
       </div>
 
-      <StepCard title={step.title} description={step.description} accent={step.accent} Icon={step.icon} />
+      <StepCard
+        title={step.title}
+        description={step.description}
+        accent={step.accent}
+        Icon={step.icon}
+      />
 
       <div className="mt-6 flex items-center justify-between">
-        <Button variant="secondary" onClick={() => setIndex((value) => Math.max(0, value - 1))} disabled={index === 0}>
+        <Button
+          variant="secondary"
+          onClick={() => setIndex((value) => Math.max(0, value - 1))}
+          disabled={index === 0}
+        >
           Back
         </Button>
         {index === onboardingSteps.length - 1 ? (
           <Button onClick={finish}>Finish and continue</Button>
         ) : (
-          <Button onClick={() => setIndex((value) => Math.min(onboardingSteps.length - 1, value + 1))}>Continue</Button>
+          <Button
+            onClick={() => setIndex((value) => Math.min(onboardingSteps.length - 1, value + 1))}
+          >
+            Continue
+          </Button>
         )}
       </div>
     </div>

@@ -1,13 +1,12 @@
-import type { TextareaHTMLAttributes } from "react";
+import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils/cn";
+import { fieldVariants } from "./input";
 
-export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function Textarea({ className, rows = 3, ...props }: ComponentProps<"textarea">) {
   return (
     <textarea
-      className={cn(
-        "w-full rounded-xl border border-[var(--color-border)] bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400",
-        className,
-      )}
+      rows={rows}
+      className={cn(fieldVariants(), "min-h-24 resize-y", className)}
       {...props}
     />
   );

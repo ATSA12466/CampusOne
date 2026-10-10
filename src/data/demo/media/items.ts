@@ -1,3 +1,4 @@
+import { images } from "@/config/images";
 import type { MediaItem } from "@/types";
 
 export const mediaItems: MediaItem[] = [
@@ -7,8 +8,7 @@ export const mediaItems: MediaItem[] = [
     kind: "podcast",
     creator: "CampusOne Studio",
     duration: "18:30",
-    source: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    thumbnail: "/images/placeholders/media-1.svg",
+    thumbnail: images.mediaOne.src,
   },
   {
     id: "md2",
@@ -16,6 +16,6 @@ export const mediaItems: MediaItem[] = [
     kind: "video",
     creator: "Career Desk",
     duration: "09:50",
-    thumbnail: "/images/placeholders/media-2.svg",
+    thumbnail: images.mediaTwo.src,
   },
 ];

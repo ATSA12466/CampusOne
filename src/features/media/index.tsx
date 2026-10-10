@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Badge, Button, Card } from "@/components/ui";
-import { mediaService } from "@/services/demo";
+import { mediaService } from "@/services";
 import { useAppStore } from "@/stores/app-store";
 
 export function MediaFeature() {
@@ -14,7 +14,10 @@ export function MediaFeature() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Media & Podcasts" description="Motivational and educational media content." />
+      <PageHeader
+        title="Media & Podcasts"
+        description="Motivational and educational media content."
+      />
       <div className="grid gap-3 md:grid-cols-2">
         {items.map((item) => (
           <Card key={item.id}>
@@ -22,16 +25,25 @@ export function MediaFeature() {
               <h2 className="font-semibold">{item.title}</h2>
               <Badge tone="primary">{item.kind}</Badge>
             </div>
-            <p className="mt-1 text-sm text-slate-600">{item.creator} • {item.duration}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {item.creator} • {item.duration}
+            </p>
             <div className="mt-3">
               {item.kind === "podcast" || item.kind === "audio" ? (
                 item.source ? (
-                  <audio controls className="w-full" src={item.source} onPlay={() => setCurrentAudio(item.id)} />
+                  <audio
+                    controls
+                    className="w-full"
+                    src={item.source}
+                    onPlay={() => setCurrentAudio(item.id)}
+                  />
                 ) : (
-                  <p className="text-xs text-slate-500">Audio source unavailable in demo.</p>
+                  <p className="text-xs text-muted-foreground">Audio source unavailable in demo.</p>
                 )
               ) : (
-                <p className="text-xs text-slate-500">Video preview available. Playback requires connected media source.</p>
+                <p className="text-xs text-muted-foreground">
+                  Video preview available. Playback requires connected media source.
+                </p>
               )}
             </div>
             <Button
@@ -46,12 +58,18 @@ export function MediaFeature() {
                 })
               }
             >
-              {bookmarks.some((bookmark) => bookmark.entityId === item.id && bookmark.entityType === "media") ? "Bookmarked" : "Bookmark"}
+              {bookmarks.some(
+                (bookmark) => bookmark.entityId === item.id && bookmark.entityType === "media",
+              )
+                ? "Bookmarked"
+                : "Bookmark"}
             </Button>
           </Card>
         ))}
       </div>
-      {currentAudio ? <p className="text-xs text-slate-500">Now playing demo media item: {currentAudio}</p> : null}
+      {currentAudio ? (
+        <p className="text-xs text-muted-foreground">Now playing demo media item: {currentAudio}</p>
+      ) : null}
     </div>
   );
 }

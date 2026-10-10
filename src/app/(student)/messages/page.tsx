@@ -1,2 +1,7 @@
+import { routeMetadata } from "@/config/metadata";
 import { MessagesFeature } from "@/features/messages";
-export default function MessagesPage() { return <MessagesFeature />; }
+export const metadata = routeMetadata("messages");
+
+export default function MessagesPage() {
+  return <MessagesFeature />;
+}

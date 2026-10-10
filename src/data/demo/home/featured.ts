@@ -1,3 +1,4 @@
+import { images } from "@/config/images";
 import type { FeaturedContentItem } from "@/types";
 
 export const featuredContent: FeaturedContentItem[] = [
@@ -6,7 +7,7 @@ export const featuredContent: FeaturedContentItem[] = [
     title: "How top students prepare for exam month",
     description: "A 5-minute focus session on revision planning and exam calm.",
     type: "video",
-    thumbnail: "/images/placeholders/exam-focus.svg",
+    thumbnail: images.examFocus.src,
     duration: "5:20",
     destination: "/media",
     ctaLabel: "Watch now",
@@ -17,7 +18,7 @@ export const featuredContent: FeaturedContentItem[] = [
     title: "Deep work audio sprint",
     description: "Guided audio routine for 45-minute distraction-free study.",
     type: "audio",
-    thumbnail: "/images/placeholders/audio-sprint.svg",
+    thumbnail: images.audioSprint.src,
     duration: "12:00",
     destination: "/media",
     ctaLabel: "Listen now",
@@ -28,7 +29,7 @@ export const featuredContent: FeaturedContentItem[] = [
     title: "Student data bundle offer",
     description: "Demo sponsored campaign for discounted monthly learning data.",
     type: "sponsored",
-    thumbnail: "/images/placeholders/data-bundle.svg",
+    thumbnail: images.dataBundle.src,
     destination: "/advertising",
     ctaLabel: "Learn more",
     sponsored: true,
@@ -39,7 +40,7 @@ export const featuredContent: FeaturedContentItem[] = [
     title: "Google Africa Developer Scholarship",
     description: "Applications are open for cloud and AI upskilling pathways.",
     type: "opportunity",
-    thumbnail: "/images/placeholders/opportunity.svg",
+    thumbnail: images.opportunity.src,
     destination: "/opportunities",
     ctaLabel: "Explore",
     active: true,
@@ -49,7 +50,7 @@ export const featuredContent: FeaturedContentItem[] = [
     title: "Innovation Square pop-up lab this week",
     description: "Campus highlight: hands-on prototype demos and student product showcases.",
     type: "highlight",
-    thumbnail: "/images/placeholders/exam-focus.svg",
+    thumbnail: images.examFocus.src,
     destination: "/events",
     ctaLabel: "View highlights",
     active: true,
@@ -59,7 +60,7 @@ export const featuredContent: FeaturedContentItem[] = [
     title: "SRC announces extended revision support",
     description: "Important announcement: revised support windows and desk availability.",
     type: "announcement",
-    thumbnail: "/images/placeholders/media-2.svg",
+    thumbnail: images.mediaTwo.src,
     destination: "/announcements",
     ctaLabel: "Read update",
     active: true,

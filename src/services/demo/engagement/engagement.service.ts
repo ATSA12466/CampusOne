@@ -1,5 +1,17 @@
-import { announcements, campaigns, clubs, events, memberships, opportunities } from "@/data/demo/engagement/clubs";
-import { initialStudentRequests, representatives, srcProjects } from "@/data/demo/engagement/src-office";
+import type { EngagementReadService } from "@/types/service-contracts";
+import {
+  announcements,
+  campaigns,
+  clubs,
+  events,
+  memberships,
+  opportunities,
+} from "@/data/demo/engagement/clubs";
+import {
+  initialStudentRequests,
+  representatives,
+  srcProjects,
+} from "@/data/demo/engagement/src-office";
 
 export const engagementService = {
   listClubs: () => clubs,
@@ -12,4 +24,4 @@ export const engagementService = {
   listSrcProjects: () => srcProjects,
   listInitialStudentRequests: () => initialStudentRequests,
   getClubById: (id: string) => clubs.find((club) => club.id === id),
-};
+} satisfies EngagementReadService;

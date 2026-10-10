@@ -1,0 +1,175 @@
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    min-height: 100%;
+    scroll-padding-top: 6rem;
+  }
+  body {
+    min-height: 100%;
+    background: var(--background);
+    color: var(--foreground);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  a {
+    text-decoration: none;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: var(--brand);
+    color: var(--brand-foreground);
+  }
+  h1,
+  .editorial-title {
+    font-family: var(--font-editorial), Georgia, serif;
+    letter-spacing: -0.035em;
+  }
+}
+@layer components {
+  .campus-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: var(--r-card);
+    box-shadow: var(--elevation-low);
+  }
+  .photo-scrim {
+    background: linear-gradient(180deg, var(--photo-scrim-start), var(--photo-scrim-end));
+  }
+  .brand-gradient {
+    background: linear-gradient(135deg, var(--hero-start), var(--hero-end));
+    color: var(--on-photo);
+  }
+  .pressable {
+    transition:
+      transform var(--motion-fast) var(--ease-out),
+      box-shadow var(--motion-normal) var(--ease-out),
+      border-color var(--motion-normal) var(--ease-out);
+  }
+  .pressable:active {
+    transform: scale(0.985);
+  }
+  .media-zoom {
+    transition: transform var(--motion-slow) var(--ease-out);
+  }
+  .skeleton-sheen {
+    animation: skeleton-pulse 1.8s ease-in-out infinite;
+  }
+  .dialog-enter {
+    animation: dialog-enter var(--motion-normal) var(--ease-out);
+  }
+  .sheet-enter {
+    animation: sheet-enter var(--motion-slow) var(--ease-out);
+  }
+  .toast-enter {
+    animation: toast-enter var(--motion-normal) var(--ease-out);
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .field-control {
+    min-height: 44px;
+    width: 100%;
+    border-radius: var(--r-control);
+    border: 1px solid var(--control-border);
+    background: var(--surface);
+    color: var(--foreground);
+    font-size: 1rem;
+    transition: border-color var(--motion-fast) var(--ease-out);
+  }
+  .field-control::placeholder {
+    color: var(--muted-foreground);
+  }
+  .field-control[aria-invalid="true"] {
+    border-color: var(--danger);
+  }
+  .field-control:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+@media (hover: hover) {
+  .pressable:hover {
+    box-shadow: var(--elevation-raised);
+  }
+  .group:hover .media-zoom {
+    transform: scale(1.025);
+  }
+}
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+@keyframes dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sheet-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .pressable:active,
+  .group:hover .media-zoom {
+    transform: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-photo-scrim {
+    background: linear-gradient(
+      90deg,
+      var(--photo-scrim-end),
+      var(--photo-scrim-start) 62%,
+      var(--photo-scrim-edge)
+    );
+  }
+}

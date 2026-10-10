@@ -21,15 +21,23 @@ export function StudyAssistantFeature() {
         description="Demo interface for AI-assisted study planning and timetable generation."
       />
       <Card>
-        <h2 className="font-semibold text-slate-900">Plan generator</h2>
+        <h2 className="font-semibold text-foreground">Plan generator</h2>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           <div>
-            <label className="mb-1 block text-sm font-medium">Priority subject</label>
-            <Input value={subject} onChange={(event) => setSubject(event.target.value)} />
+            <label htmlFor="study-subject" className="mb-1 block text-sm font-medium">
+              Priority subject
+            </label>
+            <Input
+              id="study-subject"
+              value={subject}
+              onChange={(event) => setSubject(event.target.value)}
+            />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium">Preferred session duration</label>
-            <Select>
+            <label htmlFor="study-duration" className="mb-1 block text-sm font-medium">
+              Preferred session duration
+            </label>
+            <Select id="study-duration">
               <option>45 minutes</option>
               <option>60 minutes</option>
               <option>90 minutes</option>
@@ -37,14 +45,29 @@ export function StudyAssistantFeature() {
           </div>
         </div>
         <div className="mt-3">
-          <label className="mb-1 block text-sm font-medium">Constraints</label>
-          <Textarea placeholder="Available days, existing commitments, break preferences..." rows={3} />
+          <label htmlFor="study-constraints" className="mb-1 block text-sm font-medium">
+            Constraints
+          </label>
+          <Textarea
+            id="study-constraints"
+            placeholder="Available days, existing commitments, break preferences..."
+            rows={3}
+          />
         </div>
-        <Button className="mt-4" onClick={generatePlan}>Generate demo study plan</Button>
+        <Button className="mt-4" onClick={generatePlan}>
+          Generate demo study plan
+        </Button>
       </Card>
       <Card>
         <h3 className="font-semibold">Generated output</h3>
-        <Textarea value={schedule} readOnly rows={8} placeholder="Your generated demo response appears here." className="mt-3" />
+        <Textarea
+          aria-label="Generated study plan"
+          value={schedule}
+          readOnly
+          rows={8}
+          placeholder="Your generated demo response appears here."
+          className="mt-3"
+        />
       </Card>
     </div>
   );

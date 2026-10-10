@@ -11,19 +11,24 @@ export function CarouselIndicators({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="flex items-center gap-2" role="tablist" aria-label="Featured content slides">
-      {items.map((item, idx) => (
+    <div className="flex max-w-full flex-wrap gap-1" aria-label="Featured content slides">
+      {items.map((item, index) => (
         <button
           key={item.id}
-          role="tab"
-          aria-selected={idx === activeIndex}
-          aria-label={`Go to slide ${idx + 1}: ${item.title}`}
-          className={cn(
-            "h-2.5 rounded-full transition-all",
-            idx === activeIndex ? "w-7 bg-[var(--color-royal-blue)]" : "w-2.5 bg-slate-300",
-          )}
-          onClick={() => onSelect(idx)}
-        />
+          type="button"
+          aria-current={index === activeIndex ? "true" : undefined}
+          aria-label={`Go to slide ${index + 1}: ${item.title}`}
+          className="grid size-11 place-items-center rounded-control"
+          onClick={() => onSelect(index)}
+        >
+          <span
+            className={cn(
+              "h-2 rounded-full transition-all",
+              index === activeIndex ? "w-6 bg-brand" : "w-2 bg-subtle-foreground",
+            )}
+            aria-hidden="true"
+          />
+        </button>
       ))}
     </div>
   );

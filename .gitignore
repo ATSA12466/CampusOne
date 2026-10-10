@@ -10,9 +10,7 @@ build/
 dist/
 
 # Environment variables and secrets
-.env
-.env.*
-!.env.example
+.env*
 
 # Generated local audit/test artifacts
 .cache/

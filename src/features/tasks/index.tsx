@@ -33,7 +33,10 @@ export function TasksFeature() {
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<TaskItem | null>(null);
 
-  const form = useForm<TaskFormValues>({ resolver: zodResolver(taskSchema), defaultValues: DEFAULT_VALUES });
+  const form = useForm<TaskFormValues>({
+    resolver: zodResolver(taskSchema),
+    defaultValues: DEFAULT_VALUES,
+  });
   const filteredTasks = useTaskFilter(tasks, filter, query);
 
   const resetForm = () => {
@@ -67,11 +70,20 @@ export function TasksFeature() {
     <div className="space-y-5">
       <PageHeader title="Tasks" description="Create, manage, and track personal productivity." />
       <TaskStats tasks={tasks} />
-      <TaskFormCard form={form} editing={editing} onSubmit={handleSubmit} onCancelEdit={resetForm} />
+      <TaskFormCard
+        form={form}
+        editing={editing}
+        onSubmit={handleSubmit}
+        onCancelEdit={resetForm}
+      />
 
-      <div className="grid gap-3 md:grid-cols-[1fr,220px]">
+      <div className="grid gap-3 md:grid-cols-[1fr_220px]">
         <SearchInput value={query} onChange={setQuery} placeholder="Search tasks" />
-        <Select value={filter} onChange={(event) => setFilter(event.target.value as TaskFilter)}>
+        <Select
+          aria-label="Filter tasks by status"
+          value={filter}
+          onChange={(event) => setFilter(event.target.value as TaskFilter)}
+        >
           <option value="all">All tasks</option>
           <option value="open">Open</option>
           <option value="completed">Completed</option>
@@ -79,7 +91,12 @@ export function TasksFeature() {
         </Select>
       </div>
 
-      <TaskList tasks={filteredTasks} onToggle={toggleTask} onEdit={handleEdit} onDelete={removeTask} />
+      <TaskList
+        tasks={filteredTasks}
+        onToggle={toggleTask}
+        onEdit={handleEdit}
+        onDelete={removeTask}
+      />
     </div>
   );
 }

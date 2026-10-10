@@ -11,19 +11,37 @@ export function NotificationsFeature() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Notifications" description="Track updates across tasks, events, clubs, and announcements." />
+      <PageHeader
+        title="Notifications"
+        description="Track updates across tasks, events, clubs, and announcements."
+      />
       <div className="space-y-3">
         {notifications.map((notification) => (
           <Card key={notification.id}>
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <p className="font-semibold">{notification.title}</p>
-                <p className="text-sm text-slate-600">{notification.description}</p>
-                <Link href={notification.href} className="text-xs text-blue-700">Open destination</Link>
+                <p className="text-sm text-muted-foreground">{notification.description}</p>
+                <Link href={notification.href} className="inline-flex min-h-11 items-center text-xs text-brand">
+                  Open destination
+                </Link>
               </div>
-              {notification.read ? <Badge tone="success">Read</Badge> : <Badge tone="warning">Unread</Badge>}
+              {notification.read ? (
+                <Badge tone="success">Read</Badge>
+              ) : (
+                <Badge tone="warning">Unread</Badge>
+              )}
             </div>
-            {!notification.read ? <Button className="mt-3" size="sm" variant="secondary" onClick={() => markRead(notification.id)}>Mark as read</Button> : null}
+            {!notification.read ? (
+              <Button
+                className="mt-3"
+                size="sm"
+                variant="secondary"
+                onClick={() => markRead(notification.id)}
+              >
+                Mark as read
+              </Button>
+            ) : null}
           </Card>
         ))}
       </div>
