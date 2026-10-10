@@ -1,6 +1,6 @@
 # API integration guide
 
-Phase 2 establishes a typed, swappable **read** boundary. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
+Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
 
 ## 1. Environment and preview safety
 
@@ -46,6 +46,29 @@ const club = await campusService.get("clubs", "club-1"); // Club | null
 `CatalogService`, `CollectionMap`, `ListQuery`, `Page<T>` and `ServiceOptions` live in `src/types/service-contracts.ts`. Catalog/API implementations load only when called, keeping unused API schemas out of legacy Home's initial client path.
 
 **Important:** current synchronous exports such as `engagementService`, `academicsService` and the local auth/state adapters are compatibility readers and **remain demo-only**. Setting API mode does not silently convert all legacy workflows to live behaviour. The new `/design` server composition uses the async boundary; the agreed feature phases will migrate their pages/clients one at a time. No automatic demo fallback occurs after a live request fails.
+
+### Global search (Phase 3)
+
+```ts
+import { searchService } from "@/services";
+
+const controller = new AbortController();
+const response = await searchService.search({
+  query: "Code",
+  scope: "clubs",             // all / destinations / one catalog category
+  limit: 18,                  // integer 1–30
+  signal: controller.signal,
+});
+// response: { items, unavailable, hasMore }
+```
+
+`SearchService`, `SearchQuery`, `SearchResult` and `SearchResponse` live in `src/types/search.ts`. Query text is trimmed and bounded to 100 characters; the default scope is `all`. Empty/one-character inputs offer destination shortcuts without catalog calls. Two-character content searches fan out to clubs, events, opportunities, accommodation, marketplace, resources and announcements (or only the selected category), with **six records per source**. Ranking prefers exact/prefix/title matches; the dialog returns at most 18 by default and points to full feature pages for more.
+
+The implementation composes existing `campusService.list` contracts rather than inventing a deployed `/search` endpoint. API mode therefore uses the proposed collection endpoints, same-origin credentials, query validation and response schemas already documented here. Signals and caller headers pass through unchanged. Detail links use the existing frontend URLs and encode entity IDs.
+
+A failed source is listed in `unavailable`; other results and local page shortcuts remain usable. Do not turn deliberate aborts into source failures or silently substitute demo data. All-source failure and retry are covered by controlled tests; live search/API compatibility remains **unverified**. The UI debounces 225ms, cancels superseded/closed searches, blocks Enter during loading and ignores stale completions.
+
+A future backend-wide search adapter can replace `SearchService` without changing feature controls, but must validate its returned response and preserve cancellation/partial-error semantics. Define the backend's actual authentication, search permissions, ranking and pagination before adding that endpoint. The `/design` preview service deliberately simulates failures/slow replies and is not a production API fallback.
 
 ## 3. Proposed list/detail contract
 

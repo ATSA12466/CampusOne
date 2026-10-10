@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
+import { sidebarInitScript } from "@/config/sidebar";
 import { themeInitScript } from "@/config/theme";
 import { pageMetadata } from "@/config/metadata";
 import "./globals.css";
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: sidebarInitScript }} />
       </head>
       <body className="font-sans antialiased">
         <ThemeProvider>

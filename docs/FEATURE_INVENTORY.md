@@ -1,9 +1,11 @@
 # FEATURE_INVENTORY
 
-> Phase 2: the shared theme/media/UI/service foundation is in place. The feature descriptions below inventory the preserved demo, not a claim that photo-led feature redesigns or backend integrations are complete. See `TEST_REPORT.md` for observed workflow limitations; shell/Home/auth/feature work follows the agreed phase sequence.
+> Phase 3: the shared theme/media/UI/service foundation and grouped shell/global search are in place. The feature descriptions below inventory the preserved demo, not a claim that photo-led feature redesigns or backend integrations are complete. See `TEST_REPORT.md` for observed workflow limitations; Home/auth/feature work follows the agreed phase sequence.
 
 
 ## Implemented modules (functional frontend)
+- Shell: five grouped sections / 24 preserved destinations; persistent desktop collapse; four mobile tabs + More; route focus; refined pending-logo/portrait/header placement
+- Global search: Cmd/Ctrl+K, keyboard results, scopes, clear/loading/empty/error/retry, cancellation and partial-source handling through the typed catalog
 - Onboarding: step flow, skip/back/continue, progress, persistence, replay from settings
 - Authentication UI: sign-in/register/forgot-password with validation and role demo switch
 - Home: welcome, featured carousel, quick actions, daily overview, recommendations

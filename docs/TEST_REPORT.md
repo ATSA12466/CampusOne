@@ -1,8 +1,85 @@
 # CampusOne test report
 
+## Phase 3 — shell, navigation and global search (10 October 2026)
+
+**Implemented and verified:** grouped/collapsible desktop navigation, four mobile tabs + More, refined header/brand slot, Cmd/Ctrl+K search, typed catalog search and focus/persistence/delivery behaviour. This milestone does not claim the later Home/auth/feature redesigns or live integrations are complete.
+
+### Source and native checks
+
+| Check | Result |
+| --- | --- |
+| `npm run lint` | Passed |
+| `npm run typecheck` | Passed, strict TS |
+| `npm run build` | Passed; Next 16.2.6 / 32 generated static pages; latest compile 14.5s, TypeScript 9.0s |
+| `npm run test:foundation` | 15/15 passed; previous media/API/theme contracts preserved |
+| `npm run test:shell` | 12/12 passed; no added runtime/test dependency |
+| Existing routes / official artwork | URLs preserved; SRC logo still a labelled pending slot |
+
+New native coverage proves all **24** static student routes occur once across **five** groups; four unique mobile destinations; bounded parent/detail active matching; sidebar prepaint defaults/compact/private storage; trimmed query/scope/limit validation; non-mutating accent-normalized ranking; empty/short suggestions without content calls; all seven source-to-detail mappings; six-per-source bounds; headers/signals; partial/all-source failures and recovery; URL-encoded IDs; pre/mid-flight aborts; labelled preview fixtures.
+
+### Responsive/visual regression
+
+- **222 route cases**: 37 screen/guard/not-found paths × 360/768/1280 × light/dark.
+- **74 route axe cases** at 360 in both themes: **zero final WCAG 2 A/AA + 2.1 AA violations**.
+- **Zero page-width overflow or final visible offscreen-content flags**; no browser exceptions. All 37 screens reviewed visually at 360 and 1280 in both themes using eight review sheets, with individual shell/search captures and tablet metrics.
+- Initial element-bound probes counted the onboarding card's clipped decorative circle, even though document width remained correct. Its decorative icon/circle are now explicitly hidden from assistive technology; **six targeted onboarding recaptures** verified the corrected semantic/metric result. Initial evidence is retained, not silently deleted.
+- Root redirect and the seven missing-detail patterns retain the documented Next streamed-not-found behaviour. Production `/design` is strict 404, and all destination URLs remain intact.
+
+### Shell/search browser checks
+
+`scripts/phase3-audit.mjs` passed against production 3001 and the dev-only showcase on 3000. It produces **31 visual/axe captures**: 24 responsive shell states, six controlled search loading/failure states and one panel-code delivery failure. All captures have zero axe violations, page-width overflow and small hit-target flags.
+
+**Six responsive shell cases:** 360/768/1280 × light/dark. Every destination is reachable from the desktop rail or More. Parent activation on a club detail; compact/expanded layout; Cmd **and** Ctrl shortcuts; initial input focus; arrow/wrap selection; Enter-to-detail navigation; clear/scope/empty states; Tab focus trapping; Escape and shortcut toggle/return; main focus after actual route navigation all passed.
+
+**Sidebar:** compact preference survives reload, synchronizes across tabs, clears to the default on a storage-clear event and remains usable with denied sidebar storage. With hydration chunks blocked, the stored compact layout is already **88px** wide and content offset before hydration.
+
+**Delivery:** neither search UI, More UI nor development search-fixture chunks appear in initial Home script requests. Requested panels load on intent; closing while the code download is held cannot cause a late dialog opening. Menu-to-search switching leaves **one** dialog, focuses the combobox and returns to the header on close. A controlled failed code download recovers via **Reload page**, with explicit save-changes wording; a cached import rejection was not misrepresented as a successful in-page retry. Cancelling loading/failure feedback returns focus.
+
+**Data failure/cancellation:** controlled `/design` error and partial-result fixtures recover on **Try again** in both themes. The slow fixture deliberately ignores abort so the UI's stale-reply guard is tested independently: a late Code response cannot replace newer Innovation results. Loading blocks Enter, and closing in-flight work does not reopen the dialog. These are fixtures, **not real API proof**.
+
+### Preserved workflows and backend boundary
+
+A production legacy interaction rerun passed onboarding persistence; More/menu focus/return; task CRUD/completion persistence; RSVP ticket persistence/cancel; **club-executive approval persistence**; bookmarks; notification reads; SRC validation/submission persistence. No browser exceptions. Known baseline gaps (community/report persistence, required lost/found photo, study constraints, sign-out isolation and initial onboarding guard) are unchanged and remain scheduled domain/auth work; see the Phase 2 notes below.
+
+`/api/health` remains **503 / `{ "ok": false }`** without a database. New search composes the typed/swappable catalog and preserves partial failures/cancellation. Live API/database compatibility, secure authentication and authoritative campus data are still **unverified**.
+
+### Latest production Home performance
+
+Default mobile Lighthouse 13.5 / Chromium 153, 360 × 800, simulated network/CPU multiplier 4, sequential idle production runs, zero audit errors:
+
+| Run (UTC, 10 Oct) | Performance | Accessibility | FCP | LCP | TBT | CLS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Initial Phase 3 — 22:37:22 | 67 | 100 | 0.8 s | 3.2 s | 1480 ms | 0 |
+| Final build — 22:49:55 | 66 | 100 | 0.8 s | 3.2 s | 1840 ms | 0 |
+| **Latest repeat — 22:50:07** | **68** | **100** | **0.8 s** | **3.2 s** | **1440 ms** | **0** |
+
+Latest speed index **1.8s**. Initial Home transfer is **335,457 bytes / 22 requests**: scripts 247,241 / 16; fonts 62,056 / 2; CSS 11,053 / 1; document 12,143 / 1; images 2,964 / 2. This is **11,103 bytes more than the latest Phase 2 build**, reflecting the larger destination/header surface and demo portrait. Deferred overlays are proven, but neither a smaller overall delivery nor an improved Lighthouse score is claimed.
+
+**Performance ≥90 remains OPEN**; Accessibility ≥95 is met by these measurements. Phase 4 must address initial Home composition/hydration and deliberate media delivery, then remeasure. Do not change throttling, omit low runs or substitute historical scores to claim acceptance.
+
+### Reproduce and evidence
+
+```bash
+npm run lint && npm run typecheck
+npm run test:foundation && npm run test:shell
+npm run build
+# Start dev on 0.0.0.0:3000 and this production build on 0.0.0.0:3001
+node scripts/phase3-audit.mjs
+AUDIT_BASE_URL=http://127.0.0.1:3001 \
+  AUDIT_OUTPUT_DIR=.cache/phase3/routes node scripts/design-audit.mjs
+AUDIT_BASE_URL=http://127.0.0.1:3001 \
+  AUDIT_OUTPUT_DIR=.cache/phase3/legacy-regression node scripts/audit/interactions.mjs
+AUDIT_BASE_URL=http://127.0.0.1:3001 \
+  AUDIT_OUTPUT_DIR=.cache/phase3/performance node scripts/audit/lighthouse.mjs
+```
+
+Ignored evidence: `.cache/phase3/{routes,onboarding-final,review,final-shell,legacy-regression,performance*}`. Source runners/reports are versioned; cached screenshots/binaries may not persist in another workspace. Safari/Firefox, screen-reader/physical-device and live service/security verification remain open. No heavy package, animation library, binary dataset, `.env*`, cache or build output was added to Git.
+
+---
+
 ## Phase 2 — foundation verification (10 October 2026)
 
-**Implementation:** semantic design/media/UI/service foundation is implemented; existing URLs and demo workflows are preserved. **Performance acceptance remains open:** the latest measured Home score is 74, below the ≥90 target. Accessibility measured 100, above ≥95. These are not claims that later product phases are complete.
+**Implementation:** semantic design/media/UI/service foundation is implemented; existing URLs and demo workflows are preserved. **Performance acceptance remains open:** the latest Phase 2 measured Home score was 74, below the ≥90 target. Accessibility measured 100, above ≥95. These are not claims that later product phases are complete.
 
 ### Build and source checks
 
@@ -140,7 +217,7 @@ Artifacts: ignored `.cache/phase2/performance*`, `baseline-replay`, `results/fou
 
 See README/design-system commands for the isolated browser-tool installation and dev/production servers. Route runner supports `AUDIT_ROUTES` for comma-separated targeted reruns plus width/theme filters. Production `/design` is an expected 404; set `AUDIT_DESIGN_DEV=1` only when intentionally checking the dev matrix.
 
-Automated checks do not certify screen-reader usability, all browsers, real students/data, live uploads, security/RBAC, service authority or low-end physical-device performance. Additional Safari/Firefox/device and assistive-technology work follows with the product flows. Full shell/search, magazine Home, photo auth/onboarding, expanded feeds and feature/detail redesigns remain scheduled; PWA/offline behaviour is not yet implemented.
+Automated checks do not certify screen-reader usability, all browsers, real students/data, live uploads, security/RBAC, service authority or low-end physical-device performance. Additional Safari/Firefox/device and assistive-technology work follows with the product flows. Magazine Home, photo auth/onboarding, expanded feeds and feature/detail redesigns remain scheduled; PWA/offline behaviour is not yet implemented.
 
 ## Phase 1 reference
 

@@ -1,50 +1,58 @@
 "use client";
-
-import Link from "next/link";
 import type { RefObject } from "react";
 import { Sheet } from "@/components/ui/dialog";
-import { primaryNav, workspaceNav } from "./nav-config";
-import { cn } from "@/lib/utils/cn";
-
+import { BrandMark } from "@/components/shared/brand-mark";
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
+import { navigationGroups } from "@/config/navigation";
+import { NavigationLink } from "./navigation-link";
 export function NavigationDrawer({
   open,
   onOpenChange,
-  active,
+  pathname,
   returnFocusRef,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  active: (href: string) => boolean;
-  returnFocusRef: RefObject<HTMLButtonElement | null>;
+  pathname: string;
+  returnFocusRef: RefObject<HTMLElement | null>;
 }) {
   return (
     <Sheet
       open={open}
       onOpenChange={onOpenChange}
-      title="CampusOne menu"
-      description="Explore your campus and student workspace."
+      title="Your campus, within reach."
+      description="All your destinations. One student workspace."
       returnFocusRef={returnFocusRef}
     >
-      <nav aria-label="More campus destinations" className="grid gap-1 sm:grid-cols-2">
-        {[...primaryNav, ...workspaceNav].map((item) => (
-          <Link
-            prefetch={false}
-            key={item.href}
-            href={item.href}
-            aria-current={active(item.href) ? "page" : undefined}
-            onClick={() => onOpenChange(false)}
-            className={cn(
-              "flex min-h-11 items-center gap-3 rounded-control px-3 py-2 text-sm",
-              active(item.href)
-                ? "bg-brand-soft font-semibold text-brand"
-                : "text-foreground hover:bg-surface-muted",
-            )}
-          >
-            <item.icon className="size-4 shrink-0" aria-hidden="true" />
-            {item.label}
-          </Link>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
+        <BrandMark size="sm" />
+        <span className="text-xs text-muted-foreground">GCTU · Demo</span>
+      </div>
+      <nav aria-label="More campus destinations" className="grid gap-6 sm:grid-cols-2">
+        {navigationGroups.map((group) => (
+          <section key={group.id} aria-label={group.label}>
+            <h2 className="mb-2 px-3 text-xs font-semibold tracking-wide text-muted-foreground">
+              {group.label}
+            </h2>
+            <div className="space-y-1">
+              {group.destinations.map((item) => (
+                <NavigationLink
+                  key={item.href}
+                  item={item}
+                  pathname={pathname}
+                  onNavigate={() => onOpenChange(false)}
+                />
+              ))}
+            </div>
+          </section>
         ))}
       </nav>
+      <div className="mt-6 border-t border-border pt-5">
+        <p className="mb-3 text-xs font-semibold text-muted-foreground">
+          Make yourself comfortable
+        </p>
+        <ThemeSwitcher />
+      </div>
     </Sheet>
   );
 }

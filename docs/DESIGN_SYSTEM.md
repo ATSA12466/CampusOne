@@ -272,9 +272,22 @@ Do not nest a Button inside a Link. Use `<Button asChild><Link ... /></Button>`.
 - Mobile: one-column flows, horizontal *contained* snap/choice strips when useful. Tablet: avoid squeezing two complex panes into unusable columns. Desktop: 2–3-column content with a readable maximum width.
 - Fix the root page, not just a screenshot: no page-width overflow at 360/768/1280. Intentional internal carousel/strip overflow is not a page-layout defect.
 
-The latest production Home measurement is Performance 74 / Accessibility 100: the performance ≥90 target remains open, not a completed acceptance claim. See the test report for run history and the next optimization work.
+The latest Phase 3 production Home measurement is Performance 68 / Accessibility 100: the performance ≥90 target remains open, not a completed acceptance claim. See the test report for run history and the next optimization work.
 
 Automated axe results are not an accessibility certification. The phase report separates browser checks, measured Lighthouse results and remaining manual/assistive-technology work.
+
+### Shell and search (Phase 3)
+
+- One destination source: `config/navigation.ts`, with small typed campus/student group files. Five labelled groups / 24 destinations cover the existing student routes, including the demo campus tools. Detail URLs retain their parent active state.
+- Desktop ≥1024px: 17rem expanded / 5.5rem compact rail. The accessible collapse toggle, prepaint width and document/storage-event preference keep layout consistent on reload, across tabs and when storage is denied. Compact mode preserves labelled 44px links and internal scrolling.
+- Mobile/tablet: Home, Discover, Tasks, Community plus More. More contains all 24 links and appearance controls in a focus-trapped, scrollable sheet; no destination is hidden from mobile users.
+- Header: pending official SRC slot + wordmark on smaller screens; destination context on desktop; a labelled search trigger, theme access, unread notification count and profile avatar. Ama's demo portrait is the existing fictional generated registry asset, not a verified person's photograph.
+- Cmd/Ctrl+K opens/toggles global search. The combobox uses arrow keys/Enter, visible selected results, clear and category controls, live count/loading feedback, a valid empty state and real data retry. Escape returns focus; actual route changes focus main without stealing the scroll position.
+- Query debounce 225ms; prior work is aborted and stale replies ignored. No persistent search history. Pages work without content requests for short/empty input; content searches use seven typed service collections.
+- Closed More/search code is deferred until first use, then stays mounted while closed for focus cleanup. Only one overlay is active. Loading can be cancelled without a late-open surprise. A failed code download offers an explicit **Reload page** (save any changes first); data failures retry without a reload.
+- `/design`'s navigation section includes controlled error/partial/slow search previews. These are labelled development fixtures, not live-backend proof; production `/design` and subpaths remain strict 404s.
+
+The 222-route regression plus 31 targeted shell/search/feedback captures found no final axe violations or page-width overflow. Every screen was visually reviewed at 360/1280 in both themes; tablet metrics and shell screenshots were also checked. Accessibility automation does not replace a screen-reader/device review.
 
 ## 10. Services, metadata and deployment
 
@@ -303,6 +316,7 @@ Production deliberately returns **HTTP 404** for `/design` and its subpaths. The
 npm run lint
 npm run typecheck
 npm run test:foundation
+npm run test:shell
 npm run build
 # In another shell, after the build:
 npm run start -- --hostname 0.0.0.0 --port 3001
@@ -315,9 +329,10 @@ npm install --prefix .cache/design-audit/tooling --no-audit --no-fund \
   playwright@1.64.0 @sparticuz/chromium@153.0.0 \
   @axe-core/playwright@4.13.0 lighthouse@13.5.0
 node scripts/phase2-audit.mjs
+node scripts/phase3-audit.mjs
 node scripts/phase2/proxy.mjs
 AUDIT_BASE_URL=http://127.0.0.1:3001 \
-  AUDIT_OUTPUT_DIR=.cache/phase2/routes node scripts/design-audit.mjs
+  AUDIT_OUTPUT_DIR=.cache/phase3/routes node scripts/design-audit.mjs
 AUDIT_BASE_URL=http://127.0.0.1:3001 \
   AUDIT_OUTPUT_DIR=.cache/phase2/regression node scripts/audit/interactions.mjs
 AUDIT_BASE_URL=http://127.0.0.1:3001 \
@@ -328,4 +343,4 @@ Foundation tests use Node 22.15+ native type stripping and built-in `node:test`;
 
 ## 12. Phase boundary
 
-Phase 2 supplies the reusable foundation and applies semantic themes to the legacy screens. It does not claim the whole product is now redesigned. The grouped/collapsible shell and global search are Phase 3; magazine Home is Phase 4; photo-led auth/onboarding is Phase 5; photo-rich feature/detail flows, expanded 12–30-item feeds, real calendar/ICS/GPA interactions and remaining feature work follow in Phase 6. Secure auth, uploads, real-time messaging, payments, AI and official academic authority remain unconnected integrations.
+Phase 2 supplies the reusable foundation and applies semantic themes to the legacy screens. It does not claim the whole product is now redesigned. Phase 3 implements the grouped/collapsible shell and global search; magazine Home is Phase 4; photo-led auth/onboarding is Phase 5; photo-rich feature/detail flows, expanded 12–30-item feeds, real calendar/ICS/GPA interactions and remaining feature work follow in Phase 6. Secure auth, uploads, real-time messaging, payments, AI and official academic authority remain unconnected integrations.

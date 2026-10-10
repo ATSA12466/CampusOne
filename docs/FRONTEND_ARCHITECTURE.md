@@ -2,7 +2,7 @@
 
 ## Product and phase boundary
 
-CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Later phases replace the information architecture and feature experiences in the agreed order; this is not a finished live campus platform.
+CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Phase 3 adds the grouped/collapsible shell, mobile tabs + More and global search. Later phases replace Home/auth/feature experiences in the agreed order; this is not a finished live campus platform.
 
 ## Directory map
 
@@ -23,19 +23,20 @@ src/
     media/                  # CampusImage, cards/hero/gallery/uploader + scoped hooks
     shared/                 # Brand, page header, loading/empty/error/404 states
     theme/                  # Pre-paint bootstrap + external store/controls
-    layout/, navigation/    # Compatible shell; Phase 3 redesign pending
+    layout/, navigation/    # Persistent grouped shell + lazy overlay entry points
   config/                   # App/env, theme, image registry, metadata, API paths
   types/                    # Shared entities, media/UI/theme/service contracts
   services/
-    index.ts                # Public consumer boundary + lazy async catalog
+    index.ts                # Public boundary + lazy async catalog/search
     demo/                   # Deterministic/read-only typed fixtures + compatibility
     api/                    # Validated requests and provisional backend adapter
     auth/                   # Explicit local demo authentication
     validation/             # Runtime entity/page/query schemas
   data/demo/                # Fixture storage; UI never imports it directly
   stores/                   # Zustand auth/app demo state; small serializable data
-  hooks/                    # Existing shared utility hooks
+  hooks/                    # Shell overlay and sidebar external-store hooks
   lib/media/                # Pure crop geometry + native canvas compression
+  lib/search/               # Pure search normalization and ranking
 ```
 
 ## Server/client boundaries
@@ -45,6 +46,18 @@ Prefer Server Components for initial entity reads, metadata and page composition
 The `/design` feature illustrates this separation: the server reads catalog data and composes sections; interactive controls, overlays, gallery and uploader are separate small client modules. Existing feature entries remain largely client components for compatibility. Their scheduled phases will migrate reads/layouts rather than performing a risky app-wide async rewrite in the foundation phase.
 
 Navigation and Home/composed discovery links disable automatic off-route prefetch: the baseline eager policy fetched untouched route schemas on initial Home. Future intent-based prefetch should respect device/network constraints. Use leaf imports for client components where practical. No animation or image-processing library was introduced: CSS transitions/snap, ImageBitmap, canvas and existing Next/sharp handle those jobs. Radix is used for appropriate focus, choice, menu, tooltip and overlay semantics.
+
+## Shell and search boundaries
+
+`config/navigation.ts` composes typed campus/student groups from `config/navigation/`. All 24 static student routes have exactly one destination; desktop, More and route shortcuts consume that same source. Four mobile destinations plus More keep the tab bar legible. Active matching respects a route-segment boundary and includes detail URLs.
+
+`config/sidebar.ts` supplies a trusted constant prepaint script. `useSidebarPreference` uses `useSyncExternalStore` for document-local state, reload/storage-event synchronization and private-storage fallback. `app/styles/shell.css` owns 17rem expanded / 5.5rem compact widths at the 1024px breakpoint. Collapsing never removes accessible link names or access to lower destinations; the rail scrolls internally.
+
+`StudentShell` owns route-change main focus and `useShellOverlays` owns one menu/search intent. Menu and search modules are imported only when requested, then remain mounted while closed so Radix can clean up and return focus. Loading can be cancelled before a chunk finishes; a late import must not reopen the panel. Menu-to-search keyboard switching cannot leave two dialogs open. Failed chunk delivery offers **Reload page** with a save-changes warning: a cached module rejection cannot truthfully be repaired by pretending an in-page import retry succeeded.
+
+`features/search/{components,hooks,validation}` calls the public `searchService`. Query/scope/retry changes abort prior work; late replies are ignored even from an uncooperative source. The 225ms debounce and schema bound requests. Service creation and catalog adapters stay lazy. Search results are mapped from validated catalog entities and local destination configuration, never UI dataset imports.
+
+The development `/design` navigation section supplies explicit error/partial/slow fixtures through a public preview service. These fixtures are absent from initial Home delivery and do not certify the real backend. Search terms are kept in component memory, not localStorage.
 
 ## Data boundaries
 
@@ -80,7 +93,7 @@ Development binds to `0.0.0.0`; Next accepts localhost, 127.0.0.1 and Arena's `*
 
 ## Verification and dependency policy
 
-Native Node tests cover pure TypeScript geometry, contracts, adapters, theme/bootstrap/contrast and ignore rules. Isolated Playwright/Chromium/axe/Lighthouse tooling is outside app dependencies. Route and showcase browser harnesses capture hydrated screens and exercise actual controls. Measure Lighthouse sequentially against production, not a dev build. Keep generated screenshots/binaries in ignored cache paths.
+Native Node tests cover pure TypeScript geometry, contracts, adapters, theme/bootstrap/contrast, navigation coverage, search ranking/failure/cancellation and ignore rules. Isolated Playwright/Chromium/axe/Lighthouse tooling is outside app dependencies. Route and showcase browser harnesses capture hydrated screens and exercise actual controls. Measure Lighthouse sequentially against production, not a dev build. Keep generated screenshots/binaries in ignored cache paths.
 
 Use the installed Next/React/TypeScript/Tailwind/Zustand/RHF/Zod/Lucide/CVA stack. Before adding a dependency, justify its shipped bundle cost and why native/installed capabilities are insufficient. Keep modules small, strict and explicit; there is no need for `any`, a duplicate design palette, arbitrary photo hosts or direct UI fixture imports.
 

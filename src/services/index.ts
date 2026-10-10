@@ -1,4 +1,5 @@
 import { appConfig } from "@/config/app-config";
+import type { SearchPreviewMode, SearchService } from "@/types/search";
 import type { CatalogService } from "@/types/service-contracts";
 
 // Legacy screens must not download API schemas or catalog code they don't use.
@@ -33,3 +34,30 @@ export {
   productivityService,
 } from "./demo";
 export { demoAuthService } from "./auth/demo-auth.service";
+
+// Search/UI code and response schemas are fetched only after opening search.
+let search: Promise<SearchService> | null = null;
+export const searchService: SearchService = {
+  async search(query) {
+    search ??= import("./search/search.service")
+      .then(({ createSearchService }) => createSearchService(campusService))
+      .catch((error: unknown) => {
+        search = null;
+        throw error;
+      });
+    return (await search).search(query);
+  },
+};
+
+// Development showcase entry point; not used by the production student shell.
+export function searchPreviewService(mode: SearchPreviewMode): SearchService {
+  let preview: Promise<SearchService> | null = null;
+  return {
+    async search(query) {
+      preview ??= import("./demo/search-preview.service").then(({ createSearchPreviewService }) =>
+        createSearchPreviewService(searchService, mode),
+      );
+      return (await preview).search(query);
+    },
+  };
+}

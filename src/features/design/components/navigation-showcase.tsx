@@ -1,3 +1,4 @@
+import { SearchShowcase } from "./search-showcase";
 import { ShowcaseSection } from "./showcase-section";
 import { ChoicePreview } from "./choice-preview";
 import { OverlayPreview } from "./overlay-preview";
@@ -13,6 +14,7 @@ export function NavigationShowcase() {
         <ChoicePreview />
         <OverlayPreview />
       </div>
+      <SearchShowcase />
     </ShowcaseSection>
   );
 }

@@ -2,7 +2,7 @@
 
 `campusone-web` — a GCTU student-app frontend moving toward a photo-first campus magazine and social super-app.
 
-**Current milestone: Phase 2 foundation.** The audit is complete; semantic light/dark/system themes, local Fraunces + Manrope fonts, accessible UI/media primitives, image upload preparation, route metadata and a development showcase are implemented. The existing app remains usable while the shell, Home, auth and feature redesigns follow in the agreed order.
+**Current milestone: Phase 3 shell + global search.** The Phase 2 theme/font/media/UI foundation is retained. Five grouped navigation sections cover all 24 student destinations; desktop navigation collapses with a persistent preference, and mobile has four tabs plus More. Cmd/Ctrl+K opens lazy-loaded, keyboard-accessible search across pages and seven typed catalog collections. Home, auth and feature redesigns follow in the agreed order.
 
 This is an explicitly labelled **demo/prototype**, not an official GCTU/SRC service. Generated photographs depict fictional people/a campus. The official SRC artwork is still pending; `BrandMark` keeps a clean labelled slot rather than inventing a logo. Real auth, uploads, messaging, payments, AI and authoritative campus data are not connected.
 
@@ -23,6 +23,7 @@ Open `/home` for the compatible app or **`/design`** for the eight-section worki
 npm run lint
 npm run typecheck
 npm run test:foundation
+npm run test:shell
 npm run build
 npm run start -- --hostname 0.0.0.0 --port 3001
 ```
@@ -53,6 +54,8 @@ The preview user's browser is not the sandbox: do not put localhost in the brows
 - `src/config/images.ts` — one static photo registry, alt/provenance/focal points, approved-source policy and SRC slot.
 - `src/app/globals.css` + `src/config/theme.ts` — light/dark semantic tokens and typed references.
 - `src/config/metadata.ts` — preserved route URLs with titles, descriptions and Open Graph.
+- `src/config/navigation.ts` — grouped destinations, mobile tabs and bounded active-route matching.
+- `src/features/search/` + `searchService` — cancellable/debounced, typed global search; no direct fixture imports.
 
 Three generated WebP assets total **166,234 bytes**. Existing local SVG stand-ins remain clearly labelled for later replacement. Use generated, licensed/royalty-free or explicitly authorized media only; do not hotlink copyrighted campus photos. The uploader prepares JPEG/PNG/WebP locally, with crop/preview/error/retry and bounded output; it does not claim a real upload without a service callback.
 
@@ -71,14 +74,17 @@ Browser tooling is deliberately not an application dependency:
 npm install --prefix .cache/design-audit/tooling --no-audit --no-fund \
   playwright@1.64.0 @sparticuz/chromium@153.0.0 \
   @axe-core/playwright@4.13.0 lighthouse@13.5.0
-node scripts/phase2-audit.mjs              # Running dev 3000 + production 3001
+node scripts/phase2-audit.mjs              # Foundation; running dev 3000 + production 3001
+node scripts/phase3-audit.mjs              # Shell, search, persistence and delivery checks
 node scripts/phase2/proxy.mjs              # Temporary port-4000 fixture
 AUDIT_BASE_URL=http://127.0.0.1:3001 \
-  AUDIT_OUTPUT_DIR=.cache/phase2/routes node scripts/design-audit.mjs
+  AUDIT_OUTPUT_DIR=.cache/phase3/routes node scripts/design-audit.mjs
 ```
+
+Latest verification: lint/typecheck/build, **27 native tests**, **222 responsive route cases** plus targeted recaptures, and **31 shell/search/feedback captures** passed. Latest production Home Lighthouse: **68 Performance / 100 Accessibility**. Performance ≥90 remains open; lazy closed-overlay delivery is proven, not a claim of a measured speed improvement.
 
 Snapshots/traces/build output/node_modules/test images stay ignored. The source runners and human-readable reports are committed; cached binary evidence may not persist between workspaces. Run audits again for later phases. Lighthouse targets are Home Performance ≥90 / Accessibility ≥95; only measured production scores are reported.
 
 ## Next in the agreed sequence
 
-Phase 3: grouped/collapsible desktop navigation, mobile tabs + More, global Cmd/Ctrl+K search and refined brand placement. Phase 4: magazine Home with ads/video-first ordering, a big Clubs hero, photo quick tiles, institutional links and real next-class/task recommendations. Auth/onboarding and feature-by-feature photo/detail/data/workflow upgrades follow; the existing club-executive request panel is preserved.
+Phase 3 is implemented and verified. Phase 4: magazine Home with ads/video-first ordering, a big Clubs hero, photo quick tiles, institutional links and real next-class/task recommendations. Auth/onboarding and feature-by-feature photo/detail/data/workflow upgrades follow; the existing club-executive request panel is preserved.
