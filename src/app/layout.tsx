@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+// Keep builds independent of Google Fonts availability. Source and license: ./fonts/README.md.
+const inter = localFont({
+  src: "./fonts/inter-latin-variable.woff2",
+  variable: "--font-inter",
+  weight: "100 900",
+  style: "normal",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "CampusOne",

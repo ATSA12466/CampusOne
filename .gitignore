@@ -14,6 +14,12 @@ dist/
 .env.*
 !.env.example
 
+# Generated local audit/test artifacts
+.cache/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
 # Logs
 npm-debug.log*
 yarn-debug.log*

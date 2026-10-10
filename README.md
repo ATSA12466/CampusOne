@@ -3,7 +3,9 @@
 CampusOne is a modular, feature-based Next.js frontend for student productivity, participation, representation, and opportunities.
 
 ## Current status
-Functional **frontend prototype** with role-aware demo workflows and strong backend integration boundaries. Ready for PHP API integration phase.
+Functional **frontend prototype** with role-aware local demo workflows. The photo-first premium upgrade is in progress: **Phase 1 (audit) is complete**, not the redesign.
+
+See [the design audit](docs/DESIGN_AUDIT.md) for the screen-by-screen findings, measured browser/Lighthouse baseline, implementation order, and remaining work. Authentication, messaging, AI, payments, and official ticket verification are not production services.
 
 ## Tech stack
 - Next.js 16 (App Router)
@@ -19,14 +21,17 @@ Functional **frontend prototype** with role-aware demo workflows and strong back
 npm install
 npm run dev
 npm run lint
-npm exec tsc -- --noEmit --pretty false
+npm run typecheck
 npm run build
 npm run start
 ```
 
-## Environment
-- `NEXT_PUBLIC_API_BASE_URL` – future PHP API base URL
-- Existing DB env values remain for project/platform health checks
+## Environment and reproducible builds
+- Demo frontend builds do not require a running API or a `DATABASE_URL`.
+- `/api/health` checks the existing PostgreSQL integration. Without `DATABASE_URL`, it truthfully returns HTTP 503 with `{ "ok": false }`; it does not report a healthy database.
+- `NEXT_PUBLIC_API_BASE_URL` overrides the future backend client base. The legacy `:8000` localhost fallback is an audited issue; the upcoming service-foundation work will document the platform's `:4000` API and a preview-safe same-origin proxy. Do not use a browser-localhost URL in deployed/remote previews.
+- The baseline font is bundled with its license via `next/font/local`, so builds do not fetch Google Fonts. See [font provenance](src/app/fonts/README.md).
+- Responsive screenshot, workflow, axe, and Lighthouse audit instructions are in [DESIGN_AUDIT.md](docs/DESIGN_AUDIT.md#local-evidence-and-reproducibility). Audit tooling and generated output are isolated in ignored `.cache/` storage, not app dependencies.
 
 ## Folder map
 - `src/app/` route entrypoints and route-level boundaries
