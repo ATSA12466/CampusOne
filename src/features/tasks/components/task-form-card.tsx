@@ -1,55 +1,122 @@
 import type { UseFormReturn } from "react-hook-form";
 import { Button, Card, Input, Select, Textarea } from "@/components/ui";
-import type { TaskItem } from "@/types";
+import type { TaskItem } from "@/types/productivity";
 import type { TaskFormValues } from "../validation/task.schema";
-
-interface TaskFormCardProps {
+interface Props {
   form: UseFormReturn<TaskFormValues>;
   editing: TaskItem | null;
-  onSubmit: (values: TaskFormValues) => void;
+  disabled?: boolean;
+  onSubmit: (values: TaskFormValues) => Promise<void> | void;
   onCancelEdit: () => void;
 }
-
-export function TaskFormCard({ form, editing, onSubmit, onCancelEdit }: TaskFormCardProps) {
+const fields = [
+  { name: "title", label: "Task title", type: "text" },
+  { name: "description", label: "Task description", type: "textarea" },
+  { name: "dueDate", label: "Task due date", type: "date" },
+  {
+    name: "priority",
+    label: "Task priority",
+    options: ["low", "medium", "high"],
+  },
+  {
+    name: "category",
+    label: "Task category",
+    options: ["academic", "personal", "club"],
+  },
+] as const;
+export function TaskFormCard({
+  form,
+  editing,
+  disabled = false,
+  onSubmit,
+  onCancelEdit,
+}: Props) {
+  const busy = disabled || form.formState.isSubmitting;
   return (
     <Card>
-      <h2 className="font-semibold">{editing ? "Edit task" : "Add task"}</h2>
-      <form className="mt-3 grid gap-3" onSubmit={form.handleSubmit(onSubmit)}>
-        <Input
-          aria-label="Task title"
-          aria-invalid={!!form.formState.errors.title}
-          aria-describedby={form.formState.errors.title ? "task-title-error" : undefined}
-          placeholder="Task title"
-          {...form.register("title")}
-        />
-        <Textarea
-          aria-label="Task description"
-          placeholder="Task description"
-          rows={2}
-          {...form.register("description")}
-        />
-        <div className="grid gap-3 md:grid-cols-3">
-          <Input aria-label="Task due date" type="date" {...form.register("dueDate")} />
-          <Select aria-label="Task priority" {...form.register("priority")}>
-            <option value="low">Low priority</option>
-            <option value="medium">Medium priority</option>
-            <option value="high">High priority</option>
-          </Select>
-          <Select aria-label="Task category" {...form.register("category")}>
-            <option value="academic">Academic</option>
-            <option value="personal">Personal</option>
-            <option value="club">Club</option>
-          </Select>
-        </div>
-        {form.formState.errors.title ? (
-          <p id="task-title-error" role="alert" className="text-xs text-danger">
-            {form.formState.errors.title.message}
-          </p>
-        ) : null}
-        <div className="flex gap-2">
-          <Button type="submit">{editing ? "Save changes" : "Add task"}</Button>
+      <h2 className="font-display text-2xl font-semibold">
+        {editing ? "Edit task" : "A little something to get done."}
+      </h2>
+      <form
+        noValidate
+        className="mt-5 grid gap-4 sm:grid-cols-3"
+        onSubmit={form.handleSubmit(onSubmit)}
+        aria-busy={form.formState.isSubmitting}
+      >
+        {fields.map((field) => {
+          const error = form.formState.errors[field.name],
+            id = `task-${field.name}`,
+            common = {
+              id,
+              disabled: busy,
+              "aria-invalid": !!error,
+              "aria-describedby": error ? `${id}-error` : undefined,
+              ...form.register(field.name),
+            };
+          return (
+            <div
+              key={field.name}
+              className={
+                field.name === "title" || field.name === "description"
+                  ? "sm:col-span-3"
+                  : undefined
+              }
+            >
+              <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
+                {field.label}
+              </label>
+              {"options" in field ? (
+                <Select {...common}>
+                  {field.options.map((option) => (
+                    <option key={option}>{option}</option>
+                  ))}
+                </Select>
+              ) : field.type === "textarea" ? (
+                <Textarea
+                  {...common}
+                  rows={3}
+                  maxLength={2000}
+                  placeholder="A few useful details…"
+                />
+              ) : (
+                <Input
+                  {...common}
+                  type={field.type}
+                  maxLength={120}
+                  placeholder={
+                    field.name === "title"
+                      ? "What would you like to finish?"
+                      : undefined
+                  }
+                />
+              )}{" "}
+              {error ? (
+                <p
+                  id={`${id}-error`}
+                  role="alert"
+                  className="mt-1 text-xs text-danger"
+                >
+                  {error.message}
+                </p>
+              ) : null}
+            </div>
+          );
+        })}
+        <div className="flex flex-wrap gap-2 sm:col-span-3">
+          <Button type="submit" disabled={busy}>
+            {form.formState.isSubmitting
+              ? "Saving…"
+              : editing
+                ? "Save changes"
+                : "Add task"}
+          </Button>
           {editing ? (
-            <Button type="button" variant="secondary" onClick={onCancelEdit}>
+            <Button
+              type="button"
+              disabled={busy}
+              variant="secondary"
+              onClick={onCancelEdit}
+            >
               Cancel
             </Button>
           ) : null}

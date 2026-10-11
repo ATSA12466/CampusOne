@@ -8,6 +8,7 @@ import {
   messageSchema,
   conversationSchema,
 } from "./social.schema";
+import { studyPlanSchema } from "./study.schema";
 import { profileInputSchema } from "./profile.schema";
 import { sessionInputSchema, planInputSchema } from "./schedule.schema";
 import { z } from "zod";
@@ -53,6 +54,7 @@ export const gradeInputSchema = z.object({
 export const workspaceSchemas: {
   [K in keyof WorkspaceMap]: z.ZodType<WorkspaceMap[K]>;
 } = {
+  studyPlans: studyPlanSchema,
   communityPosts: postRecordSchema,
   replies: replyRecordSchema,
   reactions: reactionSchema,

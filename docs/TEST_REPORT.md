@@ -1,5 +1,9 @@
 # CampusOne test report
 
+## Phase 6L — Tasks and Study tools
+
+**198 native tests**, lint/typecheck/build and **42 production AA/layout/44px captures** pass. Private task CRUD/completion/edit/reload/deletion, real full-day Accra overdue semantics, study availability/time/duration/breaks/focus/manual context, owner-qualified save/delete and actual timed ICS bytes are verified. All mobile/desktop light/dark layouts reviewed; squeezed mobile task cards were fixed and rechecked. Deterministic planning is explicitly **not AI**; free text is context, not inferred scheduling. Native API tests are controlled fixtures, not deployed backend/security evidence. See [Phase 6L](PHASE6L_STUDY_TOOLS.md). Secondary screens, polish and fresh final route/performance verification continue automatically.
+
 ## Phase 6K — Social
 
 **186 native tests**, lint/typecheck/optimized build and **46 production AA/layout/44px captures** pass. Community/Messages/Notifications cover 360/768/1280 light/dark and private post/reply/nested reply/concern/thread/photo/read-all/reload workflows. Guest gates, real second-tab deletion, denied-storage visit-only and corrupt-data recovery pass. Each screen’s mobile/desktop light/dark captures was manually reviewed. API notification and accepted workspace-role guards use native controlled fetch fixtures, not deployment evidence. No new runtime dependency or static image. See [Phase 6K](PHASE6K_SOCIAL.md). Studies/secondary screens and final fresh regression/performance follow automatically.

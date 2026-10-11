@@ -1,102 +1,37 @@
 "use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { PageHeader } from "@/components/shared/page-header";
-import { SearchInput } from "@/components/shared/search-input";
-import { Select } from "@/components/ui";
-import { useAppStore } from "@/stores/app-store";
-import type { TaskItem } from "@/types";
-import { TaskFormCard } from "./components/task-form-card";
-import { TaskList } from "./components/task-list";
-import { TaskStats } from "./components/task-stats";
-import { useTaskFilter, type TaskFilter } from "./hooks/use-task-filter";
-import { taskSchema, type TaskFormValues } from "./validation/task.schema";
-
-const DEFAULT_VALUES: TaskFormValues = {
-  title: "",
-  description: "",
-  dueDate: "",
-  priority: "medium",
-  category: "academic",
-};
-
+import Link from "next/link";
+import { MagazineHeader } from "@/components/shared/magazine-header";
+import { Card } from "@/components/ui/card";
+import { images } from "@/config/images";
+import { useAuthStore } from "@/stores/auth-store";
+import { TaskDirectory } from "./components/task-directory";
 export function TasksFeature() {
-  const tasks = useAppStore((state) => state.tasks);
-  const addTask = useAppStore((state) => state.addTask);
-  const toggleTask = useAppStore((state) => state.toggleTask);
-  const removeTask = useAppStore((state) => state.removeTask);
-  const updateTask = useAppStore((state) => state.updateTask);
-
-  const [filter, setFilter] = useState<TaskFilter>("all");
-  const [query, setQuery] = useState("");
-  const [editing, setEditing] = useState<TaskItem | null>(null);
-
-  const form = useForm<TaskFormValues>({
-    resolver: zodResolver(taskSchema),
-    defaultValues: DEFAULT_VALUES,
-  });
-  const filteredTasks = useTaskFilter(tasks, filter, query);
-
-  const resetForm = () => {
-    setEditing(null);
-    form.reset(DEFAULT_VALUES);
-  };
-
-  const handleSubmit = (values: TaskFormValues) => {
-    if (editing) {
-      updateTask({ ...editing, ...values });
-      resetForm();
-      return;
-    }
-
-    addTask(values);
-    form.reset(DEFAULT_VALUES);
-  };
-
-  const handleEdit = (task: TaskItem) => {
-    setEditing(task);
-    form.reset({
-      title: task.title,
-      description: task.description,
-      dueDate: task.dueDate,
-      priority: task.priority,
-      category: task.category,
-    });
-  };
-
+  const owner = useAuthStore((s) =>
+    s.user && s.hydrated
+      ? `${s.source}:${s.user.id}:${s.user.email}:${s.role}`
+      : "",
+  );
   return (
-    <div className="space-y-5">
-      <PageHeader title="Tasks" description="Create, manage, and track personal productivity." />
-      <TaskStats tasks={tasks} />
-      <TaskFormCard
-        form={form}
-        editing={editing}
-        onSubmit={handleSubmit}
-        onCancelEdit={resetForm}
+    <div className="mx-auto max-w-6xl space-y-8">
+      <MagazineHeader
+        eyebrow="A LITTLE FOCUS GOES A LONG WAY"
+        title="Make room for what matters."
+        description="The big assignment. The little errand. Your next good idea. Give your day a plan that feels like yours."
+        image={images.studyCorner}
       />
-
-      <div className="grid gap-3 md:grid-cols-[1fr_220px]">
-        <SearchInput value={query} onChange={setQuery} placeholder="Search tasks" />
-        <Select
-          aria-label="Filter tasks by status"
-          value={filter}
-          onChange={(event) => setFilter(event.target.value as TaskFilter)}
-        >
-          <option value="all">All tasks</option>
-          <option value="open">Open</option>
-          <option value="completed">Completed</option>
-          <option value="overdue">Overdue</option>
-        </Select>
-      </div>
-
-      <TaskList
-        tasks={filteredTasks}
-        onToggle={toggleTask}
-        onEdit={handleEdit}
-        onDelete={removeTask}
-      />
+      {owner ? (
+        <TaskDirectory key={owner} />
+      ) : (
+        <Card>
+          <h2 className="font-display text-2xl">Your task list is private.</h2>
+          <Link
+            href="/sign-in?next=%2Ftasks"
+            className="mt-3 inline-flex min-h-11 items-center text-brand"
+          >
+            Sign in to open your tasks
+          </Link>
+        </Card>
+      )}
     </div>
   );
 }

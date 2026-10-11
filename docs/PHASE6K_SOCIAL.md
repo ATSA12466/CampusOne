@@ -22,7 +22,7 @@ Demo records are private to this device/profile. API records belong to the conne
 
 `workspaceService` remains a lazy typed facade. Proposed cookie-authenticated operations are:
 
-- `GET /workspace/{collection}` → `{ items: validatedRecords[] }`.
+- `GET /workspace/{collection}` → `validatedRecords[]`.
 - `PUT /workspace/{collection}/{id}` with the complete typed record → `{ ok: true }`.
 - `DELETE /workspace/{collection}/{id}` → `{ ok: true }`.
 - `PUT /notifications/read` with `{ ids: string[] }` → `{ ok: true }`; IDs are validated/bounded to 200, writes use no-store, credentials and a ten-second signal.

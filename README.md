@@ -2,7 +2,7 @@
 
 `campusone-web` — a GCTU student-app frontend moving toward a photo-first campus magazine and social super-app.
 
-**Current milestone: Phase 6K Social, continuing automatically through study tools, secondary screens, polish and final verification.** Accommodation through Profile are committed; Community adds photo/private posts, reactions/replies/concern drafts, Messages adds private threads and photo history, and Notifications adds source-safe read state. See [Phase 6K](docs/PHASE6K_SOCIAL.md). These are honest frontend/demo/service boundaries, not real delivery/moderation. Backend/security and Home’s standard-renderer/physical-device Performance ≥90 remain open.
+**Current milestone: Phase 6L Tasks/Study tools, continuing automatically through secondary screens, polish and final verification.** Accommodation through Profile are committed; Community adds photo/private posts, reactions/replies/concern drafts, Messages adds private threads and photo history, and Notifications adds source-safe read state. Tasks now have source-safe CRUD/full-day overdue logic; study drafts genuinely honor availability, duration and breaks without fake AI. See [Phase 6L](docs/PHASE6L_STUDY_TOOLS.md). These are honest frontend/demo/service boundaries, not real delivery/moderation. Backend/security and Home’s standard-renderer/physical-device Performance ≥90 remain open.
 
 This is an explicitly labelled **demo/prototype**, not an official GCTU/SRC service. Generated photographs depict fictional people/a campus. The official SRC artwork is still pending; `BrandMark` keeps a clean labelled slot rather than inventing a logo. Real auth, uploads, messaging, payments, AI and authoritative campus data are not connected.
 
@@ -32,6 +32,7 @@ npm run test:discover
 npm run test:life
 npm run test:profile
 npm run test:social
+npm run test:study
 npm run build
 npm run start -- --hostname 0.0.0.0 --port 3001
 ```
@@ -84,7 +85,7 @@ The eight pre-Clubs generated WebPs total **626,572 bytes**; five additional fic
 - [Phase 6C Discover, loaded-record scope, shared saves and API replacement](docs/PHASE6C_DISCOVER.md)
 - [Phase 6D Accommodation](docs/PHASE6D_ACCOMMODATION.md) · [6E Marketplace](docs/PHASE6E_MARKETPLACE.md) · [6F Opportunities](docs/PHASE6F_OPPORTUNITIES.md)
 - [Phase 6G Lost & Found](docs/PHASE6G_LOST_FOUND.md) · [6H Academics](docs/PHASE6H_ACADEMICS.md) · [6I Schedule](docs/PHASE6I_SCHEDULE.md) · [6J Profile](docs/PHASE6J_PROFILE.md)
-- [Phase 6K Social](docs/PHASE6K_SOCIAL.md)
+- [Phase 6K Social](docs/PHASE6K_SOCIAL.md) · [Phase 6L Tasks/Study tools](docs/PHASE6L_STUDY_TOOLS.md)
 - [Frontend architecture](docs/FRONTEND_ARCHITECTURE.md)
 - [Feature inventory](docs/FEATURE_INVENTORY.md)
 - [Latest tests, screenshots, Lighthouse and remaining work](docs/TEST_REPORT.md)
@@ -113,15 +114,16 @@ node scripts/phase6-discover-api-snapshot.mjs
 node scripts/phase6-discover-api-audit.mjs
 node scripts/phase6-profile-audit.mjs
 node scripts/phase6-social-audit.mjs
+node scripts/phase6-study-audit.mjs
 node scripts/phase2/proxy.mjs              # Temporary port-4000 fixture
 AUDIT_BASE_URL=http://127.0.0.1:3001 \
   AUDIT_OUTPUT_DIR=.cache/phase6/events/routes node scripts/design-audit.mjs
 ```
 
-Current verification and exact Lighthouse measurements are recorded in [TEST_REPORT.md](docs/TEST_REPORT.md). **186 native tests** pass across ten isolated suites. Social has **46 clean production AA/layout/44px captures** at 360/768/1280 in light/dark with validated private post/reply/thread/photo/read-state workflows, guest gates and denied/corrupt/cross-tab storage. Profile’s 22 captures and earlier domain captures remain milestone evidence, not fresh full-route results. No Social runtime package was added. Historical Home medians remain **82 standard renderer /94 diagnostic /100 accessibility**; fresh performance and route/domain regressions follow final polish. The ≥90 gate is not waived.
+Current verification and exact Lighthouse measurements are recorded in [TEST_REPORT.md](docs/TEST_REPORT.md). **198 native tests** pass across eleven isolated suites. Study tools add **42 clean production captures** and actual timed ICS/download evidence; the planning engine is deterministic, not AI. Social has **46 clean production AA/layout/44px captures** at 360/768/1280 in light/dark with validated private post/reply/thread/photo/read-state workflows, guest gates and denied/corrupt/cross-tab storage. Profile’s 22 captures and earlier domain captures remain milestone evidence, not fresh full-route results. No Social runtime package was added. Historical Home medians remain **82 standard renderer /94 diagnostic /100 accessibility**; fresh performance and route/domain regressions follow final polish. The ≥90 gate is not waived.
 
 Snapshots/traces/build output/node_modules/test images stay ignored. The source runners and human-readable reports are committed; cached binary evidence may not persist between workspaces. Run audits again for later phases. Lighthouse targets are Home Performance ≥90 / Accessibility ≥95; only measured production scores are reported.
 
 ## Next in the agreed sequence
 
-Phases 1–5 and Phase 6A–K frontend milestones are implemented. Remaining: **Study Assistant/Tasks → SRC/announcements/participation/media/management/advertising/settings → polish → final verification**. Work proceeds without routine approvals. The club-executive approval/persistence panel remains preserved. Authorized SRC artwork, real secure backend/transport and physical-device proof remain external; the performance gate stays open until honestly measured.
+Phases 1–5 and Phase 6A–L frontend milestones are implemented. Remaining: **SRC/announcements/participation/media/management/advertising/settings → polish → final verification**. Work proceeds without routine approvals. The club-executive approval/persistence panel remains preserved. Authorized SRC artwork, real secure backend/transport and physical-device proof remain external; the performance gate stays open until honestly measured.

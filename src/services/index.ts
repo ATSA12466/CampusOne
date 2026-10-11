@@ -8,7 +8,9 @@ let selected: Promise<CatalogService> | null = null;
 function catalog() {
   selected ??= (
     appConfig.dataSource === "api"
-      ? import("./api/catalog.service").then(({ createApiCatalog }) => createApiCatalog())
+      ? import("./api/catalog.service").then(({ createApiCatalog }) =>
+          createApiCatalog(),
+        )
       : import("./demo/catalog.service").then(({ demoCatalog }) => demoCatalog)
   ).catch((error: unknown) => {
     selected = null;
@@ -56,8 +58,9 @@ export function searchPreviewService(mode: SearchPreviewMode): SearchService {
   let preview: Promise<SearchService> | null = null;
   return {
     async search(query) {
-      preview ??= import("./demo/search-preview.service").then(({ createSearchPreviewService }) =>
-        createSearchPreviewService(searchService, mode),
+      preview ??= import("./demo/search-preview.service").then(
+        ({ createSearchPreviewService }) =>
+          createSearchPreviewService(searchService, mode),
       );
       return (await preview).search(query);
     },
@@ -80,8 +83,8 @@ export function authPreviewService(
 ): import("@/types/auth").AuthService {
   let preview: Promise<import("@/types/auth").AuthService> | undefined;
   const get = () =>
-    (preview ??= import("./demo/auth-preview.service").then(({ createAuthPreview }) =>
-      createAuthPreview(authService, mode),
+    (preview ??= import("./demo/auth-preview.service").then(
+      ({ createAuthPreview }) => createAuthPreview(authService, mode),
     ));
   return {
     source: appConfig.dataSource,
@@ -112,7 +115,10 @@ export { eventCatalogService } from "./events/catalog.service";
 export { eventActionService } from "./events/actions.service";
 
 // Discover Phase 6C: bounded cross-campus reads and source-aware shared saves.
-export { discoverCatalogService, discoverActionService } from "./discover/discover.service";
+export {
+  discoverCatalogService,
+  discoverActionService,
+} from "./discover/discover.service";
 
 export { workspaceService } from "./workspace/workspace.service";
 
@@ -121,3 +127,6 @@ export { photoRecordService } from "./profile/photo-record.service";
 export { profileService } from "./profile/profile.service";
 
 export { notificationService } from "./notifications/notification.service";
+
+export { taskService } from "./tasks/task.service";
+export { studyPlannerService } from "./study/study-planner.service";

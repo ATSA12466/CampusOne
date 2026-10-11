@@ -6,6 +6,7 @@ import type {
   MessageRecord,
   PrivateConversation,
 } from "./social";
+import type { StudyPlan } from "./study-planner";
 import type { ProfilePreferences } from "./profile";
 import type { TimetableSession } from "./productivity";
 import type { PersonalPlan } from "./schedule";
@@ -14,6 +15,7 @@ import type { PhotoRecord } from "./photo-records";
 import type { ListingEnquiry } from "./listings";
 import type { ServiceOptions } from "./service-contracts";
 export interface WorkspaceMap {
+  studyPlans: StudyPlan;
   communityPosts: SocialPost;
   replies: SocialReply;
   reactions: SocialReaction;

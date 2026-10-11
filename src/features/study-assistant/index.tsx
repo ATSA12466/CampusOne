@@ -1,74 +1,39 @@
 "use client";
-
-import { useState } from "react";
-import { PageHeader } from "@/components/shared/page-header";
-import { Button, Card, Input, Select, Textarea } from "@/components/ui";
-
+import Link from "next/link";
+import { MagazineHeader } from "@/components/shared/magazine-header";
+import { Card } from "@/components/ui/card";
+import { images } from "@/config/images";
+import { useAuthStore } from "@/stores/auth-store";
+import { StudyWorkspace } from "./components/study-workspace";
 export function StudyAssistantFeature() {
-  const [subject, setSubject] = useState("Software Engineering");
-  const [schedule, setSchedule] = useState("");
-
-  const generatePlan = () => {
-    setSchedule(
-      `Demo AI schedule for ${subject}:\nMon 7:00pm - Revision\nWed 6:30pm - Practice questions\nSat 10:00am - Mock test\n\nNote: This is a frontend demo response until backend AI integration is connected.`,
-    );
-  };
-
+  const owner = useAuthStore((s) =>
+    s.user && s.hydrated
+      ? `${s.source}:${s.user.id}:${s.user.email}:${s.role}`
+      : "",
+  );
   return (
-    <div className="space-y-4">
-      <PageHeader
-        title="AI Study Assistant"
-        description="Demo interface for AI-assisted study planning and timetable generation."
+    <div className="mx-auto max-w-6xl space-y-8">
+      <MagazineHeader
+        eyebrow="YOUR WEEK, WITH A LITTLE BREATHING ROOM"
+        title="Find your study rhythm."
+        description="Make a little space for revision, practice and the breaks that keep you going. A thoughtful personal plan, one focused session at a time."
+        image={images.studyCorner}
       />
-      <Card>
-        <h2 className="font-semibold text-foreground">Plan generator</h2>
-        <div className="mt-3 grid gap-3 md:grid-cols-2">
-          <div>
-            <label htmlFor="study-subject" className="mb-1 block text-sm font-medium">
-              Priority subject
-            </label>
-            <Input
-              id="study-subject"
-              value={subject}
-              onChange={(event) => setSubject(event.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="study-duration" className="mb-1 block text-sm font-medium">
-              Preferred session duration
-            </label>
-            <Select id="study-duration">
-              <option>45 minutes</option>
-              <option>60 minutes</option>
-              <option>90 minutes</option>
-            </Select>
-          </div>
-        </div>
-        <div className="mt-3">
-          <label htmlFor="study-constraints" className="mb-1 block text-sm font-medium">
-            Constraints
-          </label>
-          <Textarea
-            id="study-constraints"
-            placeholder="Available days, existing commitments, break preferences..."
-            rows={3}
-          />
-        </div>
-        <Button className="mt-4" onClick={generatePlan}>
-          Generate demo study plan
-        </Button>
-      </Card>
-      <Card>
-        <h3 className="font-semibold">Generated output</h3>
-        <Textarea
-          aria-label="Generated study plan"
-          value={schedule}
-          readOnly
-          rows={8}
-          placeholder="Your generated demo response appears here."
-          className="mt-3"
-        />
-      </Card>
+      {owner ? (
+        <StudyWorkspace key={owner} />
+      ) : (
+        <Card>
+          <h2 className="font-display text-2xl">
+            Your planning space is private.
+          </h2>
+          <Link
+            className="mt-3 inline-flex min-h-11 items-center text-brand"
+            href="/sign-in?next=%2Fstudy-assistant"
+          >
+            Sign in to prepare a study draft
+          </Link>
+        </Card>
+      )}
     </div>
   );
 }
