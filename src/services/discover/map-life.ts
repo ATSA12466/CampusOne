@@ -35,7 +35,7 @@ export function discoverMarket(item: MarketplaceListing): DiscoverItem {
     description: item.description,
     href: `/marketplace/${encodeURIComponent(item.id)}`,
     destination: "detail",
-    cover: images.campusMarket,
+    cover: item.details?.gallery[0] ?? images.campusMarket,
     illustrative: true,
     facts: [
       { label: "Category", value: item.category },

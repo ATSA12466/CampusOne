@@ -82,6 +82,16 @@ export function useWorkspace<K extends WorkspaceCollection>(collection: K) {
           : "For this visit only. Device storage is unavailable.",
       });
       refresh();
+    } catch (cause) {
+      if (!request.signal.aborted && owner === live())
+        setNotice({
+          owner,
+          text:
+            cause instanceof Error
+              ? cause.message
+              : "Your change could not save. Please retry.",
+        });
+      throw cause;
     } finally {
       if (controller.current === request) {
         controller.current = null;

@@ -115,3 +115,5 @@ export { eventActionService } from "./events/actions.service";
 export { discoverCatalogService, discoverActionService } from "./discover/discover.service";
 
 export { workspaceService } from "./workspace/workspace.service";
+
+export { photoRecordService } from "./profile/photo-record.service";

@@ -144,3 +144,39 @@ test("account cleanup discards visit memory and removes owner-qualified device k
   clearPrivateWorkspace("demo", user);
   assert.deepEqual(readWorkspace(key), []);
 });
+
+test("photo records require bounded owned data, meaningful locations and source-qualified persistence", async () => {
+  const { photoRecordSchema } = await import(
+    "../../../src/services/validation/workspace.schema.ts"
+  );
+  const item = {
+    id: "photo-1",
+    title: "My useful item",
+    description: "A detailed description of my useful study item.",
+    photo: "data:image/jpeg;base64,aGVsbG8=",
+    createdAt: "2026-10-11T12:00:00Z",
+    category: "Study materials",
+    location: "Campus meeting point",
+    priceValue: 25,
+    type: "listing",
+    status: "open",
+  };
+  assert.equal(photoRecordSchema.safeParse(item).success, true);
+  for (const change of [
+    { photo: "" },
+    { photo: "https://external.invalid/a.jpg" },
+    { photo: "data:text/html;base64,aA==" },
+    { description: "short" },
+    { priceValue: -1 },
+  ])
+    assert.equal(
+      photoRecordSchema.safeParse({ ...item, ...change }).success,
+      false,
+    );
+  session();
+  const service = createWorkspaceService();
+  await service.put("marketPosts", item);
+  assert.equal((await service.list("marketPosts")).at(0).photo, item.photo);
+  await service.remove("marketPosts", item.id);
+  assert.deepEqual(await service.list("marketPosts"), []);
+});

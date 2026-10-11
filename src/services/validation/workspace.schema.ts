@@ -18,9 +18,32 @@ export const enquiryInputSchema = z.object({
     error: "Confirm the local-demo / service notice.",
   }),
 });
+export const ownedPhotoSchema = z
+  .string()
+  .max(720000)
+  .regex(
+    /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/,
+    "Prepare a JPG, PNG or WebP photo first.",
+  );
+export const photoRecordInputSchema = z.object({
+  title: z.string().trim().min(3).max(120),
+  description: z.string().trim().min(20).max(2000),
+  category: z.string().trim().min(3).max(80),
+  location: z.string().trim().min(3).max(120),
+  priceValue: z.coerce.number().min(0).max(1000000),
+  type: z.enum(["listing", "lost", "found"]),
+});
+export const photoRecordSchema = photoRecordInputSchema.extend({
+  id: recordIdSchema,
+  photo: ownedPhotoSchema,
+  createdAt: z.iso.datetime(),
+  status: z.enum(["open", "closed"]),
+});
 export const workspaceSchemas: {
   [K in keyof WorkspaceMap]: z.ZodType<WorkspaceMap[K]>;
 } = {
+  marketPosts: photoRecordSchema,
+  reports: photoRecordSchema,
   enquiries: z.object({
     id: recordIdSchema,
     category: z.enum([

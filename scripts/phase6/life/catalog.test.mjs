@@ -72,3 +72,12 @@ test("housing source uses bounded typed reads, keeps safe detail routes and no i
     null,
   );
 });
+
+test("12 marketplace records keep original titles/prices and labelled illustrative galleries", async () => {
+  const page = await demoCatalog.list("marketplace", { pageSize: 30 });
+  assert.equal(page.total, 12);
+  for (const item of page.items)
+    assert.equal(entitySchemas.marketplace.safeParse(item).success, true);
+  assert.equal(page.items.find((i) => i.id === "mk1").priceLabel, "GH₵ 40");
+  assert.equal(page.items.find((i) => i.id === "mk2").priceLabel, "GH₵ 25");
+});

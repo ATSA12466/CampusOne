@@ -1,4 +1,10 @@
 "use client";
+import dynamic from "next/dynamic";
+const PhotoRecordBoard = dynamic(() =>
+  import("@/features/workspace/components/photo-record-board").then(
+    (m) => m.PhotoRecordBoard,
+  ),
+);
 import { useState } from "react";
 import { ListingIntro } from "./components/listing-intro";
 import { ErrorState } from "@/components/shared/error-state";
@@ -160,6 +166,9 @@ export function ListingsFeature({
         ) : null}
         <DiscoverSaveNotice activity={activity} action={action} user={!!user} />
       </section>
+      {domain === "marketplace" ? (
+        <PhotoRecordBoard collection="marketPosts" />
+      ) : null}
     </div>
   );
 }
