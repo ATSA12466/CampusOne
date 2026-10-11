@@ -1,3 +1,11 @@
+import type {
+  SocialPost,
+  SocialReply,
+  SocialReaction,
+  SocialConcern,
+  MessageRecord,
+  PrivateConversation,
+} from "./social";
 import type { ProfilePreferences } from "./profile";
 import type { TimetableSession } from "./productivity";
 import type { PersonalPlan } from "./schedule";
@@ -6,6 +14,12 @@ import type { PhotoRecord } from "./photo-records";
 import type { ListingEnquiry } from "./listings";
 import type { ServiceOptions } from "./service-contracts";
 export interface WorkspaceMap {
+  communityPosts: SocialPost;
+  replies: SocialReply;
+  reactions: SocialReaction;
+  concerns: SocialConcern;
+  messages: MessageRecord;
+  conversations: PrivateConversation;
   profile: ProfilePreferences;
   sessions: TimetableSession;
   plans: PersonalPlan;

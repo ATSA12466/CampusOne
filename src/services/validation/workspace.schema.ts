@@ -1,15 +1,17 @@
+import { recordIdSchema, ownedPhotoSchema } from "./owned-media.schema";
+export { recordIdSchema, ownedPhotoSchema } from "./owned-media.schema";
+import {
+  postRecordSchema,
+  replyRecordSchema,
+  reactionSchema,
+  concernSchema,
+  messageSchema,
+  conversationSchema,
+} from "./social.schema";
 import { profileInputSchema } from "./profile.schema";
 import { sessionInputSchema, planInputSchema } from "./schedule.schema";
 import { z } from "zod";
 import type { WorkspaceMap } from "@/types/workspace";
-export const recordIdSchema = z
-  .string()
-  .min(1)
-  .max(100)
-  .refine(
-    (v) => !/[\\/\u0000-\u001f]/.test(v) && v !== "." && v !== "..",
-    "Invalid record ID",
-  );
 export const enquiryInputSchema = z.object({
   message: z
     .string()
@@ -20,13 +22,6 @@ export const enquiryInputSchema = z.object({
     error: "Confirm the local-demo / service notice.",
   }),
 });
-export const ownedPhotoSchema = z
-  .string()
-  .max(720000)
-  .regex(
-    /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/,
-    "Prepare a JPG, PNG or WebP photo first.",
-  );
 export const photoRecordInputSchema = z.object({
   title: z.string().trim().min(3).max(120),
   description: z.string().trim().min(20).max(2000),
@@ -58,6 +53,12 @@ export const gradeInputSchema = z.object({
 export const workspaceSchemas: {
   [K in keyof WorkspaceMap]: z.ZodType<WorkspaceMap[K]>;
 } = {
+  communityPosts: postRecordSchema,
+  replies: replyRecordSchema,
+  reactions: reactionSchema,
+  concerns: concernSchema,
+  messages: messageSchema,
+  conversations: conversationSchema,
   profile: profileInputSchema.extend({
     id: z.literal("profile"),
     photo: ownedPhotoSchema.optional(),

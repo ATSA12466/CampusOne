@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { appConfig } from "@/config/app-config";
 import { Bell, Search } from "lucide-react";
 import type { MouseEventHandler } from "react";
 import { BrandMark } from "@/components/shared/brand-mark";
@@ -23,7 +24,10 @@ export function ShellHeader({
 }) {
   const user = useAuthStore((state) => state.user);
   const localPhoto = useAuthStore((state) => state.photo);
-  const unread = useAppStore((state) => state.notifications.filter((item) => !item.read).length);
+  const localUnread = useAppStore(
+    (state) => state.notifications.filter((item) => !item.read).length,
+  );
+  const unread = user && appConfig.dataSource === "demo" ? localUnread : 0;
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-surface">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-2 px-4 md:px-6 lg:px-8">
@@ -44,7 +48,9 @@ export function ShellHeader({
           </p>
           <p className="truncate text-sm font-semibold">
             {currentDestination(pathname)?.label ?? "CampusOne"}
-            <span className="ml-2 text-[10px] font-normal text-muted-foreground">Demo</span>
+            <span className="ml-2 text-[10px] font-normal text-muted-foreground">
+              Demo
+            </span>
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1 md:gap-2">
@@ -100,7 +106,10 @@ export function ShellHeader({
           >
             <Avatar
               name={user?.name ?? "Guest"}
-              image={localPhoto ?? (user?.avatar ? imageForSrc(user.avatar) : undefined)}
+              image={
+                localPhoto ??
+                (user?.avatar ? imageForSrc(user.avatar) : undefined)
+              }
               size="md"
             />
           </Link>

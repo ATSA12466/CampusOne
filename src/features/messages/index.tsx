@@ -1,40 +1,38 @@
-import { EmptyState } from "@/components/shared/empty-state";
-import { PageHeader } from "@/components/shared/page-header";
-import { Card } from "@/components/ui";
-import { communityService } from "@/services";
-
+"use client";
+import Link from "next/link";
+import { MagazineHeader } from "@/components/shared/magazine-header";
+import { Card } from "@/components/ui/card";
+import { images } from "@/config/images";
+import { useAuthStore } from "@/stores/auth-store";
+import { OwnedMessages } from "./components/message-directory";
 export function MessagesFeature() {
-  const conversations = communityService.listConversations();
-
+  const owner = useAuthStore((s) =>
+    s.user && s.hydrated
+      ? `${s.source}:${s.user.id}:${s.user.email}:${s.role}`
+      : "",
+  );
   return (
-    <div className="space-y-4">
-      <PageHeader title="Messages" description="Conversation UI powered by demo datasets." />
-      {conversations.length ? (
-        <div className="grid gap-3 lg:grid-cols-[300px_1fr]">
-          <Card>
-            <ul className="space-y-2 text-sm">
-              {conversations.map((conversation) => (
-                <li
-                  key={conversation.id}
-                  className="rounded-xl border border-[var(--color-border)] p-3"
-                >
-                  <p className="font-medium">{conversation.name}</p>
-                  <p className="text-muted-foreground">{conversation.lastMessage}</p>
-                </li>
-              ))}
-            </ul>
-          </Card>
-          <Card>
-            <p className="text-sm text-muted-foreground">
-              Select a conversation. Real-time messaging will require backend websocket support.
-            </p>
-          </Card>
-        </div>
+    <div className="mx-auto max-w-6xl space-y-8">
+      <MagazineHeader
+        eyebrow="A LITTLE CONNECTION"
+        title="Good conversations start here."
+        description="Make room for your study circle, your project team and the people who make campus feel like home."
+        image={images.clubDebate}
+      />
+      {owner ? (
+        <OwnedMessages key={owner} />
       ) : (
-        <EmptyState
-          title="No messages"
-          description="Start a conversation once messaging backend is connected."
-        />
+        <Card>
+          <h2 className="font-display text-2xl">
+            Your conversations are private.
+          </h2>
+          <Link
+            href="/sign-in?next=%2Fmessages"
+            className="mt-4 inline-flex min-h-11 items-center text-brand"
+          >
+            Sign in to open messages
+          </Link>
+        </Card>
       )}
     </div>
   );

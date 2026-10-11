@@ -1,4 +1,6 @@
+import type { CampusMedia } from "./media";
 export interface CommunityPost {
+  details?: { cover?: CampusMedia; topic: string };
   id: string;
   author: string;
   body: string;

@@ -16,7 +16,8 @@
     "test:events": "node scripts/phase6-events-tests.mjs",
     "test:discover": "node scripts/phase6-discover-tests.mjs",
     "test:life": "node scripts/phase6-life-tests.mjs",
-    "test:profile": "node scripts/phase6-profile-tests.mjs"
+    "test:profile": "node scripts/phase6-profile-tests.mjs",
+    "test:social": "node scripts/phase6-social-tests.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

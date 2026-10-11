@@ -27,7 +27,7 @@ interface AuthState extends StoredAuth {
 }
 function clearActivity(reseed = false) {
   const previous = useAuthStore.getState();
-  clearPrivateWorkspace(previous.source, previous.user);
+  if (!clearPrivateWorkspace(previous.source, previous.user)) noteStorageFailure("campusone-workspace");
   try {
     (reseed ? useAppStore.getState().resetDemo : useAppStore.getState().clearAccount)();
   } catch {
@@ -86,7 +86,7 @@ export const useAuthStore = create<AuthState>()(
         useOnboardingStore.getState().resetPersonalization();
         localPhotoService.release();
         set({ user: null, role: "student", photo: null, sessionIssue: "" });
-        return !storageFailed(authStorageKey) && !storageFailed("campusone-app");
+        return !storageFailed(authStorageKey) && !storageFailed("campusone-app") && !storageFailed("campusone-workspace");
       },
     }),
     {

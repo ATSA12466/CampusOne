@@ -1,5 +1,9 @@
 "use client";
 import { useEffect, useReducer, useState, useRef } from "react";
+import {
+  privateWorkspaceKey,
+  invalidateWorkspaceStorage,
+} from "@/lib/workspace/storage";
 import { useAuthStore } from "@/stores/auth-store";
 import { workspaceService } from "@/services";
 import type { WorkspaceCollection, WorkspaceMap } from "@/types/workspace";
@@ -64,9 +68,20 @@ export function useWorkspace<K extends WorkspaceCollection>(collection: K) {
       if (detail?.owner === owner && detail.collection === collection)
         refresh();
     };
+    const external = (event: StorageEvent) => {
+      const state = useAuthStore.getState();
+      const key = privateWorkspaceKey(state.source, state.user);
+      if (key && (!event.key || event.key === `${key}:${collection}`)) {
+        invalidateWorkspaceStorage(event.key);
+        refresh();
+      }
+    };
     window.addEventListener("campusone-workspace-updated", listener);
-    return () =>
+    window.addEventListener("storage", external);
+    return () => {
       window.removeEventListener("campusone-workspace-updated", listener);
+      window.removeEventListener("storage", external);
+    };
   }, [owner, collection]);
   const mutate = async (item: WorkspaceMap[K] | string) => {
     if (!owner) throw new Error("Sign in before making changes.");
@@ -84,7 +99,11 @@ export function useWorkspace<K extends WorkspaceCollection>(collection: K) {
           : await workspaceService.put(collection, item, {
               signal: request.signal,
             });
-      if (request.signal.aborted || owner !== live()) return;
+      if (request.signal.aborted || owner !== live())
+        throw new DOMException(
+          "The account changed or the request was interrupted.",
+          "AbortError",
+        );
       setNotice({
         owner,
         text: result.persisted

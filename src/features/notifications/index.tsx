@@ -1,50 +1,39 @@
 "use client";
-
 import Link from "next/link";
-import { PageHeader } from "@/components/shared/page-header";
-import { Badge, Button, Card } from "@/components/ui";
-import { useAppStore } from "@/stores/app-store";
-
+import { MagazineHeader } from "@/components/shared/magazine-header";
+import { Card } from "@/components/ui/card";
+import { images } from "@/config/images";
+import { useAuthStore } from "@/stores/auth-store";
+import { OwnedNotifications } from "./components/notification-directory";
 export function NotificationsFeature() {
-  const notifications = useAppStore((state) => state.notifications);
-  const markRead = useAppStore((state) => state.markNotificationRead);
-
+  const owner = useAuthStore((s) =>
+    s.user && s.hydrated
+      ? `${s.source}:${s.user.id}:${s.user.email}:${s.role}`
+      : "",
+  );
   return (
-    <div className="space-y-4">
-      <PageHeader
-        title="Notifications"
-        description="Track updates across tasks, events, clubs, and announcements."
+    <div className="mx-auto max-w-6xl space-y-8">
+      <MagazineHeader
+        eyebrow="YOUR CAMPUS, IN THE LOOP"
+        title="A little heads-up."
+        description="Useful reminders and campus updates. Keep what matters in view, without the noise."
+        image={images.innovationNight}
       />
-      <div className="space-y-3">
-        {notifications.map((notification) => (
-          <Card key={notification.id}>
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div>
-                <p className="font-semibold">{notification.title}</p>
-                <p className="text-sm text-muted-foreground">{notification.description}</p>
-                <Link href={notification.href} className="inline-flex min-h-11 items-center text-xs text-brand">
-                  Open destination
-                </Link>
-              </div>
-              {notification.read ? (
-                <Badge tone="success">Read</Badge>
-              ) : (
-                <Badge tone="warning">Unread</Badge>
-              )}
-            </div>
-            {!notification.read ? (
-              <Button
-                className="mt-3"
-                size="sm"
-                variant="secondary"
-                onClick={() => markRead(notification.id)}
-              >
-                Mark as read
-              </Button>
-            ) : null}
-          </Card>
-        ))}
-      </div>
+      {owner ? (
+        <OwnedNotifications key={owner} />
+      ) : (
+        <Card>
+          <h2 className="font-display text-2xl">
+            Updates stay with your profile.
+          </h2>
+          <Link
+            href="/sign-in?next=%2Fnotifications"
+            className="mt-4 inline-flex min-h-11 items-center text-brand"
+          >
+            Sign in to view notifications
+          </Link>
+        </Card>
+      )}
     </div>
   );
 }

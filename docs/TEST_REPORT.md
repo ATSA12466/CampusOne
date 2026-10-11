@@ -1,5 +1,9 @@
 # CampusOne test report
 
+## Phase 6K — Social
+
+**186 native tests**, lint/typecheck/optimized build and **46 production AA/layout/44px captures** pass. Community/Messages/Notifications cover 360/768/1280 light/dark and private post/reply/nested reply/concern/thread/photo/read-all/reload workflows. Guest gates, real second-tab deletion, denied-storage visit-only and corrupt-data recovery pass. Each screen’s mobile/desktop light/dark captures was manually reviewed. API notification and accepted workspace-role guards use native controlled fetch fixtures, not deployment evidence. No new runtime dependency or static image. See [Phase 6K](PHASE6K_SOCIAL.md). Studies/secondary screens and final fresh regression/performance follow automatically.
+
 ## Phase 6J — Profile
 
 176 native tests, lint/typecheck/build and 22 clean 360/768/1280 light/dark AA/layout/44px profile captures pass. Name/programme/bio/preferences and required owned-photo crop/persistence/removal are verified; authority fields remain unchanged and API mode does not use local demo counts/preferences. Actual captures reviewed and square portrait/focus defects corrected. No runtime dependency added. Details and limits: [Phase 6J](PHASE6J_PROFILE.md). Work continues automatically to remaining screens and final gates.

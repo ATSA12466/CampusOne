@@ -1,4 +1,14 @@
 const cache = new Map<string, unknown[]>();
+const volatile = new Set<string>();
+export function invalidateWorkspaceStorage(key: string | null) {
+  if (key) {
+    cache.delete(key);
+    volatile.delete(key);
+  } else {
+    cache.clear();
+    volatile.clear();
+  }
+}
 export const workspacePrefix = "campusone-workspace:";
 export function privateWorkspaceKey(
   source: string,
@@ -14,10 +24,13 @@ export function readWorkspace(key: string): unknown[] {
     if (raw !== null) {
       const value: unknown = JSON.parse(raw);
       if (!Array.isArray(value)) throw new Error("Stored data is invalid");
+      if (volatile.has(key)) return cache.get(key) ?? value;
       cache.set(key, value);
       return value;
     }
-    return cache.get(key) ?? [];
+    if (volatile.has(key)) return cache.get(key) ?? [];
+    cache.delete(key);
+    return [];
   } catch (cause) {
     if (
       cause instanceof SyntaxError ||
@@ -33,8 +46,10 @@ export function writeWorkspace(key: string, items: unknown[]): boolean {
   cache.set(key, items);
   try {
     localStorage.setItem(key, JSON.stringify(items));
+    volatile.delete(key);
     return true;
   } catch {
+    volatile.add(key);
     return false;
   }
 }
@@ -43,20 +58,23 @@ export function clearPrivateWorkspace(
   user?: { id: string; email: string } | null,
 ) {
   const prefix = privateWorkspaceKey(source, user);
-  if (!prefix) return;
+  if (!prefix) return true;
+  let confirmed = true;
   for (const key of cache.keys())
     if (key.startsWith(prefix + ":")) {
       cache.delete(key);
+      volatile.delete(key);
       try {
         localStorage.removeItem(key);
       } catch {
-        /* Deletion cannot be guaranteed when storage is denied. */
+        confirmed = false;
       }
     }
   try {
     for (const key of Object.keys(localStorage))
       if (key.startsWith(prefix + ":")) localStorage.removeItem(key);
   } catch {
-    /* Memory is cleared; device deletion is not guaranteed. */
+    confirmed = false;
   }
+  return confirmed;
 }

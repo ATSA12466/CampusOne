@@ -25,6 +25,8 @@ const owner = (expected: "demo" | "api") => {
     );
   return privateWorkspaceKey(source, user)!;
 };
+const scope = (source: "demo" | "api") =>
+  `${owner(source)}:${useAuthStore.getState().role}`;
 const signal = (o: ServiceOptions = {}) =>
   o.signal
     ? AbortSignal.any([o.signal, AbortSignal.timeout(10000)])
@@ -45,7 +47,8 @@ export function createWorkspaceService(
     source,
     async list(collection, options = {}) {
       options.signal?.throwIfAborted();
-      const key = owner(source);
+      const key = owner(source),
+        expected = scope(source);
       const result =
         source === "api"
           ? await apiClient(`/workspace/${collection}`, {
@@ -55,13 +58,14 @@ export function createWorkspaceService(
             })
           : local(collection, key);
       options.signal?.throwIfAborted();
-      if (owner(source) !== key)
+      if (scope(source) !== expected)
         throw new Error("The account changed. Please retry.");
       return result as WorkspaceMap[typeof collection][];
     },
     async put(collection, input, options = {}) {
       options.signal?.throwIfAborted();
       const key = owner(source),
+        expected = scope(source),
         item = workspaceSchemas[collection].parse(input);
       if (source === "api") {
         await apiClient(
@@ -74,19 +78,29 @@ export function createWorkspaceService(
             cache: "no-store",
           },
         );
+        options.signal?.throwIfAborted();
+        if (scope(source) !== expected)
+          throw new Error(
+            "The account changed. Refresh publisher-owned records; an accepted write cannot be undone by stopping the wait.",
+          );
         return { persisted: true };
       }
       const rows = local(collection, key),
-        next = [item, ...rows.filter((r) => r.id !== item.id)].slice(0, 200);
+        next = [item, ...rows.filter((r) => r.id !== item.id)];
+      if (next.length > 200 || JSON.stringify(next).length > 3000000)
+        throw new Error(
+          "This private collection is full. Export or remove older records before saving more photos or notes.",
+        );
       options.signal?.throwIfAborted();
-      if (owner(source) !== key)
+      if (scope(source) !== expected)
         throw new Error("The account changed. No local record was written.");
       return { persisted: writeWorkspace(`${key}:${collection}`, next) };
     },
     async remove(collection, id, options = {}) {
       recordIdSchema.parse(id);
       options.signal?.throwIfAborted();
-      const key = owner(source);
+      const key = owner(source),
+        expected = scope(source);
       if (source === "api") {
         await apiClient(`/workspace/${collection}/${encodeURIComponent(id)}`, {
           method: "DELETE",
@@ -94,11 +108,16 @@ export function createWorkspaceService(
           signal: signal(options),
           cache: "no-store",
         });
+        options.signal?.throwIfAborted();
+        if (scope(source) !== expected)
+          throw new Error(
+            "The account changed. Refresh publisher-owned records; an accepted write cannot be undone by stopping the wait.",
+          );
         return { persisted: true };
       }
       const next = local(collection, key).filter((item) => item.id !== id);
       options.signal?.throwIfAborted();
-      if (owner(source) !== key) throw new Error("The account changed.");
+      if (scope(source) !== expected) throw new Error("The account changed.");
       return { persisted: writeWorkspace(`${key}:${collection}`, next) };
     },
   };
