@@ -1,7 +1,9 @@
+import { listingDetailsSchema } from "./listing.schema";
 import { z } from "zod";
 const text = z.string();
 export const lifeSchemas = {
   accommodation: z.object({
+    details: listingDetailsSchema.optional(),
     id: text,
     title: text,
     location: text,
@@ -9,6 +11,7 @@ export const lifeSchemas = {
     facilities: z.array(text),
   }),
   marketplace: z.object({
+    details: listingDetailsSchema.optional(),
     id: text,
     title: text,
     category: text,

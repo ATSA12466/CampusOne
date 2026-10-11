@@ -28,18 +28,18 @@ test("the 24-record campus edit spans all eight real demo collections, not inven
   );
   assert.ok(!edit.some((i) => i.id === "e15" || i.id === "e16"));
 });
-test("all 45 existing listings are reachable through eight unique six-card pages and clamped navigation", () => {
+test("all canonical listings are reachable through unique six-card pages and clamped navigation", () => {
   const f = { ...filter, view: "all" },
     all = Array.from(
-      { length: 8 },
+      { length: Math.ceil(items.length / 6) },
       (_, n) =>
         discoverDirectory(sections, { ...f, page: n + 1 }, [], now).items,
     ).flat();
-  assert.equal(all.length, 45);
-  assert.equal(new Set(all.map(discoverKey)).size, 45);
+  assert.equal(all.length, items.length);
+  assert.equal(new Set(all.map(discoverKey)).size, items.length);
   assert.equal(
     discoverDirectory(sections, { ...f, page: 999 }, [], now).page,
-    8,
+    Math.ceil(items.length / 6),
   );
   assert.equal(
     discoverDirectory(sections, { ...f, page: NaN }, [], now).page,
@@ -122,7 +122,7 @@ test("balanced/name/date sorts are deterministic, undated last and do not mutate
       .map((i) => i.title),
   );
   const dated = Array.from(
-    { length: 8 },
+    { length: Math.ceil(items.length / 6) },
     (_, n) =>
       discoverDirectory(
         sections,
@@ -167,7 +167,7 @@ test("saved views compose with category/query, source-qualified IDs and page cla
   const duplicated = [...sections, sections[0]];
   assert.equal(
     discoverDirectory(duplicated, { ...filter, view: "all" }, [], now).total,
-    45,
+    items.length,
   );
 });
 test("status clock honestly handles cancellation, past/full/deadline/live and date-only events", () => {

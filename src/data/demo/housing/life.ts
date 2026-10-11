@@ -1,3 +1,4 @@
+import { extraAccommodations, housingDetails } from "./accommodation-catalog";
 import type { AccommodationListing, LostFoundReport, MarketplaceListing } from "@/types";
 
 export const marketplaceListings: MarketplaceListing[] = [
@@ -39,6 +40,7 @@ export const reports: LostFoundReport[] = [
 export const accommodations: AccommodationListing[] = [
   {
     id: "h1",
+    details: { ...housingDetails("CityGate Hostel", 2), priceValue: 2800, walkMinutes: 5 },
     title: "CityGate Hostel",
     location: "5 mins from campus",
     price: "GH₵ 2,800 / semester",
@@ -46,9 +48,11 @@ export const accommodations: AccommodationListing[] = [
   },
   {
     id: "h2",
+    details: { ...housingDetails("BlueNest Residence", 4), priceValue: 3200 },
     title: "BlueNest Residence",
     location: "Adj. Main Road",
     price: "GH₵ 3,200 / semester",
     facilities: ["Water heater", "Security", "Laundry"],
   },
+  ...extraAccommodations,
 ];

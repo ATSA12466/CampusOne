@@ -1,5 +1,9 @@
 # CampusOne test report
 
+## Phase 6D — Accommodation
+
+Twelve fictional homes, **159 native tests**, clean lint/TS/build and **104 housing AA/layout/44px browser captures** pass. All 12 details plus directory/search/paging/Saved-reload run at 360/768/1280 in light/dark; gallery and validated device-only enquiry run at 360/1280. Actual mobile/desktop screens were inspected; duplicate supplied Type presentation was corrected and cover variety improved. Workspace HTTP tests are native fetch mocks, not real backend proof. [Full scope and reproduction](PHASE6D_ACCOMMODATION.md). Moving directly to Marketplace.
+
 ## Phase 6C — photo-first Discover (11 October 2026)
 
 **Discover frontend hub implemented and verified; Accommodation is next.** Eight categories retain 45 canonical records, a balanced edit of 24, loaded-record search/category/mix/name/date/Saved and URL-backed six-record pages. Sparse covers are labelled illustrations; library/board links remain honest. Shared demo/API save contracts preserve Club/Event private workflows and executive reviews. No new runtime package or application image file; API evidence uses controlled fixtures, not a deployed secure backend.

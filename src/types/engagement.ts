@@ -1,3 +1,4 @@
+import type { ListingDetails } from "./listings";
 import type { EventDetails } from "./events";
 import type { ClubDetails } from "./clubs";
 export interface Club {
@@ -41,6 +42,7 @@ export interface EventItem {
 }
 
 export interface Opportunity {
+  details?: ListingDetails;
   id: string;
   title: string;
   provider: string;

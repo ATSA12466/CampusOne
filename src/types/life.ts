@@ -1,4 +1,6 @@
+import type { ListingDetails } from "./listings";
 export interface MarketplaceListing {
+  details?: ListingDetails;
   id: string;
   title: string;
   category: string;
@@ -16,6 +18,7 @@ export interface LostFoundReport {
 }
 
 export interface AccommodationListing {
+  details?: ListingDetails;
   id: string;
   title: string;
   location: string;

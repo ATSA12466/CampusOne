@@ -113,3 +113,5 @@ export { eventActionService } from "./events/actions.service";
 
 // Discover Phase 6C: bounded cross-campus reads and source-aware shared saves.
 export { discoverCatalogService, discoverActionService } from "./discover/discover.service";
+
+export { workspaceService } from "./workspace/workspace.service";

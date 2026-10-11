@@ -1,3 +1,4 @@
+import { listingDetailsSchema } from "./listing.schema";
 import { eventItemSchema } from "./event.schema";
 import { clubDetailsSchema, clubImageSourceSchema } from "./club.schema";
 import { z } from "zod";
@@ -15,6 +16,7 @@ export const engagementSchemas = {
   }),
   events: eventItemSchema,
   opportunities: z.object({
+    details: listingDetailsSchema.optional(),
     id: text,
     title: text,
     provider: text,

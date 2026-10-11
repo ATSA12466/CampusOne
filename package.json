@@ -14,7 +14,8 @@
     "test:auth": "node scripts/phase5-tests.mjs",
     "test:clubs": "node scripts/phase6-clubs-tests.mjs",
     "test:events": "node scripts/phase6-events-tests.mjs",
-    "test:discover": "node scripts/phase6-discover-tests.mjs"
+    "test:discover": "node scripts/phase6-discover-tests.mjs",
+    "test:life": "node scripts/phase6-life-tests.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

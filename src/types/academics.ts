@@ -1,4 +1,6 @@
+import type { ListingDetails } from "./listings";
 export interface LearningResource {
+  details?: ListingDetails;
   id: string;
   title: string;
   course: string;

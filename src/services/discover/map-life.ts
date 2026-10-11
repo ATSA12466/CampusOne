@@ -18,11 +18,12 @@ export function discoverLiving(item: AccommodationListing): DiscoverItem {
       "Facilities not supplied. Review the original listing.",
     href: `/accommodation/${encodeURIComponent(item.id)}`,
     destination: "detail",
-    cover: images.campusLiving,
+    cover: item.details?.gallery[0] ?? images.campusLiving,
     illustrative: true,
     facts: [
       { label: "Location", value: item.location },
       { label: "Listed price", value: item.price },
+      { label: "Type", value: item.details?.kind ?? "Type not supplied" },
     ],
   };
 }

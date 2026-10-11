@@ -2,7 +2,7 @@
 
 `campusone-web` — a GCTU student-app frontend moving toward a photo-first campus magazine and social super-app.
 
-**Current milestone: Phase 6C photo-first Discover.** Eight categories now share a balanced 24-record campus edit, all 45 canonical listings, URL-backed search/category/sort, real six-per-page pagination and owner-safe shared saves. Sparse-domain covers are explicitly category illustrations; Media/Lost & Found open their existing library/board. Clubs/executive reviews, Events RSVP/tickets/ICS, Home, auth/intro and the grouped shell remain intact; **Accommodation is next**. Typed cookie APIs are tested with controlled fixtures, **not a connected secure backend**. Retained Home Lighthouse medians are **94 Performance / 100 Accessibility** with disclosed CPU raster and **82 / 100** with the default sandbox renderer; portable/default-renderer Performance ≥90 remains open.
+**Current milestone: Phase 6D Accommodation, continuing automatically through the remaining agreed features.** Twelve fictional homes have photo discovery/details, search/type/location/Saved, gallery/lightbox, canonical saves, private device-only enquiry/report drafts and an honest Maps area search. Original prices/IDs are preserved. Discover, Clubs/executive reviews, Events RSVP/ticket/ICS, Home, auth and shell remain intact. See [Phase 6D](docs/PHASE6D_ACCOMMODATION.md). Marketplace is next; real backend/security and Home's default-renderer/physical-device Performance ≥90 gate remain open.
 
 This is an explicitly labelled **demo/prototype**, not an official GCTU/SRC service. Generated photographs depict fictional people/a campus. The official SRC artwork is still pending; `BrandMark` keeps a clean labelled slot rather than inventing a logo. Real auth, uploads, messaging, payments, AI and authoritative campus data are not connected.
 
@@ -29,6 +29,7 @@ npm run test:auth
 npm run test:clubs
 npm run test:events
 npm run test:discover
+npm run test:life
 npm run build
 npm run start -- --hostname 0.0.0.0 --port 3001
 ```

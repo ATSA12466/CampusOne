@@ -18,7 +18,7 @@ import {
   discoverCategories,
 } from "../../../src/config/discover.ts";
 import { items, filter, find } from "./native-helpers.mjs";
-test("all 45 mapped DTOs have bounded fields, approved meaningful covers and existing safe destinations", () => {
+test("all canonical mapped DTOs have bounded fields, approved meaningful covers and existing safe destinations", () => {
   for (const item of items) {
     assert.equal(discoverItemSchema.safeParse(item).success, true, item.title);
     assert.ok(item.cover.alt.length >= 8);
@@ -34,7 +34,7 @@ test("all 45 mapped DTOs have bounded fields, approved meaningful covers and exi
       .value,
     "GH₵ 40",
   );
-  assert.ok(Buffer.byteLength(JSON.stringify(items)) < 60000);
+  assert.ok(Buffer.byteLength(JSON.stringify(items)) < items.length * 1600);
 });
 test("unsafe source IDs, images, titles and extra-large activity never enter discovery", () => {
   for (const id of [

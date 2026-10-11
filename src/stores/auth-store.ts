@@ -1,4 +1,5 @@
 "use client";
+import { clearPrivateWorkspace } from "@/lib/workspace/storage";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { appConfig } from "@/config/app-config";
@@ -25,6 +26,8 @@ interface AuthState extends StoredAuth {
   setSessionIssue: (message: string) => void;
 }
 function clearActivity(reseed = false) {
+  const previous = useAuthStore.getState();
+  clearPrivateWorkspace(previous.source, previous.user);
   try {
     (reseed ? useAppStore.getState().resetDemo : useAppStore.getState().clearAccount)();
   } catch {

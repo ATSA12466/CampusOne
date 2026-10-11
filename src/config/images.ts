@@ -13,9 +13,31 @@ const placeholder = (src: string, alt: string): CampusMedia => ({
   width: 1200,
   height: 675,
   provenance: "placeholder",
-  sourceNote: "Original local SVG stand-in, retained for replacement with authorized photography.",
+  sourceNote:
+    "Original local SVG stand-in, retained for replacement with authorized photography.",
 });
 export const images = {
+  housingRoom: {
+    src: "/images/demo/housing-room.webp",
+    alt: "Airy fictional student bedroom with a sunlit desk, neat bed and tropical greenery — generated illustration, not an actual property.",
+    width: 1200,
+    height: 675,
+    provenance: "generated",
+    sourceNote: generatedSource,
+    blurDataURL:
+      "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAwBACdASoUAAsAPyV6tVIuJ6UisAgBwCSJQBOmUABhc+hlPt6Mbc5CZ4AA94tahcBUlTVzBR5dnE4l8P/hKtDdesBeZEz6C9B8vZqM2IlKXquETxvPiBQ+DYLL7cmANPukgwKKuoh5MkF+NA1uAAAA",
+  },
+  marketDesk: {
+    src: "/images/demo/market-desk.webp",
+    alt: "Useful student objects including notebooks, backpack and headphones on a sunlit desk — generated product-category illustration, not actual items for sale.",
+    width: 1200,
+    height: 675,
+    provenance: "generated",
+    sourceNote: generatedSource,
+    blurDataURL:
+      "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAAAQBACdASoUAAsAPyV6tFGuJ6UisAgBwCSJbACdMoABoj2ndckf4LxAAAD764Pz39eT9nZEyxPwm6TwldPanfObhJQTd4cXfWMI7OjEj9R+vb9niSmo4IifnS1g/4YFpomtnqfgjp1wBpBIWMTFg/STE/eAAA==",
+  },
+
   eventShowcase: {
     src: "/images/demo/event-showcase.webp",
     alt: "Fictional Ghanaian students sharing a robotics project at a golden-hour courtyard showcase — AI-generated demonstration, not an actual GCTU event.",
