@@ -2,6 +2,7 @@ import {
   academicsService,
   communityService,
   engagementService,
+  homeService,
   lifeService,
   mediaService,
   productivityService,
@@ -17,6 +18,7 @@ import type {
 } from "@/types/service-contracts";
 
 const readers: { [K in CollectionName]: () => CollectionMap[K][] } = {
+  featured: homeService.listFeaturedContent,
   clubs: engagementService.listClubs,
   events: engagementService.listEvents,
   opportunities: engagementService.listOpportunities,

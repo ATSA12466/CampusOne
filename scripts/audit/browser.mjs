@@ -13,7 +13,10 @@ const {
 } = await import(require.resolve("@sparticuz/chromium"));
 export const { default: AxeBuilder } = await import(require.resolve("@axe-core/playwright"));
 
-export async function launchAuditBrowser(extraArgs = [], { multiProcess = false } = {}) {
+export async function launchAuditBrowser(
+  extraArgs = [],
+  { multiProcess = false, softwareRendering = false } = {},
+) {
   const libraryDirectory = await inflate(
     join(dirname(require.resolve("@sparticuz/chromium")), "../bin/al2023.tar.br"),
   );
@@ -23,11 +26,19 @@ export async function launchAuditBrowser(extraArgs = [], { multiProcess = false 
     "--disable-web-security",
     "--allow-running-insecure-content",
     ...(multiProcess ? ["--single-process", "--in-process-gpu"] : []),
+    ...(softwareRendering
+      ? [
+          "--ignore-gpu-blocklist",
+          "--use-gl=angle",
+          "--use-angle=swiftshader",
+          "--enable-unsafe-swiftshader",
+        ]
+      : []),
   ];
   const args = chromium.args.filter((arg) => !excluded.includes(arg));
   return playwrightChromium.launch({
     executablePath,
-    args: [...args, ...extraArgs],
+    args: [...args, ...(softwareRendering ? ["--disable-gpu"] : []), ...extraArgs],
     headless: true,
   });
 }
@@ -63,11 +74,32 @@ export async function waitForScreen(page) {
 
 export function screenMetrics() {
   const width = window.innerWidth;
+  // Intersect genuine clipping ancestors: snap lanes intentionally keep later
+  // slides outside their viewport. Do not suppress root document overflow.
+  const clippedRect = (element) => {
+    const rect = element.getBoundingClientRect();
+    let left = rect.left,
+      right = rect.right;
+    for (
+      let parent = element.parentElement;
+      parent && parent !== document.body;
+      parent = parent.parentElement
+    ) {
+      const style = getComputedStyle(parent);
+      if (["auto", "scroll", "hidden", "clip"].includes(style.overflowX)) {
+        const bounds = parent.getBoundingClientRect();
+        left = Math.max(left, bounds.left + parent.clientLeft);
+        right = Math.min(right, bounds.left + parent.clientLeft + parent.clientWidth);
+      }
+    }
+    return { left, right, width: Math.max(0, right - left) };
+  };
   const visible = (element) =>
     element.getClientRects().length > 0 &&
     !element.closest('[aria-hidden="true"]') &&
     getComputedStyle(element).visibility !== "hidden" &&
-    getComputedStyle(element).opacity !== "0";
+    getComputedStyle(element).opacity !== "0" &&
+    clippedRect(element).width > 0;
   const interactive = Array.from(document.querySelectorAll("a, button, input, select, textarea"))
     .filter(visible)
     .map((element) => ({
@@ -81,7 +113,7 @@ export function screenMetrics() {
   const overflowing = Array.from(document.querySelectorAll("body *"))
     .filter(visible)
     .filter((element) => {
-      const rect = element.getBoundingClientRect();
+      const rect = clippedRect(element);
       return rect.right > width + 1 || rect.left < -1;
     })
     .slice(0, 10)

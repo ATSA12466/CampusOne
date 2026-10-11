@@ -1,6 +1,6 @@
 # API integration guide
 
-Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
+Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search; Phase 4 uses it for server-composed Home. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
 
 ## 1. Environment and preview safety
 
@@ -16,6 +16,7 @@ The versioned, credential-free source is `config/env.example`. The generator wil
 | `NEXT_PUBLIC_DATA_SOURCE` | `demo`; `api` selects the new async catalog implementation |
 | `NEXT_PUBLIC_API_BASE_URL` | `/api`; browser-facing request prefix |
 | `API_PROXY_TARGET` | `http://127.0.0.1:4000`; server-only API origin, without a trailing `/api` |
+| `API_SESSION_COOKIE_NAMES` | Empty; server-only comma-separated exact backend session-cookie names; empty forwards no cookies |
 | `NEXT_PUBLIC_APP_URL` | Unset; set your real deployment origin for absolute social-preview images |
 | `NEXT_PUBLIC_IMAGE_HOSTS` | Empty; exact comma-separated licensed/owned HTTPS image hosts |
 | `DATABASE_URL` | Optional server secret for the existing PostgreSQL health integration |
@@ -43,9 +44,9 @@ const firstPage = await campusService.list("clubs", {
 const club = await campusService.get("clubs", "club-1"); // Club | null
 ```
 
-`CatalogService`, `CollectionMap`, `ListQuery`, `Page<T>` and `ServiceOptions` live in `src/types/service-contracts.ts`. Catalog/API implementations load only when called, keeping unused API schemas out of legacy Home's initial client path.
+`CatalogService`, `CollectionMap`, `ListQuery`, `Page<T>` and `ServiceOptions` live in `src/types/service-contracts.ts`. Catalog/API implementations load only when called, keeping unused API schemas out of the initial client path.
 
-**Important:** current synchronous exports such as `engagementService`, `academicsService` and the local auth/state adapters are compatibility readers and **remain demo-only**. Setting API mode does not silently convert all legacy workflows to live behaviour. The new `/design` server composition uses the async boundary; the agreed feature phases will migrate their pages/clients one at a time. No automatic demo fallback occurs after a live request fails.
+**Important:** current synchronous exports such as `engagementService`, `academicsService` and the local auth/state adapters are compatibility readers and **remain demo-only**. Setting API mode does not silently convert all legacy workflows to live behaviour. The `/design` and Home server compositions use the async boundary; the agreed feature phases will migrate their pages/clients one at a time. No automatic demo fallback occurs after a live request fails.
 
 ### Global search (Phase 3)
 
@@ -70,9 +71,26 @@ A failed source is listed in `unavailable`; other results and local page shortcu
 
 A future backend-wide search adapter can replace `SearchService` without changing feature controls, but must validate its returned response and preserve cancellation/partial-error semantics. Define the backend's actual authentication, search permissions, ranking and pagination before adding that endpoint. The `/design` preview service deliberately simulates failures/slow replies and is not a production API fallback.
 
+### Home feed (Phase 4)
+
+```ts
+import { homeFeedService } from "@/services";
+const snapshot = await homeFeedService.snapshot({ headers: selectedSessionHeaders });
+// featured, clubs, events, opportunities, campaigns, timetable, courses,
+// now (server ISO clock), unavailable, truncated
+```
+
+`HomeFeedService` / `HomeSnapshot` live in `src/types/home.ts`. Seven independent catalog list calls run concurrently, **pageSize 30**, with eight-second abortable deadlines. Caller cancellation rejects; a source deadline/network/validation failure records `unavailable`. Upstream `hasMore` records `truncated`, including a warning that a bounded timetable may not contain every session. Collection failures never substitute demo entries. API GETs use `cache: "no-store"`; only the adapter, not private results, is reused.
+
+The new eighteenth collection is `featured`, proposed **`GET /api/home/featured`** with the normal list envelope. `FeaturedContentItem` requires ID/title/description/type, approved `thumbnail`, meaningful `thumbnailAlt` (12–300 chars), local destination and boolean `active`. Video can supply approved `mediaSource` / `captionsSource`, transcript, creator, duration and CTA. A sponsored placement references `campaignId`. Only active Home campaigns inside valid inclusive start/end dates are rendered; playable, described active videos follow. Unsupported/inactive items create no slot. Campaign expiry is rechecked by the client campus clock; changed backend status still requires a fresh feed.
+
+Event/campaign/deadline responses must use valid ISO calendar dates (`YYYY-MM-DD`), not timestamps or impossible dates. Detail IDs are encoded. For uploaded/publisher thumbnails not in the static registry, Home maps the approved URL and supplied alt to media metadata without inventing a license. Private/signed media, content authorization and source licensing remain backend responsibilities.
+
+Timetable/course previews can come from the API, but the existing task planner is **device-only demo state**, not an API mutation or official LMS/timetable synchronization. Recommendations are sorted by date/deadline, not claimed personalized. Development-only `?home-preview=empty|inactive|partial|offline|recover|truncated` fixtures are visibly labelled and ignored by production. They do not validate a real backend.
+
 ## 3. Proposed list/detail contract
 
-Resource paths are centralized in `src/config/api-endpoints.ts`. Collections currently include clubs, events, opportunities, accommodation, marketplace, resources, courses, posts, conversations, notifications, media, announcements, timetable, representatives, projects, campaigns and lost/found.
+Resource paths are centralized in `src/config/api-endpoints.ts`. Collections currently include featured (`/home/featured`), clubs, events, opportunities, accommodation, marketplace, resources, courses, posts, conversations, notifications, media, announcements, timetable, representatives, projects, campaigns and lost/found.
 
 ```http
 GET /api/clubs?search=code&category=all&sort=title&page=1&pageSize=18
@@ -126,14 +144,16 @@ Browser credentials use the same-origin proxy, but server fetch **does not autom
 ```ts
 import { headers } from "next/headers";
 import { campusService } from "@/services";
+import { sessionHeaders } from "@/services/api/session-headers";
 
 const requestHeaders = await headers();
+const names = (process.env.API_SESSION_COOKIE_NAMES ?? "").split(",");
 const clubs = await campusService.list("clubs", {
-  headers: { Cookie: requestHeaders.get("cookie") ?? "" },
+  headers: sessionHeaders(requestHeaders.get("cookie"), names),
 });
 ```
 
-Do not forward every incoming header or put session values in URLs, component props, logs or public environment variables. Server data caching/revalidation must be scoped correctly for authenticated resources; define it with the real backend instead of caching private feeds globally.
+Set the real session-cookie names agreed with the backend; the default empty allowlist forwards none. Only exact names survive, not analytics/role/other cookies. Do not forward every incoming header or put session values in URLs, component props, logs or public environment variables. Server data caching/revalidation must be scoped correctly for authenticated resources; define it with the real backend instead of caching private feeds globally.
 
 Production needs a real session/auth lifecycle, secure host-appropriate cookies, CSRF handling, role authorization **on the server**, rate limits and privacy controls. The demo role switch/Zustand state is not authentication or an authorization boundary. A visible management/executive panel does not confer official authority. Sign-out isolation and profile/security flows remain scheduled feature work.
 

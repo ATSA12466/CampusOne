@@ -1,0 +1,32 @@
+@layer components {
+  /* Keep the server-rendered, keyboard-reachable recommendations in the document;
+     the browser may skip layout/paint until this below-fold section is nearby. */
+  .home-recommendations {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 45rem;
+  }
+  @media (min-width: 768px) {
+    .home-recommendations {
+      contain-intrinsic-size: auto 28rem;
+    }
+  }
+
+  .home-progress {
+    appearance: none;
+    border: 0;
+    background: var(--surface-inset);
+    color: var(--brand);
+  }
+  .home-progress::-webkit-progress-bar {
+    background: var(--surface-inset);
+    border-radius: var(--r-pill);
+  }
+  .home-progress::-webkit-progress-value {
+    background: var(--brand);
+    border-radius: var(--r-pill);
+  }
+  .home-progress::-moz-progress-bar {
+    background: var(--brand);
+    border-radius: var(--r-pill);
+  }
+}

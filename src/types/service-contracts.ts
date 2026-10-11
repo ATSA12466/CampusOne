@@ -54,12 +54,21 @@ export interface ProductivityReadService {
   listInitialTasks: () => TaskItem[];
   listTimetableSessions: () => TimetableSession[];
 }
+export interface DemoAppStateService {
+  initial: () => {
+    memberships: ClubMembership[];
+    srcRequests: StudentRequest[];
+    notifications: NotificationItem[];
+    tasks: TaskItem[];
+  };
+}
 export interface DemoAuthService {
   initialUser: () => UserProfile;
   signInByRole: (role: UserRole) => UserProfile;
 }
 
 export interface CollectionMap {
+  featured: FeaturedContentItem;
   clubs: Club;
   events: EventItem;
   opportunities: Opportunity;

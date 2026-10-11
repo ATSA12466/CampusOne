@@ -1,6 +1,6 @@
 # FEATURE_INVENTORY
 
-> Phase 3: the shared theme/media/UI/service foundation and grouped shell/global search are in place. The feature descriptions below inventory the preserved demo, not a claim that photo-led feature redesigns or backend integrations are complete. See `TEST_REPORT.md` for observed workflow limitations; Home/auth/feature work follows the agreed phase sequence.
+> Phase 4: the shared theme/media/UI/service foundation and grouped shell/global search are in place. The magazine Home now consumes typed server reads, actual deferred video, photo shortcuts and local task completion/undo. The other feature descriptions below inventory the preserved demo, not a claim that photo-led feature redesigns or backend integrations are complete. See `TEST_REPORT.md` for observed workflow limitations; Auth/onboarding and remaining feature work follow the agreed phase sequence.
 
 
 ## Implemented modules (functional frontend)
@@ -8,7 +8,8 @@
 - Global search: Cmd/Ctrl+K, keyboard results, scopes, clear/loading/empty/error/retry, cancellation and partial-source handling through the typed catalog
 - Onboarding: step flow, skip/back/continue, progress, persistence, replay from settings
 - Authentication UI: sign-in/register/forgot-password with validation and role demo switch
-- Home: welcome, featured carousel, quick actions, daily overview, recommendations
+- Home: conditional active sponsor/video-first feed, generated Clubs hero, six native snap photo destinations, official HTTPS LMS/SIP links, Accra now/next class, overdue/today tasks, completion/undo/progress, chronological event/deadline recommendations, honest partial/empty/retry states
+- Deferred UI: player and native media bytes on Play, header appearance menu on first click, Radix toast stack on first message with a native failure fallback
 - Discover: cross-domain search with category filter
 - Academics: resource listing/filtering/bookmarking/detail view/download state
 - AI Study Assistant: demo planning interface with explicit demo output labeling
@@ -46,3 +47,11 @@
 - Calendar grid interactions are simplified
 - Threaded comments/replies are simplified
 - Attendance recording is represented at status level, not full session editor
+
+## Phase 4 boundaries
+
+- The 18th typed collection, `featured`, and Home API paths are proposed, not a deployed backend.
+- Home reads seven sources concurrently with 30-record bounds/deadlines; missing sources never silently become demo data.
+- Planner actions and auth remain explicitly local demo state, even in API mode. Dates/campaign expiry use Africa/Accra; invalid dates are rejected/skipped safely.
+- New pictures are fictional generated scenes; the five-second flower clip/poster/captions are a labelled local CC0 sample, not GCTU footage. LMS/SIP URLs come from official sources; current portal reachability was not verified.
+- Performance ≥90 remains open; exact results and renderer diagnostics are in the test report. The executive approval panel and persistence remain preserved.

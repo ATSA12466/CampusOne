@@ -6,8 +6,8 @@ const { entitySchemas } = await import("../../src/services/validation/catalog.sc
 const { createApiCatalog } = await import("../../src/services/api/catalog.service.ts");
 const { apiClient, apiUrl, ApiError } = await import("../../src/services/api/client.ts");
 
-test("all 17 demo collections satisfy their runtime contracts", async () => {
-  assert.equal(Object.keys(entitySchemas).length, 17);
+test("all 18 demo collections satisfy their runtime contracts", async () => {
+  assert.equal(Object.keys(entitySchemas).length, 18);
   for (const collection of Object.keys(entitySchemas)) {
     const page = await demoCatalog.list(collection);
     for (const item of page.items)

@@ -2,7 +2,7 @@
 
 ## Product and phase boundary
 
-CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Phase 3 adds the grouped/collapsible shell, mobile tabs + More and global search. Later phases replace Home/auth/feature experiences in the agreed order; this is not a finished live campus platform.
+CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Phase 3 adds the grouped/collapsible shell, mobile tabs + More and global search. Phase 4 adds the server-composed magazine Home with a bounded typed feed, actual deferred video and device-only planner. Later phases replace auth/feature experiences in the agreed order; this is not a finished live campus platform.
 
 ## Directory map
 
@@ -27,7 +27,8 @@ src/
   config/                   # App/env, theme, image registry, metadata, API paths
   types/                    # Shared entities, media/UI/theme/service contracts
   services/
-    index.ts                # Public boundary + lazy async catalog/search
+    index.ts                # Public boundary + lazy async catalog/search/Home
+    home/                   # Concurrent bounded snapshot assembly
     demo/                   # Deterministic/read-only typed fixtures + compatibility
     api/                    # Validated requests and provisional backend adapter
     auth/                   # Explicit local demo authentication
@@ -37,6 +38,7 @@ src/
   hooks/                    # Shell overlay and sidebar external-store hooks
   lib/media/                # Pure crop geometry + native canvas compression
   lib/search/               # Pure search normalization and ranking
+  lib/home/                 # Active/date selectors and Accra now/next/tasks
 ```
 
 ## Server/client boundaries
@@ -46,6 +48,18 @@ Prefer Server Components for initial entity reads, metadata and page composition
 The `/design` feature illustrates this separation: the server reads catalog data and composes sections; interactive controls, overlays, gallery and uploader are separate small client modules. Existing feature entries remain largely client components for compatibility. Their scheduled phases will migrate reads/layouts rather than performing a risky app-wide async rewrite in the foundation phase.
 
 Navigation and Home/composed discovery links disable automatic off-route prefetch: the baseline eager policy fetched untouched route schemas on initial Home. Future intent-based prefetch should respect device/network constraints. Use leaf imports for client components where practical. No animation or image-processing library was introduced: CSS transitions/snap, ImageBitmap, canvas and existing Next/sharp handle those jobs. Radix is used for appropriate focus, choice, menu, tooltip and overlay semantics.
+
+## Home composition and deferred UI
+
+`(student)/home/page.tsx` is per-request: server headers establish a fresh clock/feed and only explicitly allowlisted session cookies reach the trusted API adapter. `HomeFeature` concurrently reads seven collections through `homeFeedService`; no private request header becomes a client prop. API catalog GETs use `cache: "no-store"`, each Home read has an eight-second deadline, and failed/truncated sections remain explicit rather than falling back to demos.
+
+The server composes placement slides, Clubs hero, photo destinations, institutional links and date-sorted recommendations. Small client islands own the native snap carousel, minute-resolution Accra clock, persisted demo tasks/undo/progress and retry. A failed source does not remove the independent shortcuts. An empty active placement list creates no carousel or reserved advertising container. Recommendations use progressive `content-visibility` below the fold while remaining in the document and keyboard reachable.
+
+The player is imported only after Play; native WebM bytes/captions are absent from initial Home. Playback is manual, errors have a real retry, the transcript remains available and closing unmounts the video. Cmd/Ctrl+K does not open a second shell overlay over a feature dialog or appearance menu. Chromium native-control shadow UI can consume Escape internally; the application's Close control is reachable by keyboard and Escape works from dialog-owned controls.
+
+The header's `AppearanceTrigger` intent-loads the existing menu/control module; the first click opens it. First-paint/system theme resolution remains eager. `ToastProvider` keeps a lean queue/context and imports Radix `ToastStack` only for a message; failed code delivery retains a dismissible native status/alert instead of dropping feedback. `demoAppStateService.initial()` clones just the four persisted-state seeds, without making shell initialization depend on every compatibility catalog reader. Existing executive membership/task data and store actions are unchanged.
+
+See [Phase 4 Home](PHASE4_HOME.md) for the collection, media and development-fixture contracts. The homepage is not a claim of live personal data, official timetables or personalized AI recommendations.
 
 ## Shell and search boundaries
 
@@ -63,7 +77,7 @@ The development `/design` navigation section supplies explicit error/partial/slo
 
 - All UI and initial store seeds use `@/services`.
 - `campusService.list/get` is asynchronous and selects demo/API from app config; unused adapter/schema code loads only when a consumer calls it.
-- The generic typed collection map contains 17 preserved entity collections.
+- The generic typed collection map contains 18 entity collections, including the proposed `featured` placement collection.
 - Demo list results are cloned; search/category/sort/pagination/abort are predictable.
 - API response/query schemas validate the boundary. HTTP/offline/invalid-envelope/abort are distinct outcomes.
 - Legacy synchronous exports remain demo-only. API mode is **not** a promise that all old UI now uses a real server.

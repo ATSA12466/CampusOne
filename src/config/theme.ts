@@ -28,7 +28,12 @@ export const theme = {
     section: "var(--space-12)",
     page: "var(--space-16)",
   },
-  radius: { control: "var(--r-control)", card: "var(--r-card)", media: "var(--r-media)" },
+  radius: {
+    control: "var(--r-control)",
+    card: "var(--r-card)",
+    media: "var(--r-media)",
+    pill: "var(--r-pill)",
+  },
   elevation: {
     low: "var(--elevation-low)",
     raised: "var(--elevation-raised)",

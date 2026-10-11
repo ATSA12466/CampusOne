@@ -2,6 +2,7 @@ import type { CollectionName } from "@/types/service-contracts";
 
 // Proposed resource paths; adapt here to the real API without changing catalog consumers.
 export const apiEndpoints = {
+  featured: "/home/featured",
   clubs: "/clubs",
   events: "/events",
   opportunities: "/opportunities",

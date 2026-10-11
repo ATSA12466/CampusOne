@@ -12,12 +12,19 @@ const options = [
   { value: "dark", label: "Dark", icon: <Moon className="size-4" aria-hidden="true" /> },
   { value: "system", label: "System", icon: <Laptop className="size-4" aria-hidden="true" /> },
 ];
-export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
+export function ThemeSwitcher({
+  compact = false,
+  defaultOpen,
+}: {
+  compact?: boolean;
+  defaultOpen?: boolean;
+}) {
   const { preference, setTheme, resolved } = useTheme();
   if (compact)
     return (
       <Dropdown
         label="Appearance"
+        defaultOpen={defaultOpen}
         trigger={
           <Button
             variant="ghost"

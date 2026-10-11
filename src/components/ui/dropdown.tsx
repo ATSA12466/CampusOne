@@ -3,7 +3,7 @@
 import * as Primitive from "@radix-ui/react-dropdown-menu";
 import { Check } from "lucide-react";
 import { cva } from "class-variance-authority";
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import type { DropdownItem } from "@/types/ui";
 
 const item = cva(
@@ -18,24 +18,31 @@ export function Dropdown({
   items,
   label,
   align = "end",
+  defaultOpen,
 }: {
   trigger: ReactNode;
   items: readonly DropdownItem[];
   label?: string;
   align?: "start" | "center" | "end";
+  defaultOpen?: boolean;
 }) {
+  const labelId = useId();
   return (
-    <Primitive.Root>
+    <Primitive.Root modal={false} defaultOpen={defaultOpen}>
       <Primitive.Trigger asChild>{trigger}</Primitive.Trigger>
       <Primitive.Portal>
         <Primitive.Content
+          {...(label ? { "aria-labelledby": labelId } : {})}
           align={align}
           sideOffset={8}
           className="dialog-enter z-70 min-w-48 rounded-card border border-border bg-surface-raised p-1.5 text-foreground shadow-overlay"
         >
           {label ? (
             <>
-              <Primitive.Label className="px-3 py-2 text-xs font-semibold text-muted-foreground">
+              <Primitive.Label
+                id={labelId}
+                className="px-3 py-2 text-xs font-semibold text-muted-foreground"
+              >
                 {label}
               </Primitive.Label>
               <Primitive.Separator className="mb-1 h-px bg-border" />

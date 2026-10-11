@@ -3,12 +3,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Bookmark, ClubMembership, NotificationItem, StudentRequest, TaskItem } from "@/types";
-import { engagementService, communityService, productivityService } from "@/services";
+import { demoAppStateService } from "@/services";
 
-const initialMemberships = structuredClone(engagementService.listMemberships());
-const initialNotifications = structuredClone(communityService.listNotifications());
-const initialTasks = structuredClone(productivityService.listInitialTasks());
-const initialStudentRequests = structuredClone(engagementService.listInitialStudentRequests());
+const seed = demoAppStateService.initial();
 
 interface AppState {
   tasks: TaskItem[];
@@ -32,12 +29,12 @@ interface AppState {
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
-      tasks: initialTasks,
+      tasks: seed.tasks,
       bookmarks: [],
-      memberships: initialMemberships,
+      memberships: seed.memberships,
       registrations: [],
-      notifications: initialNotifications,
-      srcRequests: initialStudentRequests,
+      notifications: seed.notifications,
+      srcRequests: seed.srcRequests,
       addTask: (task) =>
         set((state) => ({
           tasks: [...state.tasks, { ...task, id: crypto.randomUUID(), completed: false }],

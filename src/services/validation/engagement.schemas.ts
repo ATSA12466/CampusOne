@@ -1,5 +1,6 @@
 import { z } from "zod";
 const text = z.string();
+const date = z.iso.date();
 export const engagementSchemas = {
   clubs: z.object({
     id: text,
@@ -13,7 +14,7 @@ export const engagementSchemas = {
     id: text,
     title: text,
     venue: text,
-    date: text,
+    date,
     category: text,
     seats: z.number().nonnegative(),
     registered: z.number().nonnegative(),
@@ -23,7 +24,7 @@ export const engagementSchemas = {
     title: text,
     provider: text,
     category: text,
-    deadline: text,
+    deadline: date,
     summary: text,
   }),
   announcements: z.object({
@@ -47,7 +48,7 @@ export const engagementSchemas = {
     advertiser: text,
     placement: text,
     status: z.enum(["draft", "active", "scheduled"]),
-    startDate: text,
-    endDate: text,
+    startDate: date,
+    endDate: date,
   }),
 };

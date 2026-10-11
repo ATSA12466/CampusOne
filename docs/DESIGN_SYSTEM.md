@@ -129,7 +129,7 @@ Current assets:
 - `campusLife`: generated fictional campus-life scene, 1376 × 768, **142,842 bytes**;
 - `studentAma`: a 240 × 240 crop from the same generated scene, **9,072 bytes**;
 - `studentKojo`: another 240 × 240 crop, **14,320 bytes**;
-- total generated WebP assets: **166,234 bytes**;
+- Phase 2 generated WebP assets: **166,234 bytes**;
 - eight original SVG stand-ins retained for later replacement;
 - one intentional unavailable-image entry for error testing (its dimensions describe the intended demonstration frame, not an existing file).
 
@@ -151,7 +151,8 @@ Wraps `next/image`; source policy, frame shape, loading and fallback behaviour a
 - Focal points use 0–100 percentages and preserve a subject across crops.
 - `sizes` communicates the **actual layout width**, not automatically `100vw`.
 - `priority` maps to Next 16's preload API; only an actual above-fold image should be prioritized.
-- Blur-up when the registry has LQIP data; a quiet skeleton otherwise.
+- Pre-blurred tiny raster LQIPs when supplied; a quiet skeleton otherwise. The image itself is SSR-visible immediately, not hidden until a client onLoad. Native data-image placeholders avoid full-size SVG Gaussian filters.
+- `quality` is bounded to 60 or 75 (Next allowlist): Home leads use 60; default remains 75. WebP is the fast-encoding default, with AVIF still configured. Photo tiles declare their actual 160px layout width.
 - Missing, disallowed or failed sources become a branded gradient/icon fallback, retaining a meaningful accessible description and the frame ratio.
 - Blob upload previews are unoptimized, remain on this device, and must be revoked by their owner.
 - Local paths and upload blobs are allowed. Remote sources require an exact approved HTTPS hostname; credentials, nonstandard ports, unsafe paths and arbitrary data URLs are rejected.
@@ -344,3 +345,17 @@ Foundation tests use Node 22.15+ native type stripping and built-in `node:test`;
 ## 12. Phase boundary
 
 Phase 2 supplies the reusable foundation and applies semantic themes to the legacy screens. It does not claim the whole product is now redesigned. Phase 3 implements the grouped/collapsible shell and global search; magazine Home is Phase 4; photo-led auth/onboarding is Phase 5; photo-rich feature/detail flows, expanded 12–30-item feeds, real calendar/ICS/GPA interactions and remaining feature work follow in Phase 6. Secure auth, uploads, real-time messaging, payments, AI and official academic authority remain unconnected integrations.
+
+## Phase 4 magazine Home
+
+Home applies the foundation without replacing the palette or inventing SRC artwork: an editorial greeting, conditional ads/video, large Clubs photo/scrim, 160px snap tiles, external portal cards, native task progress, and photo event/deadline cards. Manrope + Fraunces remain the distinctive next/font pairing. Native transitions, focus and reduced-motion rules are retained; no animation/media dependency was added.
+
+Five new fictional generated scenes: `clubsHero` (1376×768, 141,886B), `studyCorner` (1000×558, 58,336B), `innovationNight` (1000×558, 76,564B), `campusLiving` (1000×558, 105,576B), `campusMarket` (1000×558, 77,976B). Together with Phase 2 assets, generated WebPs total **626,572B**. They are not real GCTU people, an actual event or a listed property. Registry alt/provenance/source notes and visible captions retain that distinction. Raw generation files stay ignored.
+
+`mediaPause` is a **20,018B** still from the local MDN CC0 flower clip, not a generated campus film. The 960×540 / ~5.06s / 554,058B WebM, English visual-description track and text alternative are labelled as a licensed sample; attribution/full CC0 text live in `public/media/demo/`. No clip/caption bytes load before Play, and nothing autoplays.
+
+The header appearance control opens its intent-loaded dropdown on the first click; dropdown content references its visible label (rather than the changing trigger name), and the menu is nonmodal so the underlying page is not aria-hidden with focusable descendants. Theme bootstrap/system/reload/cross-tab behavior stays eager and unchanged. The first toast loads the Radix renderer; code failure uses a native dismissible live status/alert. Task undo is persistent inline feedback with restored keyboard focus, not an action that disappears with the toast.
+
+A native browser may reserve Escape for its video-control shadow UI. Keyboard users can reach the application Close button; Escape from dialog-owned controls closes the preview and restores the launch button. Fullscreen/OS-native media behavior and device-specific playback still need manual cross-browser validation.
+
+See [Phase 4 Home](PHASE4_HOME.md) and the [test report](TEST_REPORT.md) for selection, data, visual checks and measured performance limits.

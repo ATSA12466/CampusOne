@@ -33,6 +33,7 @@ export {
   mediaService,
   productivityService,
 } from "./demo";
+export { demoAppStateService } from "./demo/app-state.service";
 export { demoAuthService } from "./auth/demo-auth.service";
 
 // Search/UI code and response schemas are fetched only after opening search.
@@ -61,3 +62,11 @@ export function searchPreviewService(mode: SearchPreviewMode): SearchService {
     },
   };
 }
+
+// Initial Home reads use this async boundary in a Server Component.
+export const homeFeedService: import("@/types/home").HomeFeedService = {
+  async snapshot(options) {
+    const { createHomeFeedService } = await import("./home/home.service");
+    return createHomeFeedService(campusService).snapshot(options);
+  },
+};

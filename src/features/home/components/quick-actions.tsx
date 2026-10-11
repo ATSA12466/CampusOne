@@ -1,35 +1,38 @@
-import Link from "next/link";
-import { BookOpen, Calendar, ClipboardPlus, Compass, Users } from "lucide-react";
-import { Card } from "@/components/ui";
-
-const actions = [
-  { label: "Add Task", href: "/tasks", icon: ClipboardPlus },
-  { label: "View Timetable", href: "/timetable", icon: Calendar },
-  { label: "Resources", href: "/academics", icon: BookOpen },
-  { label: "Explore Clubs", href: "/clubs", icon: Users },
-  { label: "Discover", href: "/discover", icon: Compass },
-];
-
+import { PhotoTile } from "@/components/media/photo-tile";
+import { homeShortcuts } from "@/config/home";
+import { images } from "@/config/images";
 export function QuickActions() {
   return (
-    <Card>
-      <h3 className="text-base font-semibold">Quick actions</h3>
-      <div className="mt-3 grid grid-cols-2 gap-2">
-        {actions.map((action) => {
-          const Icon = action.icon;
-          return (
-            <Link
-              prefetch={false}
-              key={action.href}
-              href={action.href}
-              className="rounded-xl border border-[var(--color-border)] p-3 text-sm transition hover:border-brand/25 hover:bg-brand-soft"
-            >
-              <Icon size={16} className="mb-1 text-brand" />
-              {action.label}
-            </Link>
-          );
-        })}
+    <section aria-labelledby="home-shortcuts-title" className="min-w-0">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <p className="mb-1 text-[10px] font-bold tracking-[0.16em] text-brand uppercase">
+            Make it your campus
+          </p>
+          <h2 id="home-shortcuts-title" className="font-display text-2xl font-semibold">
+            A different kind of shortcut.
+          </h2>
+        </div>
+        <p className="text-xs text-muted-foreground">Swipe or scroll to explore</p>
       </div>
-    </Card>
+      <div
+        role="region"
+        aria-label="Photo shortcuts"
+        tabIndex={0}
+        className="-mx-1 grid grid-flow-col auto-cols-[minmax(10rem,1fr)] snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain rounded-control p-1 [scrollbar-width:thin]"
+      >
+        {homeShortcuts.map((item) => (
+          <PhotoTile
+            key={item.href}
+            image={images[item.image]}
+            sizes="160px"
+            title={item.title}
+            description={item.description}
+            href={item.href}
+            className="min-h-44 snap-start [&_h3]:text-xl [&_p]:text-xs"
+          />
+        ))}
+      </div>
+    </section>
   );
 }

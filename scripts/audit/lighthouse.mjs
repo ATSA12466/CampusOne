@@ -12,10 +12,10 @@ const output = resolve(process.env.AUDIT_OUTPUT_DIR ?? ".cache/design-audit/resu
 const port = Number(process.env.AUDIT_CHROME_PORT ?? "9222");
 await mkdir(output, { recursive: true });
 // Multi-process Chromium is needed for Lighthouse's trace filmstrip collector.
-const browser = await launchAuditBrowser(
-  [`--remote-debugging-port=${port}`, "--run-all-compositor-stages-before-draw"],
-  { multiProcess: true },
-);
+const browser = await launchAuditBrowser([`--remote-debugging-port=${port}`], {
+  multiProcess: true,
+  softwareRendering: process.env.AUDIT_RENDERER === "software",
+});
 try {
   const result = await lighthouse(`${baseUrl}/home`, {
     port,
@@ -50,6 +50,7 @@ try {
       {
         fetchTime,
         environment,
+        renderer: process.env.AUDIT_RENDERER === "software" ? "software-raster" : "swiftshader",
         finalDisplayedUrl,
         performance,
         accessibility: categories.accessibility.score * 100,

@@ -1,5 +1,63 @@
 # CampusOne test report
 
+## Phase 4 — magazine Home (11 October 2026)
+
+**Home implementation and functional checks passed. Performance is environment-conditional, not an unqualified completed gate:** the final three explicit CPU-raster Lighthouse runs score 92/91/91 (median **91**), but default sandbox SwiftShader runs score 60/63/63 (median **63**). Accessibility is **100** in all six. Default-renderer/real-device performance ≥90 remains open. No auth/domain redesign or real backend is claimed.
+
+### Final source / native checks
+
+| Check | Result |
+| --- | --- |
+| `npm run lint` / `npm run typecheck` | Passed; strict TS, no `any` introduced |
+| `npm run build` | Passed; Next 16.2.6, compile 20.3s / TS 14.1s / 32 static pages; `/home` intentionally per-request |
+| Foundation / shell / Home native tests | **15 + 12 + 18 = 45 passed**, zero failed |
+| Runtime dependency / route / SRC policy | No runtime package added, URLs unchanged, official artwork still pending |
+| Source contracts | 18 validated demo collections; 7-source Home composition and exact cookie allowlist |
+
+The 18 Home native tests cover campus/leap/calendar dates; safe malformed persisted task dates; now/next boundaries, overlap/week rollover, real weekday/time ordering and non-mutating sorts; overdue/today/done tasks; seven concurrent bounded reads, partial/all-source failure/recovery, caller cancellation and cooperative deadlines; exact session-cookie filtering; valid/invalid/expired/future/wrong-placement campaign suppression; described playable videos; sorted upcoming events/deadlines; rejected unsafe media/destinations/impossible API dates; explicit bounded development fixtures; and deep-cloned seed equivalence for executive memberships, notifications, tasks and SRC requests.
+
+### Home browser / visual checks
+
+`scripts/phase4-audit.mjs` passed all **home / media / states / clock / delivery** groups against the same final production build (3001), plus explicitly development-only fixtures (3000).
+
+- **38 responsive/feedback captures**: 18 Home/carousel/task states, 7 player/error states, 8 feed/storage/SSR states and 5 intent-delivery/failure states. All checked WCAG 2 A/AA + 2.1 AA captures have **zero axe violations, horizontal root overflow and sub-44px target flags**.
+- Home **360/768/1280 × light/dark**: active ads before Clubs; real carousel keyboard arrows/current/disabled boundaries; all six photo destinations; native snap scrolling without root overflow; official HTTPS portal target/rel/name attributes; task completion/progress/Undo and restored focus; reload persistence. Below-fold recommendation focus causes paint/scroll and is unobscured in all six cases despite progressive content-visibility.
+- Media **all six**: no initial video/caption requests, no autoplay, real 960×540 ~5.059s metadata, actual `play()`/unpaused state, captions/transcript, keyboard trap, application-owned Escape, close unmount and return focus. Cmd/Ctrl+K cannot stack a shell search over the preview. Blocking the WebM produces a real failure; unblocking + **Retry video** restores playable metadata.
+- A native video-control shadow UI can consume Escape without dispatching DOM key events. The test focuses the keyboard-reachable application Close control before Escape; it does **not** claim to override OS/native fullscreen controls. Safari/Firefox/physical-device playback remain unverified.
+- Empty/inactive placements leave **no carousel or advertising container**. Partial/offline feeds retain independent actions; a fault-once feed refreshes through **Try again**; truncation is visible. Production ignores fixture queries. Denied task storage yields honest “for this visit” feedback. With hydration scripts blocked, lead images are already SSR-visible.
+- Held player code delivery can be cancelled; late delivery cannot open a closed preview. Player, appearance-control and Radix toast chunks are absent from initial Home requests. The first appearance click opens its named menu, real Dark selection works and focus returns. Failed player code recovers through reload; failed toast code retains dismissible native feedback; failed theme code is visibly explained.
+- The initial menu-label assertion exposed Radix's automatic trigger `aria-labelledby` taking precedence over `aria-label`; visible-label association now explicitly overrides it. Modal dropdown background hiding also produced `aria-hidden-focus`; the conventional menu is now nonmodal, without hiding a focusable page. Final open-menu AA checks pass. No audit rule was disabled.
+- Manual current-build visual review covered all six Home layouts (including lower content/tablet), all six players, and representative feed/media/code-error/menu feedback. Full-page images of fixed overlays include unblurred below-viewport content by screenshot mechanics; that is not a claim that the modal viewport is unshielded.
+
+### Preserved foundation, shell and executive workflows
+
+- **222 production route cases**: 37 preserved screen/guard/not-found paths × 360/768/1280 × light/dark; HTTP/title rendering and zero browser exceptions. All final document widths equal the viewport, with no visible overflow or small target flags. **74** route AA analyses at 360 in both themes: zero violations. The 37 screens were visually reviewed at 360/1280 light/dark through eight current-build overview sheets, with individual Home/player/lower-content inspection and 768 metrics.
+- `phase3-audit`: **31** shell/search/delivery captures, zero AA/overflow/target flags; all 24 destinations, compact/cross-tab/prepaint storage, Ctrl and Cmd shortcuts, arrow/Enter navigation, scope/clear/empty, trap/return/main-route focus, cancellation, guarded switching and source/code-error recovery passed.
+- `phase2-audit`: six dev foundation layouts plus dialogs/sheets/gallery/native swipe, dropdown/toast/tabs/controls, reduced motion, upload errors/retry/crop/compression/EXIF/object URL cleanup, appearance persistence/system/cross-tab/private storage, GH₵ Manrope glyph and dark first paint without hydration all passed. Production `/design` remains strict HTTP 404.
+- The preserved-workflow rerun explicitly asserts **12 positive flags**, including **club-executive request approval and persistence**, task CRUD/completion, onboarding, More focus, RSVP ticket/cancel, bookmarks, notification reads and SRC validation/submission. No browser exceptions.
+- Known legacy gaps remain honestly recorded: first visit bypasses onboarding; default membership seeds leave no fresh join; community and lost/found submissions do not persist; lost/found still lacks required photo; study constraints are incomplete; demo sign-out retains role/bookmarks. These remain auth/domain phases, not silently marked fixed.
+- Seven invalid details render “Page not found” but retain streamed HTTP **200**. Root still redirects to `/home`. The port-4000 **fixture**, not a live backend, passed same-origin proxy/cookie forwarding; local health remains **503 / `{ "ok": false }`** without a DB.
+
+### Production Lighthouse — measured, renderer disclosed
+
+Lighthouse **13.5.0**, Chromium **153.0.8010.0**, mobile **360×800**, device scale 1; standard simulated RTT **150ms**, throughput **1638.4kbps**, CPU slowdown **4×**. Sequential fresh browser runs against production, dev stopped, zero audit errors. No route/assets/features or CPU/network throttle were disabled to obtain scores.
+
+| Final run (UTC, 11 Oct) | Renderer | Performance | Accessibility | FCP | LCP | TBT | CLS |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 05:04:50 | Default SwiftShader | 60 | 100 | 0.9s | 3.5s | 3340ms | 0 |
+| 05:05:32 | Default SwiftShader | 63 | 100 | 1.0s | 3.6s | 1890ms | 0 |
+| 05:06:00 | Default SwiftShader | 63 | 100 | 0.9s | 3.4s | 2130ms | 0 |
+| 05:05:04 | Explicit CPU raster | 92 | 100 | 0.9s | 3.3s | 80ms | 0 |
+| 05:05:46 | Explicit CPU raster | 91 | 100 | 0.9s | 3.2s | 140ms | 0 |
+| 05:06:14 | Explicit CPU raster | 91 | 100 | 0.9s | 3.2s | 160ms | 0 |
+
+**Medians:** default Performance **63**, LCP **3.5s**, TBT **2134ms**; explicit CPU raster Performance **91**, LCP **3.2s**, TBT **139ms**. Accessibility **100** and CLS **0** throughout. CPU-raster runs remove ANGLE/SwiftShader flags and add `--disable-gpu`; everything else is unchanged. An obsolete forced-compositor launch flag was removed earlier for both paths. The much lower default-renderer results remain visible; a diagnostic passing result does not establish a portable score or waive the open default-renderer gate.
+
+Final initial transfer is approximately **381,510B / 29 nonzero transfers**; **14 scripts / 211,181B**. Phase 4 initial was **450,458B** with Performance 53; intermediate default scores 57/56 and CPU diagnostics 86/88/87 are retained in cache. Final transfer is ~15% lower than the initial build. The lean seed service has equivalence/isolation coverage, but **no measured initial-JS reduction** is established (the previous diagnostic was 211,151B). Do not attribute the scoring improvement to it alone, or infer a proven isolated content-visibility benefit from single historical runs.
+
+New runtime dependencies: **none**. Source/scripts and these summaries are committed; screenshots/HTML/JSON/traces/tool dependencies stay ignored under `.cache/phase4/`. Tooling/evidence may not persist across environments; reproduce with the documented runners. Real API/auth/DB/uploads, official portal availability, screen-reader/IME/fullscreen/physical-device and Safari/Firefox checks remain open.
+
+
 ## Phase 3 — shell, navigation and global search (10 October 2026)
 
 **Implemented and verified:** grouped/collapsible desktop navigation, four mobile tabs + More, refined header/brand slot, Cmd/Ctrl+K search, typed catalog search and focus/persistence/delivery behaviour. This milestone does not claim the later Home/auth/feature redesigns or live integrations are complete.

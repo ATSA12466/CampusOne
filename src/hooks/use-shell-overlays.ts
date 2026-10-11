@@ -50,6 +50,15 @@ export function useShellOverlays() {
       if (event.defaultPrevented || event.isComposing) return;
       if ((event.metaKey || event.ctrlKey) && !event.altKey && event.key.toLowerCase() === "k") {
         event.preventDefault();
+        // Feature dialogs and the appearance menu own focus until they close.
+        // More/Search can still switch because they share the shell overlay state.
+        if (
+          !overlay &&
+          document.querySelector(
+            '[role="dialog"][data-state="open"], [role="menu"][data-state="open"]',
+          )
+        )
+          return;
         if (overlay === "search") setOverlay(null);
         else open("search");
       }

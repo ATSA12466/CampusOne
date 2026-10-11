@@ -19,6 +19,7 @@ export function PhotoTile({
   href,
   icon: Icon,
   featured,
+  sizes,
   className,
 }: {
   image?: CampusMedia;
@@ -27,6 +28,7 @@ export function PhotoTile({
   href: string;
   icon?: LucideIcon;
   featured?: boolean;
+  sizes?: string;
   className?: string;
 }) {
   return (
@@ -35,6 +37,7 @@ export function PhotoTile({
         image={image}
         alt={image?.alt ?? `${title} photo unavailable`}
         aspect="portrait"
+        sizes={sizes}
         className="absolute inset-0 h-full w-full"
         imageClassName="media-zoom"
       />

@@ -23,6 +23,7 @@ export function createApiCatalog(baseUrl?: string): CatalogService {
       );
       return apiClient(`${apiEndpoints[collection]}?${search}`, {
         schema: pageSchema(entitySchemas[collection]),
+        cache: "no-store",
         signal: query.signal,
         headers: query.headers,
         baseUrl,
@@ -37,6 +38,7 @@ export function createApiCatalog(baseUrl?: string): CatalogService {
       try {
         return await apiClient(`${apiEndpoints[collection]}/${encodeURIComponent(id)}`, {
           schema: entitySchemas[collection],
+          cache: "no-store",
           signal: options.signal,
           headers: options.headers,
           baseUrl,

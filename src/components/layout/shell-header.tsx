@@ -4,7 +4,7 @@ import { Bell, Search } from "lucide-react";
 import type { MouseEventHandler } from "react";
 import { BrandMark } from "@/components/shared/brand-mark";
 import { Avatar } from "@/components/ui/avatar";
-import { ThemeSwitcher } from "@/components/theme/theme-switcher";
+import { AppearanceTrigger } from "@/components/theme/appearance-trigger";
 import { Button } from "@/components/ui/button";
 import { imageForSrc } from "@/config/images";
 import { currentDestination } from "@/config/navigation";
@@ -71,7 +71,7 @@ export function ShellHeader({
             </kbd>
           </Button>
           <span className="hidden sm:inline-flex">
-            <ThemeSwitcher compact />
+            <AppearanceTrigger />
           </span>
           <Link
             prefetch={false}

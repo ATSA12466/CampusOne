@@ -9,7 +9,10 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   allowedDevOrigins: ["localhost", "127.0.0.1", "*.e2b.app"],
   images: {
-    formats: ["image/avif", "image/webp"],
+    // WebP is the fast-encoding default; AVIF remains available for negotiated clients.
+    formats: ["image/webp", "image/avif"],
+    qualities: [60, 75],
+    imageSizes: [32, 64, 96, 160, 256, 384],
     remotePatterns: imageHosts.map((hostname) => ({
       protocol: "https" as const,
       port: "",

@@ -1,8 +1,8 @@
+import { homeImageBlurs } from "./image-blurs";
 import type { CampusMedia } from "@/types/media";
 
 // Every static photo/stand-in URL lives here. Upload/API URLs arrive as typed data.
-const blur =
-  "data:image/webp;base64,UklGRr4AAABXRUJQVlA4ILIAAADQAwCdASoYAA4APwForE6rJiQiMAgBYCAJYgCdAYyAdqxlRiB9L+AA/oOJA1Puqx01mx6kr2M2oQoVGUS+DxL24NewP3Vl0flJyQk4PCvhU34D225BGDm+3MSWIgsHXZ5U0KuHeIJ+fC3m3dqvFX9uvK+kUVlAsRUyDVPPVbqaWXy+7BmV+54kt7tQdbal970aZ9coVAjHYEh9TvquedhX5RZJah49dy31dL9l+tOyAAAA";
+const blur = homeImageBlurs["campus-life"];
 const generatedSource =
   "AI-generated for CampusOne; fictional campus and people, not GCTU photographs or actual students.";
 const placeholder = (src: string, alt: string): CampusMedia => ({
@@ -14,6 +14,65 @@ const placeholder = (src: string, alt: string): CampusMedia => ({
   sourceNote: "Original local SVG stand-in, retained for replacement with authorized photography.",
 });
 export const images = {
+  clubsHero: {
+    src: "/images/demo/clubs-hero.webp",
+    alt: "Fictional Ghanaian student friends gathered in a tropical campus courtyard \u2014 AI-generated demo, not GCTU or actual students.",
+    width: 1376,
+    height: 768,
+    blurDataURL: homeImageBlurs["clubs-hero"],
+    focalPoint: { x: 68, y: 50 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  studyCorner: {
+    src: "/images/demo/study-corner.webp",
+    alt: "Fictional students studying together in a bright library \u2014 AI-generated demonstration.",
+    width: 1000,
+    height: 558,
+    blurDataURL: homeImageBlurs["study-corner"],
+    focalPoint: { x: 64, y: 50 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  innovationNight: {
+    src: "/images/demo/innovation-night.webp",
+    alt: "Fictional Ghanaian students sharing a prototype at an evening campus showcase \u2014 AI-generated demonstration.",
+    width: 1000,
+    height: 558,
+    blurDataURL: homeImageBlurs["innovation-night"],
+    focalPoint: { x: 52, y: 50 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  campusLiving: {
+    src: "/images/demo/campus-living.webp",
+    alt: "A fictional student residence courtyard with tropical plants \u2014 AI-generated, not an actual listed property.",
+    width: 1000,
+    height: 558,
+    blurDataURL: homeImageBlurs["campus-living"],
+    focalPoint: { x: 50, y: 50 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  campusMarket: {
+    src: "/images/demo/campus-market.webp",
+    alt: "Fictional Ghanaian students browsing books and a laptop at a campus pop-up \u2014 AI-generated demonstration.",
+    width: 1000,
+    height: 558,
+    blurDataURL: homeImageBlurs["campus-market"],
+    focalPoint: { x: 55, y: 50 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  mediaPause: {
+    src: "/images/demo/media-pause.webp",
+    alt: "Pink flowers in a still extracted from the MDN CC0 video sample; not campus footage.",
+    width: 960,
+    height: 540,
+    provenance: "licensed",
+    sourceNote:
+      "CC0 MDN interactive-examples flower.webm; local extracted poster. See public/media/demo/README.md.",
+  },
   campusLife: {
     src: "/images/demo/campus-life.webp",
     alt: "Students walking through a green campus courtyard — AI-generated demonstration, not an actual GCTU photograph.",
@@ -85,30 +144,4 @@ export const srcLogo: CampusMedia | null = null; // Supply the official SRC artw
 export function imageForSrc(src: string): CampusMedia | undefined {
   return Object.values(images).find((image) => image.src === src);
 }
-export const approvedImageHosts = (process.env.NEXT_PUBLIC_IMAGE_HOSTS ?? "")
-  .split(",")
-  .map((host) => host.trim().toLowerCase())
-  .filter(Boolean);
-export function isAllowedImageSrc(src: string) {
-  if (/[\\\u0000-\u001f]/.test(src)) return false;
-  if (src.startsWith("/") && !src.startsWith("//")) {
-    try {
-      return !/(?:^|\/)(?:\.|\.\.)(?:\/|$)/.test(decodeURIComponent(src.split("?")[0]));
-    } catch {
-      return false;
-    }
-  }
-  if (src.startsWith("blob:")) return true;
-  try {
-    const url = new URL(src);
-    return (
-      url.protocol === "https:" &&
-      !url.username &&
-      !url.password &&
-      !url.port &&
-      approvedImageHosts.includes(url.hostname)
-    );
-  } catch {
-    return false;
-  }
-}
+export { approvedImageHosts, isAllowedImageSrc } from "./image-policy";

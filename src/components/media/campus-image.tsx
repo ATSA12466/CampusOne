@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ImageOff, ImageIcon } from "lucide-react";
 import { cva } from "class-variance-authority";
 import { useState, type ReactNode, type CSSProperties } from "react";
-import { isAllowedImageSrc } from "@/config/images";
+import { isAllowedImageSrc } from "@/config/image-policy";
 import { cn } from "@/lib/utils/cn";
 import type { AspectRatio, CampusMedia, FocalPoint } from "@/types/media";
 
@@ -28,6 +28,7 @@ interface Props {
   focalPoint?: FocalPoint;
   sizes?: string;
   priority?: boolean;
+  quality?: 60 | 75;
   className?: string;
   imageClassName?: string;
   imageStyle?: CSSProperties;
@@ -53,6 +54,7 @@ function ImageContent({
   focalPoint,
   sizes = "(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw",
   priority = false,
+  quality = 75,
   imageClassName,
   imageStyle,
   fallback,
@@ -93,19 +95,22 @@ function ImageContent({
         src={image.src}
         alt={alt}
         fill
+        quality={quality}
         sizes={sizes}
         preload={priority}
+        fetchPriority={priority ? "high" : undefined}
         loading={priority ? undefined : "lazy"}
-        placeholder={image.blurDataURL ? "blur" : "empty"}
+        // Use a pre-blurred raster LQIP directly, avoiding a per-image SVG filter.
+        placeholder={
+          image.blurDataURL?.startsWith("data:image/")
+            ? (image.blurDataURL as `data:image/${string}`)
+            : "empty"
+        }
         blurDataURL={image.blurDataURL}
         unoptimized={image.src.startsWith("blob:")}
         onLoad={() => setLoaded(true)}
         onError={() => setFailed(true)}
-        className={cn(
-          "transition-opacity duration-200",
-          loaded ? "opacity-100" : "opacity-0",
-          imageClassName,
-        )}
+        className={cn("transition-opacity duration-200", "opacity-100", imageClassName)}
         style={{
           objectFit: fit,
           objectPosition: `${Math.max(0, Math.min(100, focal.x))}% ${Math.max(0, Math.min(100, focal.y))}%`,

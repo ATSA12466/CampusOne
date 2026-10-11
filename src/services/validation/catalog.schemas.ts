@@ -1,9 +1,11 @@
 import { z } from "zod";
 import type { CollectionMap, CollectionName, Page } from "@/types/service-contracts";
+import { featuredSchema } from "./home.schema";
 import { engagementSchemas } from "./engagement.schemas";
 import { lifeSchemas } from "./life.schemas";
 const text = z.string();
 export const entitySchemas: { [K in CollectionName]: z.ZodType<CollectionMap[K]> } = {
+  featured: featuredSchema,
   ...engagementSchemas,
   ...lifeSchemas,
   resources: z.object({
