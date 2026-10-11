@@ -1,0 +1,11 @@
+# Phase 6I — Timetable and Calendar (11 October 2026)
+
+Photo-led `/timetable` and `/calendar` preserve the original three sample sessions and read typed async source catalogs, not UI demo datasets. Dynamic server composition seeds current dates per visit instead of freezing today at build time; source failures never add invented API fallback schedules. Demo/catalog classes, public events (not automatic RSVPs) and personal classes/plans are explicitly differentiated.
+
+Own class and personal plan editors validate real dates, weekday/time ranges and forward durations; support persistent create/edit and confirmed delete. Personal class intersections are flagged; adjacent/different-day classes do not conflict. Workspace `sessions`/`plans` retain owner/source guards, bounded schemas and logout/account cleanup. A collection/owner-qualified browser invalidation event refreshes other mounted views immediately after acknowledged mutations, so the agenda updates without a reload.
+
+Calendar Week/Month/Agenda, Today/previous/next controls and keyboard month-date cells work in semantic light/dark. Month navigation uses actual calendar-month arithmetic, not 28-day approximations. 360px month padding was corrected after the 44px target test failed. Exports are real, labelled **personal planning snapshot `.ics` downloads**, not institutional invitations. Existing event ICS formatting was extracted/reused: UTF-8 75-octet folds, escaping and CRLF. Full event timestamps retain offsets/overnight endings and cancellations.
+
+Lint, strict typecheck, build and **171 native tests** pass. **32 complete clean AA/layout/44px captures** cover both routes plus Week/Month/Agenda and month navigation at 360/768/1280 light/dark; personal class/create/reload/edit/delete, immediate agenda invalidation, plan/create/reload/delete and actual downloaded ICS assertions run at 360/1280 light/dark. JSON independently validated and four actual screenshots inspected. Dynamic-route flag was build-verified after those captures; it does not change layout. Evidence `.cache/phase6/schedule`; reproduction `phase6-schedule-audit.mjs` / `test:life`.
+
+No official timetable/registration, invitation delivery or real backend authorization proof. Next: Profile automatically.

@@ -133,3 +133,76 @@ test("GPA weights actual credits and gives no result for an empty term", async (
   assert.deepEqual(weightedGpa(rows), { credits: 4, quality: 14, gpa: 3.5 });
   assert.equal(weightedGpa([{ credits: 4, points: 0 }]).gpa, 0);
 });
+
+test("schedule arithmetic is UTC/Accra consistent at week/month/year boundaries", async () => {
+  const { dateAdd, weekStart, monthDays, monthShift } = await import(
+    "../../../src/lib/schedule/agenda.ts"
+  );
+  assert.equal(weekStart("2026-10-11"), "2026-10-05");
+  assert.equal(dateAdd("2026-12-31", 1), "2027-01-01");
+  assert.equal(monthShift("2026-10-11", 1), "2026-11-01");
+  assert.equal(monthShift("2026-01-31", -1), "2025-12-01");
+  assert.equal(monthDays("2026-10-11").length, 42);
+});
+test("overlap detector allows adjacent classes, distinguishes days and flags actual intersections", async () => {
+  const { classConflicts } = await import(
+    "../../../src/lib/schedule/agenda.ts"
+  );
+  const a = { id: "a", day: "Monday", start: "09:00", end: "10:00" },
+    b = { id: "b", day: "Monday", start: "10:00", end: "11:00" },
+    c = { id: "c", day: "Tuesday", start: "09:15", end: "09:45" };
+  assert.deepEqual(classConflicts([a, b, c]), []);
+  assert.deepEqual(classConflicts([a, { ...c, day: "Monday" }]), [["a", "c"]]);
+});
+test("weekly agenda materializes correct weekdays without changing source records", async () => {
+  const { weeklyAgenda } = await import("../../../src/lib/schedule/agenda.ts");
+  const { timetableSessions } = await import(
+    "../../../src/data/demo/productivity/tasks.ts"
+  );
+  const items = weeklyAgenda(
+    timetableSessions,
+    ["2026-10-05", "2026-10-06", "2026-10-08"],
+    "Demo",
+  );
+  assert.equal(items.length, 3);
+  assert.equal(items.find((i) => i.title === "ITT 341").date, "2026-10-05");
+  assert.equal(timetableSessions[0].id, "s1");
+});
+test("multi-entry ICS uses CRLF, UTF8 folding, escaped values and exact offset-aware event times", async () => {
+  const { scheduleCalendar } = await import(
+    "../../../src/lib/schedule/calendar.ts"
+  );
+  const content = scheduleCalendar(
+    [
+      {
+        id: "a",
+        title: "É".repeat(80) + ";x,y",
+        date: "2026-10-11",
+        start: "09:00",
+        end: "10:00",
+        venue: "Lab\nRoom",
+        kind: "personal",
+        label: "Private",
+      },
+      {
+        id: "b",
+        title: "Cancelled event",
+        date: "2026-10-11",
+        startsAt: "2026-10-11T23:00:00+01:00",
+        endsAt: "2026-10-12T01:00:00+01:00",
+        venue: "Room",
+        kind: "event",
+        label: "Public",
+        cancelled: true,
+      },
+    ],
+    "2026-10-11T12:00:00Z",
+  );
+  assert.equal((content.match(/BEGIN:VEVENT/g) || []).length, 2);
+  assert.ok(content.includes("DTSTART:20261011T220000Z"));
+  assert.ok(content.includes("DTEND:20261012T000000Z"));
+  assert.ok(content.includes("STATUS:CANCELLED"));
+  assert.ok(content.includes("\\;x\\,y"));
+  for (const line of content.split("\r\n"))
+    assert.ok(Buffer.byteLength(line) <= 75);
+});

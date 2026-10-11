@@ -56,6 +56,18 @@ export function useWorkspace<K extends WorkspaceCollection>(collection: K) {
       controller.current = null;
     };
   }, [owner, nonce, collection]);
+  useEffect(() => {
+    const listener = (event: Event) => {
+      const detail = (
+        event as CustomEvent<{ owner: string; collection: string }>
+      ).detail;
+      if (detail?.owner === owner && detail.collection === collection)
+        refresh();
+    };
+    window.addEventListener("campusone-workspace-updated", listener);
+    return () =>
+      window.removeEventListener("campusone-workspace-updated", listener);
+  }, [owner, collection]);
   const mutate = async (item: WorkspaceMap[K] | string) => {
     if (!owner) throw new Error("Sign in before making changes.");
     if (controller.current) throw new Error("A change is already pending.");
@@ -81,7 +93,11 @@ export function useWorkspace<K extends WorkspaceCollection>(collection: K) {
             : "The connected service accepted this change."
           : "For this visit only. Device storage is unavailable.",
       });
-      refresh();
+      window.dispatchEvent(
+        new CustomEvent("campusone-workspace-updated", {
+          detail: { owner, collection },
+        }),
+      );
     } catch (cause) {
       if (!request.signal.aborted && owner === live())
         setNotice({

@@ -1,3 +1,4 @@
+import { sessionInputSchema, planInputSchema } from "./schedule.schema";
 import { z } from "zod";
 import type { WorkspaceMap } from "@/types/workspace";
 export const recordIdSchema = z
@@ -56,6 +57,8 @@ export const gradeInputSchema = z.object({
 export const workspaceSchemas: {
   [K in keyof WorkspaceMap]: z.ZodType<WorkspaceMap[K]>;
 } = {
+  sessions: sessionInputSchema.safeExtend({ id: recordIdSchema }),
+  plans: planInputSchema.safeExtend({ id: recordIdSchema }),
   notes: noteInputSchema.extend({
     id: recordIdSchema,
     createdAt: z.iso.datetime(),

@@ -1,3 +1,4 @@
+import { sessionInputSchema } from "./schedule.schema";
 import { listingDetailsSchema } from "./listing.schema";
 import { z } from "zod";
 import type {
@@ -49,14 +50,7 @@ export const entitySchemas: {
     read: z.boolean(),
     category: z.enum(["tasks", "events", "clubs", "announcement"]),
   }),
-  timetable: z.object({
-    id: text,
-    day: text,
-    course: text,
-    start: text,
-    end: text,
-    venue: text,
-  }),
+  timetable: sessionInputSchema.safeExtend({ id: text }),
 };
 export function pageSchema<T>(entity: z.ZodType<T>): z.ZodType<Page<T>> {
   return z

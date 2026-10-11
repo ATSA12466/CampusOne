@@ -230,3 +230,50 @@ test("private grade and note schemas bound fields and retain owner-qualified doc
     "A useful private revision checklist.",
   );
 });
+
+test("personal schedule schemas reject impossible dates, invalid times and backwards durations", async () => {
+  const { sessionInputSchema, planInputSchema } = await import(
+    "../../../src/services/validation/schedule.schema.ts"
+  );
+  assert.equal(
+    sessionInputSchema.safeParse({
+      day: "Monday",
+      course: "ITT 341",
+      start: "11:00",
+      end: "10:00",
+      venue: "Lab",
+    }).success,
+    false,
+  );
+  assert.equal(
+    sessionInputSchema.safeParse({
+      day: "Monday",
+      course: "ITT 341",
+      start: "25:00",
+      end: "26:00",
+      venue: "Lab",
+    }).success,
+    false,
+  );
+  assert.equal(
+    planInputSchema.safeParse({
+      title: "Study time",
+      date: "2026-02-30",
+      start: "10:00",
+      end: "11:00",
+      venue: "Library",
+    }).success,
+    false,
+  );
+  session();
+  const service = createWorkspaceService();
+  await service.put("sessions", {
+    id: "my-class",
+    day: "Friday",
+    course: "ITT 341",
+    start: "09:00",
+    end: "10:00",
+    venue: "Lab",
+  });
+  assert.equal((await service.list("sessions"))[0].day, "Friday");
+});
