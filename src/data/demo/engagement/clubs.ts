@@ -1,3 +1,4 @@
+import {extraAnnouncements} from "./announcement-catalog";
 import { extraOpportunities, opportunityDetails } from "./opportunity-catalog";
 import type { Announcement, Campaign, Opportunity } from "@/types";
 
@@ -21,6 +22,7 @@ export const announcements: Announcement[] = [
     pinned: false,
     publishedAt: "2026-10-07",
   },
+  ...extraAnnouncements,
 ];
 
 export { events } from "./event-catalog";

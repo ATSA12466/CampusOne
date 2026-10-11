@@ -18,4 +18,22 @@ export const mediaItems: MediaItem[] = [
     duration: "09:50",
     thumbnail: images.mediaTwo.src,
   },
+  {
+    id: "md3",
+    title: "A botanical breathing pause",
+    kind: "video",
+    creator: "MDN CC0 sample",
+    duration: "0:05",
+    thumbnail: images.mediaPause.src,
+    source: "/media/demo/flower.webm",
+  },
+  {
+    id: "md4",
+    title: "CC0 sound-effect playback sample",
+    kind: "audio",
+    creator: "MDN CC0 sample",
+    duration: "Short sample",
+    thumbnail: images.mediaTwo.src,
+    source: "/media/demo/t-rex-roar.mp3",
+  },
 ];

@@ -130,3 +130,4 @@ export { notificationService } from "./notifications/notification.service";
 
 export { taskService } from "./tasks/task.service";
 export { studyPlannerService } from "./study/study-planner.service";
+export { campusActionService } from "./campus-operations/campus.service";

@@ -7,3 +7,11 @@ Repository license: https://github.com/mdn/interactive-examples/blob/main/LICENS
 The license is reproduced as `CC0-LICENSE.txt`. Downloaded through GitHub's API; no copyrighted hotlink.
 
 554,058 bytes; 960 × 540; measured browser duration 5.059 seconds. The poster in the central image registry was extracted from this clip. `flower.vtt` and the inline description provide a text alternative. This is a clearly labelled public-domain media sample, **not a GCTU video**. Playback uses native controls; no autoplay, no initial video download, no video SDK.
+
+## Native audio playback sample
+
+`t-rex-roar.mp3` (39,868 bytes) is MDN's CC0 audio sample, downloaded from
+https://github.com/mdn/interactive-examples/blob/main/live-examples/media/cc0-audio/t-rex-roar.mp3
+under the same repository CC0 license saved here. It is a short sound-effect playback check,
+not a podcast, student voice, GCTU recording or guided study audio. Media requests it only
+when the student opens the sample player; no external hotlink or autoplay.

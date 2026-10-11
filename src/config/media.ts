@@ -9,3 +9,12 @@ export const campusPause = {
   transcript:
     "Silent five-second close-up of pink flowers moving gently outdoors while a bee visits a bloom. This public-domain sample is a visual breathing break, not footage of GCTU.",
 } as const;
+
+// Playback sources are local licensed samples or explicitly approved HTTPS hosts.
+import { isAllowedImageSrc } from "./image-policy";
+export function isAllowedPlaybackSrc(src: string) {
+  return (
+    (/^\/media\/[a-zA-Z0-9_./-]+$/.test(src) && !src.includes("..")) ||
+    (src.startsWith("https://") && isAllowedImageSrc(src))
+  );
+}

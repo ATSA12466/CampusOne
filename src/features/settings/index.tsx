@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { PageHeader } from "@/components/shared/page-header";
+import { MagazineHeader } from "@/components/shared/magazine-header";
+import { images } from "@/config/images";
+import Link from "next/link";
 import { Button, Card } from "@/components/ui";
 import { useSignOut } from "@/features/auth/hooks/use-sign-out";
 import { StorageNotice } from "@/features/auth/components/storage-notice";
@@ -14,15 +16,39 @@ export function SettingsFeature() {
   const logout = useSignOut();
 
   return (
-    <div className="space-y-4">
-      <PageHeader
-        title="Settings"
-        description="Preferences, onboarding replay, and demo account actions."
+    <div className="mx-auto max-w-5xl space-y-6">
+      <MagazineHeader
+        eyebrow="MAKE IT YOURS"
+        title="Your campus. Your preferences."
+        description="Choose your appearance, revisit the introduction and understand what stays on this device."
+        image={images.campusLife}
       />
+      <Card>
+        <h2 className="font-display text-xl font-semibold">
+          Privacy & profile
+        </h2>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Prepared photos, notes, drafts and activity stay with the active
+          profile. Demo data is device-local, not encrypted university storage.
+          Logout removes this profile’s private workspace; connected services
+          must independently enforce privacy and retention.
+        </p>
+        <Link
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-brand"
+          href="/profile"
+        >
+          Edit your profile and preferences →
+        </Link>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Animations respect your device’s reduced-motion setting. Theme
+          preferences are device-wide; private records are owner-qualified.
+        </p>
+      </Card>
       <Card>
         <h2 className="font-semibold">Appearance</h2>
         <p className="mt-1 mb-4 text-sm text-muted-foreground">
-          Choose a theme, or follow your device. Your preference is saved on this device.
+          Choose a theme, or follow your device. Your preference is saved on
+          this device.
         </p>
         <ThemeSwitcher />
       </Card>
@@ -45,8 +71,8 @@ export function SettingsFeature() {
       <Card>
         <h2 className="font-semibold">Session</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Sign-out clears this local profile, role and account activity. API mode also requests
-          server sign-out.
+          Sign-out clears this local profile, role and account activity. API
+          mode also requests server sign-out.
         </p>
         <Button
           className="mt-3"

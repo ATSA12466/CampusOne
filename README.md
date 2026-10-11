@@ -2,7 +2,7 @@
 
 `campusone-web` — a GCTU student-app frontend moving toward a photo-first campus magazine and social super-app.
 
-**Current milestone: Phase 6L Tasks/Study tools, continuing automatically through secondary screens, polish and final verification.** Accommodation through Profile are committed; Community adds photo/private posts, reactions/replies/concern drafts, Messages adds private threads and photo history, and Notifications adds source-safe read state. Tasks now have source-safe CRUD/full-day overdue logic; study drafts genuinely honor availability, duration and breaks without fake AI. See [Phase 6L](docs/PHASE6L_STUDY_TOOLS.md). These are honest frontend/demo/service boundaries, not real delivery/moderation. Backend/security and Home’s standard-renderer/physical-device Performance ≥90 remain open.
+**Current milestone: Phase 6 frontend domain migrations complete through 6M.** Accommodation, Marketplace, Opportunities, Lost & Found, Academics/GPA/notes, Timetable/Calendar/ICS, editable Profile, Community/Messages/Notifications, Tasks/Study planning and the secondary campus screens are committed in sequence. The remaining-screen milestone adds photo announcements/SRC/Media/Participation/Management/Advertising/Settings with typed source-safe workflows and real licensed playback. **Polish and fresh final verification continue automatically**. Backend/security, authorized SRC artwork and Home's standard-renderer/physical-device Performance ≥90 are still open; see [Phase 6M](docs/PHASE6M_SECONDARY.md).
 
 This is an explicitly labelled **demo/prototype**, not an official GCTU/SRC service. Generated photographs depict fictional people/a campus. The official SRC artwork is still pending; `BrandMark` keeps a clean labelled slot rather than inventing a logo. Real auth, uploads, messaging, payments, AI and authoritative campus data are not connected.
 
@@ -33,6 +33,7 @@ npm run test:life
 npm run test:profile
 npm run test:social
 npm run test:study
+npm run test:secondary
 npm run build
 npm run start -- --hostname 0.0.0.0 --port 3001
 ```

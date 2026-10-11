@@ -1,68 +1,132 @@
 "use client";
-
-import Link from "next/link";
 import { useState } from "react";
-import { PageHeader } from "@/components/shared/page-header";
+import { MagazineHeader } from "@/components/shared/magazine-header";
 import { SearchInput } from "@/components/shared/search-input";
-import { Badge, Button, Card } from "@/components/ui";
-import { engagementService } from "@/services";
-import { useAppStore } from "@/stores/app-store";
-
-export function AnnouncementsFeature() {
-  const [query, setQuery] = useState("");
-  const announcements = engagementService.listAnnouncements();
-  const toggleBookmark = useAppStore((state) => state.toggleBookmark);
-  const bookmarks = useAppStore((state) => state.bookmarks);
-
-  const filtered = announcements.filter((item) =>
-    item.title.toLowerCase().includes(query.toLowerCase()),
-  );
-
+import { EmptyState } from "@/components/shared/empty-state";
+import { Button, Pagination, SegmentedControl, Select } from "@/components/ui";
+import { images } from "@/config/images";
+import { appConfig } from "@/config/app-config";
+import { useCampusFeed } from "@/features/campus-feed/hooks/use-campus-feed";
+import { useCampusActivity } from "@/features/campus-feed/hooks/use-campus-activity";
+import { SourceFeedback } from "@/features/campus-feed/components/source-feedback";
+import { AnnouncementCard } from "./components/announcement-card";
+import type { CampusFeed } from "@/types/campus-feed";
+export function AnnouncementsFeature({
+  initial,
+}: {
+  initial: CampusFeed<"announcements">;
+}) {
+  const feed = useCampusFeed("announcements", initial),
+    activity = useCampusActivity(),
+    [query, setQuery] = useState(""),
+    [category, setCategory] = useState("all"),
+    [view, setView] = useState("all"),
+    [page, setPage] = useState(1);
+  const items = feed.items
+      .filter(
+        (i) =>
+          (category === "all" || i.category === category) &&
+          (view !== "saved" || activity.savedAnnouncementIds.includes(i.id)) &&
+          `${i.title} ${i.content}`.toLowerCase().includes(query.toLowerCase()),
+      )
+      .sort(
+        (a, b) =>
+          Number(b.pinned) - Number(a.pinned) ||
+          b.publishedAt.localeCompare(a.publishedAt) ||
+          a.id.localeCompare(b.id),
+      ),
+    pages = Math.max(1, Math.ceil(items.length / 6)),
+    current = Math.min(page, pages);
   return (
-    <div className="space-y-4">
-      <PageHeader
-        title="Announcements"
-        description="Pinned, searchable updates from SRC, campus, and clubs."
+    <div className="mx-auto max-w-6xl space-y-6">
+      <MagazineHeader
+        eyebrow="FROM AROUND CAMPUS"
+        title="A little news. A bigger picture."
+        description="The useful updates, shared ideas and campus conversations worth knowing about."
+        image={images.clubDebate}
       />
-      <SearchInput value={query} onChange={setQuery} placeholder="Search announcements" />
-      <div className="space-y-3">
-        {filtered.map((announcement) => {
-          const saved = bookmarks.some(
-            (item) => item.entityId === announcement.id && item.entityType === "announcement",
-          );
-          return (
-            <Card key={announcement.id}>
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h2 className="font-semibold">{announcement.title}</h2>
-                  <p className="text-sm text-muted-foreground">{announcement.content}</p>
-                </div>
-                {announcement.pinned ? <Badge tone="gold">Pinned</Badge> : null}
-              </div>
-              <div className="mt-3 flex gap-2">
-                <Link href={`/announcements/${announcement.id}`}>
-                  <Button size="sm" variant="secondary">
-                    View
-                  </Button>
-                </Link>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() =>
-                    toggleBookmark({
-                      id: `b-${announcement.id}`,
-                      entityId: announcement.id,
-                      entityType: "announcement",
-                    })
-                  }
-                >
-                  {saved ? "Unsave" : "Save"}
-                </Button>
-              </div>
-            </Card>
-          );
-        })}
+      {appConfig.dataSource === "demo" ? (
+        <p className="text-xs text-muted-foreground">
+          Fictional demo updates, not official university announcements.
+          Generated category covers are not photographs of these updates.
+        </p>
+      ) : null}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_200px_auto]">
+        <SearchInput
+          value={query}
+          onChange={(v) => {
+            setQuery(v);
+            setPage(1);
+          }}
+          placeholder="Search announcements"
+        />
+        <Select
+          aria-label="Announcement category"
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value);
+            setPage(1);
+          }}
+        >
+          <option value="all">All categories</option>
+          <option value="src">SRC</option>
+          <option value="campus">Campus</option>
+          <option value="club">Clubs</option>
+        </Select>
+        <SegmentedControl
+          label="Announcement view"
+          value={view}
+          onValueChange={(v) => {
+            setView(v);
+            setPage(1);
+          }}
+          options={[
+            { value: "all", label: "All updates" },
+            { value: "saved", label: "Saved" },
+          ]}
+        />
       </div>
+      <SourceFeedback
+        count={feed.items.length}
+        total={feed.total}
+        error={feed.failure || feed.error}
+        more={feed.hasMore}
+        busy={feed.busy}
+        retry={() => void feed.retry()}
+        load={() => void feed.load(true)}
+      />
+      {activity.error ? (
+        <div role="alert">
+          <p>{activity.error}</p>
+          <Button onClick={activity.refresh}>Retry private activity</Button>
+        </div>
+      ) : null}
+      {activity.notice ? (
+        <p role="status" className="text-sm text-muted-foreground">
+          {activity.notice}
+        </p>
+      ) : null}
+      {view === "saved" && activity.loading ? (
+        <p role="status">Loading your saved updates…</p>
+      ) : items.length ? (
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {items.slice((current - 1) * 6, current * 6).map((item) => (
+            <AnnouncementCard key={item.id} item={item} activity={activity} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          title={
+            view === "saved" && !activity.ready
+              ? "Sign in to collect useful updates"
+              : feed.error
+                ? "Updates need another moment"
+                : "No updates in this view"
+          }
+          description="Search and Saved apply to loaded updates. Change the filters or retry an unavailable source."
+        />
+      )}
+      <Pagination page={current} totalPages={pages} onPageChange={setPage} />
     </div>
   );
 }

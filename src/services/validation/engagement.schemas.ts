@@ -4,6 +4,8 @@ import { clubDetailsSchema, clubImageSourceSchema } from "./club.schema";
 import { z } from "zod";
 const text = z.string();
 const date = z.iso.date();
+const bounded = z.string().trim().min(1).max(240);
+const safeId = z.string().regex(/^[a-zA-Z0-9_-]{1,100}$/);
 export const engagementSchemas = {
   clubs: z.object({
     id: text,
@@ -25,25 +27,30 @@ export const engagementSchemas = {
     summary: text,
   }),
   announcements: z.object({
-    id: text,
-    title: text,
-    content: text,
+    id: safeId,
+    title: bounded,
+    content: z.string().max(8000),
     category: z.enum(["src", "campus", "club"]),
     pinned: z.boolean(),
-    publishedAt: text,
+    publishedAt: date,
   }),
-  representatives: z.object({ id: text, name: text, role: text, responsibility: text }),
+  representatives: z.object({
+    id: safeId,
+    name: bounded,
+    role: bounded,
+    responsibility: z.string().max(2000),
+  }),
   projects: z.object({
-    id: text,
-    title: text,
+    id: safeId,
+    title: bounded,
     status: z.enum(["planning", "active", "in-progress", "completed"]),
-    summary: text,
+    summary: z.string().max(2000),
   }),
   campaigns: z.object({
-    id: text,
-    title: text,
-    advertiser: text,
-    placement: text,
+    id: safeId,
+    title: bounded,
+    advertiser: bounded,
+    placement: bounded,
     status: z.enum(["draft", "active", "scheduled"]),
     startDate: date,
     endDate: date,

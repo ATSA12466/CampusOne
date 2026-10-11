@@ -17,7 +17,9 @@ export function SrcRepresentativesPanel({
           >
             <p className="font-medium text-foreground">{representative.name}</p>
             <p className="text-muted-foreground">{representative.role}</p>
-            <p className="mt-1 text-muted-foreground">{representative.responsibility}</p>
+            <p className="mt-1 text-muted-foreground">
+              {representative.responsibility}
+            </p>
           </li>
         ))}
       </ul>

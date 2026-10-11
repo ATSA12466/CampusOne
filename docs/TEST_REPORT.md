@@ -1,5 +1,9 @@
 # CampusOne test report
 
+## Phase 6M — secondary campus screens
+
+**206 native tests**, clean lint/typecheck/build and **64 production AA/layout/44px captures** pass. All eight secondary directory/detail layouts run at 360/768/1280 light/dark; source-safe announcement saves/SRC requests reload correctly and actual licensed audio/video playback is deferred until intent. Each mobile/desktop light/dark screen was visually reviewed. No runtime package added. Backend contracts use native mocks, not deployment proof. [Phase 6M](PHASE6M_SECONDARY.md) records scope and boundaries. All scheduled Phase 6 frontend domains are migrated; polish and final verification continue. A fresh default-renderer Home pre-polish diagnostic measured **67 Performance /100 Accessibility**, so the performance gate is explicitly still open.
+
 ## Phase 6L — Tasks and Study tools
 
 **198 native tests**, lint/typecheck/build and **42 production AA/layout/44px captures** pass. Private task CRUD/completion/edit/reload/deletion, real full-day Accra overdue semantics, study availability/time/duration/breaks/focus/manual context, owner-qualified save/delete and actual timed ICS bytes are verified. All mobile/desktop light/dark layouts reviewed; squeezed mobile task cards were fixed and rechecked. Deterministic planning is explicitly **not AI**; free text is context, not inferred scheduling. Native API tests are controlled fixtures, not deployed backend/security evidence. See [Phase 6L](PHASE6L_STUDY_TOOLS.md). Secondary screens, polish and fresh final route/performance verification continue automatically.
