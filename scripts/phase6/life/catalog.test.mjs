@@ -111,3 +111,25 @@ test("12 lost/found reports keep original records, validated states and board-on
     ),
   );
 });
+
+test("12 academic resources retain original IDs/course/download metadata without inventing actual file delivery", async () => {
+  const page = await demoCatalog.list("resources", { pageSize: 30 });
+  assert.equal(page.total, 12);
+  for (const item of page.items)
+    assert.equal(entitySchemas.resources.safeParse(item).success, true);
+  assert.equal(
+    page.items.find((i) => i.id === "r1").url,
+    "https://example.com/resources/agile-notes.pdf",
+  );
+  assert.equal(page.items.find((i) => i.id === "r2").downloadable, false);
+});
+test("GPA weights actual credits and gives no result for an empty term", async () => {
+  const { weightedGpa } = await import("../../../src/lib/academics/gpa.ts");
+  assert.deepEqual(weightedGpa([]), { credits: 0, quality: 0, gpa: null });
+  const rows = [
+    { credits: 3, points: 4 },
+    { credits: 1, points: 2 },
+  ];
+  assert.deepEqual(weightedGpa(rows), { credits: 4, quality: 14, gpa: 3.5 });
+  assert.equal(weightedGpa([{ credits: 4, points: 0 }]).gpa, 0);
+});

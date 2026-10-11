@@ -1,3 +1,4 @@
+import { extraResources, resourceDetails } from "./resource-catalog";
 import type { Course, LearningResource } from "@/types";
 
 export const courses: Course[] = [
@@ -9,6 +10,7 @@ export const courses: Course[] = [
 export const resources: LearningResource[] = [
   {
     id: "r1",
+    details: resourceDetails("Agile sprint planning notes"),
     title: "Agile sprint planning notes",
     course: "ITT 341",
     category: "pdf",
@@ -19,6 +21,7 @@ export const resources: LearningResource[] = [
   },
   {
     id: "r2",
+    details: resourceDetails("Normalization walkthrough"),
     title: "Normalization walkthrough",
     course: "ITT 315",
     category: "video",
@@ -28,6 +31,7 @@ export const resources: LearningResource[] = [
   },
   {
     id: "r3",
+    details: resourceDetails("OSI model quick slides"),
     title: "OSI model quick slides",
     course: "ITT 351",
     category: "slides",
@@ -36,4 +40,5 @@ export const resources: LearningResource[] = [
     downloadable: true,
     url: "https://example.com/resources/osi-slides.pptx",
   },
+  ...extraResources,
 ];

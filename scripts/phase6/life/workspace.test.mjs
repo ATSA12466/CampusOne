@@ -180,3 +180,53 @@ test("photo records require bounded owned data, meaningful locations and source-
   await service.remove("marketPosts", item.id);
   assert.deepEqual(await service.list("marketPosts"), []);
 });
+
+test("private grade and note schemas bound fields and retain owner-qualified documents", async () => {
+  const { gradeInputSchema, noteInputSchema } = await import(
+    "../../../src/services/validation/workspace.schema.ts"
+  );
+  assert.equal(
+    gradeInputSchema.safeParse({
+      course: "ITT 341",
+      term: "Semester 1",
+      credits: 0,
+      points: 4,
+    }).success,
+    false,
+  );
+  assert.equal(
+    gradeInputSchema.safeParse({
+      course: "ITT 341",
+      term: "Semester 1",
+      credits: 3,
+      points: 5,
+    }).success,
+    false,
+  );
+  assert.equal(
+    noteInputSchema.safeParse({ course: "IT", title: "Title", body: "short" })
+      .success,
+    false,
+  );
+  session();
+  const service = createWorkspaceService();
+  await service.put("grades", {
+    id: "g1",
+    course: "ITT 341",
+    term: "Semester 1",
+    credits: 3,
+    points: 4,
+  });
+  assert.equal((await service.list("grades")).length, 1);
+  await service.put("notes", {
+    id: "note-1",
+    course: "ITT 341",
+    title: "Revision checklist",
+    body: "A useful private revision checklist.",
+    createdAt: "2026-10-11T12:00:00Z",
+  });
+  assert.equal(
+    (await service.list("notes"))[0].body,
+    "A useful private revision checklist.",
+  );
+});

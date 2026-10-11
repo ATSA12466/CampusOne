@@ -1,14 +1,22 @@
+import { listingDetailsSchema } from "./listing.schema";
 import { z } from "zod";
-import type { CollectionMap, CollectionName, Page } from "@/types/service-contracts";
+import type {
+  CollectionMap,
+  CollectionName,
+  Page,
+} from "@/types/service-contracts";
 import { featuredSchema } from "./home.schema";
 import { engagementSchemas } from "./engagement.schemas";
 import { lifeSchemas } from "./life.schemas";
 const text = z.string();
-export const entitySchemas: { [K in CollectionName]: z.ZodType<CollectionMap[K]> } = {
+export const entitySchemas: {
+  [K in CollectionName]: z.ZodType<CollectionMap[K]>;
+} = {
   featured: featuredSchema,
   ...engagementSchemas,
   ...lifeSchemas,
   resources: z.object({
+    details: listingDetailsSchema.optional(),
     id: text,
     title: text,
     course: text,
@@ -27,7 +35,12 @@ export const entitySchemas: { [K in CollectionName]: z.ZodType<CollectionMap[K]>
     likes: z.number().nonnegative(),
     comments: z.number().nonnegative(),
   }),
-  conversations: z.object({ id: text, name: text, lastMessage: text, updatedAt: text }),
+  conversations: z.object({
+    id: text,
+    name: text,
+    lastMessage: text,
+    updatedAt: text,
+  }),
   notifications: z.object({
     id: text,
     title: text,
@@ -36,7 +49,14 @@ export const entitySchemas: { [K in CollectionName]: z.ZodType<CollectionMap[K]>
     read: z.boolean(),
     category: z.enum(["tasks", "events", "clubs", "announcement"]),
   }),
-  timetable: z.object({ id: text, day: text, course: text, start: text, end: text, venue: text }),
+  timetable: z.object({
+    id: text,
+    day: text,
+    course: text,
+    start: text,
+    end: text,
+    venue: text,
+  }),
 };
 export function pageSchema<T>(entity: z.ZodType<T>): z.ZodType<Page<T>> {
   return z
@@ -46,5 +66,8 @@ export function pageSchema<T>(entity: z.ZodType<T>): z.ZodType<Page<T>> {
       page: z.number().int().min(1),
       pageSize: z.number().int().min(1).max(30),
     })
-    .transform((page) => ({ ...page, hasMore: page.page * page.pageSize < page.total }));
+    .transform((page) => ({
+      ...page,
+      hasMore: page.page * page.pageSize < page.total,
+    }));
 }

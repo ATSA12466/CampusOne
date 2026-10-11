@@ -59,10 +59,13 @@ test("case/diacritic/space-aware query searches descriptions, venues, courses an
       now,
     ).items.some((i) => i.id === "e1"),
   );
-  assert.equal(
-    discoverDirectory(sections, { ...filter, query: "ITT 315" }, [], now)
-      .items[0].id,
-    "r2",
+  assert.ok(
+    discoverDirectory(
+      sections,
+      { ...filter, query: "ITT 315" },
+      [],
+      now,
+    ).items.some((item) => item.id === "r2"),
   );
   assert.equal(
     discoverDirectory(

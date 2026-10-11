@@ -39,9 +39,28 @@ export const photoRecordSchema = photoRecordInputSchema.extend({
   createdAt: z.iso.datetime(),
   status: z.enum(["open", "closed"]),
 });
+export const noteInputSchema = z.object({
+  course: z.string().trim().min(2).max(80),
+  title: z.string().trim().min(3).max(120),
+  body: z.string().trim().min(10).max(10000),
+});
+export const gradeInputSchema = z.object({
+  course: z.string().trim().min(2).max(80),
+  term: z.string().trim().min(2).max(80),
+  credits: z.coerce.number().int().min(1).max(40),
+  points: z.preprocess(
+    (value) => (typeof value === "string" && !value.trim() ? NaN : value),
+    z.coerce.number().min(0).max(4),
+  ),
+});
 export const workspaceSchemas: {
   [K in keyof WorkspaceMap]: z.ZodType<WorkspaceMap[K]>;
 } = {
+  notes: noteInputSchema.extend({
+    id: recordIdSchema,
+    createdAt: z.iso.datetime(),
+  }),
+  grades: gradeInputSchema.extend({ id: recordIdSchema }),
   marketPosts: photoRecordSchema,
   reports: photoRecordSchema,
   enquiries: z.object({

@@ -1,7 +1,10 @@
+import type { StudyNote, GradeEntry } from "./academic-tools";
 import type { PhotoRecord } from "./photo-records";
 import type { ListingEnquiry } from "./listings";
 import type { ServiceOptions } from "./service-contracts";
 export interface WorkspaceMap {
+  notes: StudyNote;
+  grades: GradeEntry;
   marketPosts: PhotoRecord;
   reports: PhotoRecord;
   enquiries: ListingEnquiry;

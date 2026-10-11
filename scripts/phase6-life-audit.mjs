@@ -83,12 +83,28 @@ try {
         await page
           .getByRole("button", { name: "Remove from saved", exact: true })
           .waitFor();
+        await page.waitForFunction(() => {
+          const button = [...document.querySelectorAll("button")].find(
+            (b) => b.textContent?.trim() === "Remove from saved",
+          );
+          return button && !button.disabled;
+        });
         await visit(page, base, root + "?view=saved");
+        await page.waitForFunction(
+          () =>
+            document.querySelectorAll("article[data-discover-key]").length ===
+            1,
+        );
         assert.equal(
           await page.locator("article[data-discover-key]").count(),
           1,
         );
         await page.reload({ waitUntil: "networkidle" });
+        await page.waitForFunction(
+          () =>
+            document.querySelectorAll("article[data-discover-key]").length ===
+            1,
+        );
         assert.equal(
           await page.locator("article[data-discover-key]").count(),
           1,
