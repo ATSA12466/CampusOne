@@ -1,8 +1,8 @@
 # CampusOne design system
 
-Phase 2 · 10 October 2026 · Package: `campusone-web` · Product: **CampusOne**
+Foundation Phase 2, extended through Phase 5 · 11 October 2026 · Package: `campusone-web` · Product: **CampusOne**
 
-A photo-centered, campus-magazine foundation for GCTU student life: editorial character without making everyday work harder. This is a frontend prototype, not an official campus service. The full shell, Home, auth and feature redesigns follow in the agreed phase order.
+A photo-centered, campus-magazine foundation for GCTU student life: editorial character without making everyday work harder. This is a frontend prototype, not an official campus service. The grouped shell, magazine Home and photo-led auth/onboarding are implemented; domain redesigns follow in the agreed phase order.
 
 ## 1. Principles and source of truth
 
@@ -359,3 +359,15 @@ The header appearance control opens its intent-loaded dropdown on the first clic
 A native browser may reserve Escape for its video-control shadow UI. Keyboard users can reach the application Close button; Escape from dialog-owned controls closes the preview and restores the launch button. Fullscreen/OS-native media behavior and device-specific playback still need manual cross-browser validation.
 
 See [Phase 4 Home](PHASE4_HOME.md) and the [test report](TEST_REPORT.md) for selection, data, visual checks and measured performance limits.
+
+## Phase 5 photo-led forms and introduction
+
+`AuthLayout`/`PhotoStory` reuse Manrope/Fraunces, semantic surfaces, brand actions, a dark media scrim and the real pending-logo slot. Existing generated `campusLife`, `studyCorner`, `clubsHero` and `innovationNight` registry stories are explicitly illustrative, never institutional evidence. No palette copy, component hex, new font/animation/image dependency or fabricated SRC mark was introduced.
+
+At desktop the reserved photo frame sits beside readable fields; at narrow widths it precedes the form. Absolute full-size/aspect-auto image utilities and inherited content minimum height keep the photo and editorial copy together; native geometry assertions accompany screenshot review because overflow checks alone missed an early stacking defect. Five intro steps expose textual/visual progress, sensible Back/Continue/Skip actions and optional profile setup without pretending to verify enrollment.
+
+Required fields have associated Zod/RHF errors and first-error focus. Password reveal/hide has an accessible changing action name. Pending actions disable duplicate submission and expose cancellation/status; failures retain inputs with resubmit or reconnect/save/reload guidance. Roles are a labelled local demo switch, absent in API mode. Recovery explicitly distinguishes no-email preview from request acceptance.
+
+Portrait choices are labelled keyboard radio controls. The optional local photo editor is intent-loaded, trapped/named, Escape-closeable with return focus, and shares the foundation crop/compression/error primitives. Cancellation ignores late code delivery; failed code has truthful reload recovery. Output is an ephemeral visit avatar, not a server upload or durable attachment; files/blob/data URLs are not persisted.
+
+Light/dark/system and reduced motion stay semantic. The production auth suite records **105 WCAG A/AA + 2.1 AA captures** with zero overflow/sub-44px flags at 360/768/1280; manual 360/1280 light/dark sheets and individual editor/story checks cover composition. All 222 preserved route variants / 74 route AA analyses also pass. See [Phase 5](PHASE5_AUTH_ONBOARDING.md) for privacy/API boundaries and [test report](TEST_REPORT.md) for honest performance/backend/device caveats.

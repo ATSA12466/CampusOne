@@ -14,6 +14,8 @@ interface AppState {
   registrations: string[];
   notifications: NotificationItem[];
   srcRequests: StudentRequest[];
+  clearAccount: () => void;
+  resetDemo: () => void;
   addTask: (task: Omit<TaskItem, "id" | "completed">) => void;
   toggleTask: (id: string) => void;
   removeTask: (id: string) => void;
@@ -35,6 +37,16 @@ export const useAppStore = create<AppState>()(
       registrations: [],
       notifications: seed.notifications,
       srcRequests: seed.srcRequests,
+      clearAccount: () =>
+        set({
+          tasks: [],
+          bookmarks: [],
+          memberships: [],
+          registrations: [],
+          notifications: [],
+          srcRequests: [],
+        }),
+      resetDemo: () => set({ ...demoAppStateService.initial(), bookmarks: [], registrations: [] }),
       addTask: (task) =>
         set((state) => ({
           tasks: [...state.tasks, { ...task, id: crypto.randomUUID(), completed: false }],

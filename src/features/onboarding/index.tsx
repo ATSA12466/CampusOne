@@ -1,89 +1,118 @@
 "use client";
-
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui";
-import { useOnboardingStore } from "@/stores/onboarding-store";
-import { onboardingSteps } from "./data/onboarding-steps";
-import { StepCard } from "./components/step-card";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/shared/brand-mark";
-import { ThemeSwitcher } from "@/components/theme/theme-switcher";
-
-export function OnboardingExperience() {
-  const router = useRouter();
-  const completeOnboarding = useOnboardingStore((state) => state.completeOnboarding);
-  const [index, setIndex] = useState(0);
-
+import { AppearanceTrigger } from "@/components/theme/appearance-trigger";
+import { useOnboardingStore } from "@/stores/onboarding-store";
+import { onboardingSteps } from "@/config/onboarding";
+import { PhotoStory } from "@/features/auth/components/photo-story";
+import { StorageNotice } from "@/features/auth/components/storage-notice";
+import { IntroHighlights } from "./components/intro-highlights";
+import { ProfileSetup } from "./components/profile-setup";
+export function OnboardingExperience({ next = "/home" }: { next?: string }) {
+  const router = useRouter(),
+    index = useOnboardingStore((state) => state.step),
+    hydrated = useOnboardingStore((state) => state.hydrated);
+  const heading = useRef<HTMLHeadingElement | null>(null),
+    previous = useRef(index);
   const step = onboardingSteps[index];
-  const progress = useMemo(() => ((index + 1) / onboardingSteps.length) * 100, [index]);
-
+  useEffect(() => {
+    if (previous.current !== index) {
+      heading.current?.focus({ preventScroll: true });
+      previous.current = index;
+    }
+  }, [index]);
   const finish = () => {
-    completeOnboarding();
-    router.push("/home");
+    useOnboardingStore.getState().completeOnboarding();
+    router.replace(next);
   };
-
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 md:py-14">
-      <div className="mb-6 flex items-center justify-between">
-        <BrandMark />
-        <ThemeSwitcher compact />
-      </div>
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">CampusOne onboarding</h1>
-          <p className="text-sm text-muted-foreground">
-            Step {index + 1} of {onboardingSteps.length}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => router.push("/sign-in")}>
+    <main className="auth-page">
+      <header className="auth-page-header">
+        <BrandMark size="sm" />
+        <div className="flex items-center gap-1">
+          <Link
+            prefetch={false}
+            href={`/sign-in?next=${encodeURIComponent(next)}`}
+            className="inline-flex min-h-11 items-center rounded-control px-3 text-sm font-semibold text-brand"
+          >
             Sign in
-          </Button>
-          <Button variant="ghost" onClick={finish}>
-            Skip introduction
-          </Button>
+          </Link>
+          <AppearanceTrigger />
         </div>
       </header>
-
-      <div
-        role="progressbar"
-        aria-label="Onboarding progress"
-        aria-valuenow={index + 1}
-        aria-valuemin={0}
-        aria-valuemax={onboardingSteps.length}
-        className="mb-5 h-2 overflow-hidden rounded-full bg-surface-inset"
-      >
-        <div
-          className="h-full rounded-full bg-[var(--color-royal-blue)] transition-all"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-
-      <StepCard
-        title={step.title}
-        description={step.description}
-        accent={step.accent}
-        Icon={step.icon}
-      />
-
-      <div className="mt-6 flex items-center justify-between">
-        <Button
-          variant="secondary"
-          onClick={() => setIndex((value) => Math.max(0, value - 1))}
-          disabled={index === 0}
-        >
-          Back
-        </Button>
-        {index === onboardingSteps.length - 1 ? (
-          <Button onClick={finish}>Finish and continue</Button>
-        ) : (
-          <Button
-            onClick={() => setIndex((value) => Math.min(onboardingSteps.length - 1, value + 1))}
+      <div className="auth-page-grid">
+        <PhotoStory {...step} />
+        <section className="auth-form-panel" aria-labelledby="onboarding-title">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <span className="auth-eyebrow">FIVE SMALL STEPS · YOUR CAMPUS</span>
+            <Button variant="ghost" size="sm" onClick={finish} disabled={!hydrated}>
+              Skip introduction
+            </Button>
+          </div>
+          <h1 id="onboarding-title" className="text-title font-semibold">
+            Welcome to CampusOne.
+          </h1>
+          <div className="mt-5 mb-6">
+            <div
+              role="progressbar"
+              aria-label="Onboarding progress"
+              aria-valuemin={0}
+              aria-valuemax={5}
+              aria-valuenow={index + 1}
+              aria-valuetext={`Step ${index + 1} of 5`}
+              className="onboarding-steps"
+            >
+              {onboardingSteps.map((_step, part) => (
+                <span key={part} aria-hidden="true" data-active={part <= index} />
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Step {index + 1} of 5 · Progress stays on this browser.
+            </p>
+          </div>
+          <StorageNotice />
+          <h2
+            ref={heading}
+            tabIndex={-1}
+            className="mb-3 rounded-control font-display text-2xl font-semibold outline-none focus-visible:outline-solid"
+            aria-live="polite"
           >
-            Continue
-          </Button>
-        )}
+            {step.title}
+          </h2>
+          <p className="mb-6 text-sm text-muted-foreground">{step.description}</p>
+          {index === 4 ? (
+            <ProfileSetup next={next} onBack={() => useOnboardingStore.getState().setStep(3)} />
+          ) : (
+            <>
+              <IntroHighlights step={index} />
+              <div className="mt-7 flex justify-between gap-3">
+                <Button
+                  variant="secondary"
+                  disabled={index === 0 || !hydrated}
+                  onClick={() => useOnboardingStore.getState().setStep(index - 1)}
+                >
+                  Back
+                </Button>
+                <Button
+                  disabled={!hydrated}
+                  onClick={() => useOnboardingStore.getState().setStep(index + 1)}
+                >
+                  Continue
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </Button>
+              </div>
+            </>
+          )}
+          <p className="mt-7 border-t border-border pt-4 text-[11px] text-muted-foreground">
+            A local demo, never an official GCTU service. No university password is needed to
+            explore.
+          </p>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

@@ -22,6 +22,7 @@ export function ShellHeader({
   onSearch: MouseEventHandler<HTMLButtonElement>;
 }) {
   const user = useAuthStore((state) => state.user);
+  const localPhoto = useAuthStore((state) => state.photo);
   const unread = useAppStore((state) => state.notifications.filter((item) => !item.read).length);
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-surface">
@@ -99,7 +100,7 @@ export function ShellHeader({
           >
             <Avatar
               name={user?.name ?? "Guest"}
-              image={user?.avatar ? imageForSrc(user.avatar) : undefined}
+              image={localPhoto ?? (user?.avatar ? imageForSrc(user.avatar) : undefined)}
               size="md"
             />
           </Link>

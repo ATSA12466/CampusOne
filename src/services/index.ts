@@ -1,4 +1,5 @@
 import { appConfig } from "@/config/app-config";
+import { authService } from "./auth/auth.service";
 import type { SearchPreviewMode, SearchService } from "@/types/search";
 import type { CatalogService } from "@/types/service-contracts";
 
@@ -70,3 +71,34 @@ export const homeFeedService: import("@/types/home").HomeFeedService = {
     return createHomeFeedService(campusService).snapshot(options);
   },
 };
+
+export { authService };
+export { onboardingService } from "./profile/onboarding.service";
+export { localPhotoService } from "./profile/local-photo.service";
+export function authPreviewService(
+  mode: import("@/types/auth").AuthPreview,
+): import("@/types/auth").AuthService {
+  let preview: Promise<import("@/types/auth").AuthService> | undefined;
+  const get = () =>
+    (preview ??= import("./demo/auth-preview.service").then(({ createAuthPreview }) =>
+      createAuthPreview(authService, mode),
+    ));
+  return {
+    source: appConfig.dataSource,
+    async signIn(input, options) {
+      return (await get()).signIn(input, options);
+    },
+    async register(input, options) {
+      return (await get()).register(input, options);
+    },
+    async requestReset(email, options) {
+      return (await get()).requestReset(email, options);
+    },
+    async session(options) {
+      return (await get()).session(options);
+    },
+    async signOut(options) {
+      return (await get()).signOut(options);
+    },
+  };
+}

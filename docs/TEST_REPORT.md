@@ -1,5 +1,74 @@
 # CampusOne test report
 
+## Phase 5 — photo-led auth and onboarding (11 October 2026)
+
+**Frontend milestone implemented and verified.** Local registration now uses submitted identity, first visit reliably reaches the five-step introduction, profile drafts/progress return safely, optional crop/avatar preparation is visit-only, and sign-out isolates private demo data across tabs. This is not secure real authentication or a claim that later domain redesigns are complete. The default-renderer Home Performance ≥90 gate remains open.
+
+### Source, build, security and native checks
+
+| Check | Result |
+| --- | --- |
+| `npm run lint` / `npm run typecheck` | Passed; strict TS, no `any` or UI dataset imports introduced |
+| `npm run build` | Passed; Next **16.4.0**, final cached compile 0.97s / TS 3.2s / 32 generated pages; auth/intro use validated per-request options |
+| Native foundation / shell / Home / auth | **15 + 12 + 18 + 23 = 68 passed**, zero failed |
+| Dependencies | Upgraded existing Next/eslint-config-next 16.4.0 and PostCSS 8.5.29; no new direct runtime library |
+| `npm audit --omit=dev` | **0 vulnerabilities** |
+| Full `npm audit` | **9: 0 critical, 5 high, 4 moderate**, in the development toolchain; not concealed or “fixed” by a forced framework downgrade |
+| URLs / theme / SRC / assets | Preserved; semantic light/dark/system, licensed font pairing and centralized existing generated imagery; official artwork still pending |
+
+The 23 auth native tests exercise normalized email/Unicode name/password/confirmation/preview acknowledgment boundaries; preferences, roles/profile/storage migrations and secret/blob/data-field omission; safe student-only return paths including malformed/double-encoded/external/auth-loop rejection; memory fallback; submitted demo registration ID/name; reset/cancellation/failure/retry; cloned role-preserving personalization; mocked API credentials/no-store/port-4000/role omission, validated sessions/401/invalid/offline/HTTP/reset/logout outcomes; actual store private clearing, executive preservation, remember/API persistence; and returning local sign-in versus new same-email registration identity.
+
+Generated Next declarations were inspected: the 16.4 build adds the generated root-params type reference, not a committed `.next` artifact. Source/profile modules remain small; the interest picker was separated from profile setup. Secrets, `.env*`, dependencies, screenshots/build/caches stay out of Git.
+
+### Production auth browser and visual verification
+
+`scripts/phase5-audit.mjs` passes all **forms / tour / photo / session / states / delivery** groups against the latest production build (3001), with explicit development-only failures/slow fixtures on 3000. Final evidence is ignored under `.cache/phase5/latest/`; source runners and this report are versioned.
+
+- **105 AA/layout/44px captures:** 36 form/validation/recovery, 36 intro/profile, 24 photo dialog/error/crop/prepared states, 6 feedback/storage states and 3 delivery/no-hydration states. Each capture has zero WCAG 2 A/AA + 2.1 AA violations, root/visible overflow or sub-44px target flags; normal browser cases have no page exceptions.
+- **360/768/1280 × light/dark:** password reveal/hide, correct invalid-field focus, safe `/clubs` return, recovery explicitly saying no email, actual Esi Owusu registration identity, mismatch rejection, optional skip returning to `/profile`, no stored password/blob. Required-field test locators account for visible required stars; path-based URL predicates avoid falsely matching a `next=/clubs` query before navigation.
+- **All five steps/six combinations:** origin return, Back/Continue/skip, heading focus, reload/resume, valid draft retention, actual name/programme/level/interests/portrait personalization, finish and Settings replay. Programme options remain illustrative and interests are not recommendation inputs.
+- **Photo/six combinations:** named trap/Escape/return focus, invalid MIME rejection, real native crop/compression, selected local blob avatar through client navigation, omission from storage, disappearance on reload. This is not a server upload. Foundation separately checks pixel bounds, output encoding/metadata and object-URL cleanup.
+- **Session/executive:** role switch preserves the seeded pending request and bookmark; approval survives reload. A second management tab loses elevated responsibilities on logout; user/role, six private arrays, preferences and photo clear. Guest survives reload, remember-disabled identity is not persisted, anonymous reload clears its activity, and external storage clearing signs out the other demo tab. API cookie revocation/cross-tab security remains unverified.
+- **Feedback/storage:** each form's development fail-once path retains inputs and resubmission recovers. A 3500ms request disables duplicate submission and cancels without a session mutation. Denied storage still completes/skips the intro with a memory-only notice. Corrupt auth JSON clears the account with recovery guidance; an automatic guest cleanup initially erased that guidance and was corrected. Production ignores fixture queries and unsafe destinations.
+- **Delivery:** photo-editor code absent before intent; Escape cancels held code and late delivery does not open a dialog. Persistent editor chunk failure has explicit reload guidance and real recovery. Sign-in's photo remains SSR-visible with hydration blocked.
+- Manual **360/1280 light/dark** visual review covers the three auth forms, five intro screens and editor/crop states through four current overview sheets, plus individual story/editor inspection. Tablet geometry/AA checks run too. Full-page screenshots of fixed overlays can include content outside the shielded viewport; this is screenshot composition, not an uncovered active dialog.
+- Initial width/axe checks missed a real photo-above-copy stacking defect. Absolute/full-frame media utilities and inherited story-content min-height fix it; native image/copy-bound assertions cover all six normal form layouts. No axe rule or target requirement was disabled to make it pass.
+
+### Shared regression and original gaps
+
+- **222 production route cases:** 37 preserved routes/guard/not-found paths × three widths × two themes, expected HTTP/title/rendering with no page exceptions. **74 route AA analyses**, zero violations/overflow/tap flags. All 37 screens were visually reviewed at 360/1280 light/dark through eight current-build overview sheets, with the separate auth/editor review and 768 checks. Seven invalid details still render shared not-found with streamed HTTP 200; root redirects to Home and production `/design` is strict 404.
+- **Foundation:** six development showcase layouts/sections, focus/dialog/sheet/gallery/swipe/menu/toast/tabs, native uploader validation/retry/crop/metadata cleanup, reduced motion, light/dark/system/reload/cross-tab/private theme, Manrope GH₵ glyph and dark prepaint without hydration pass. Publishing's detail context now seeds completed intro; otherwise the correctly working first-visit guard measures onboarding, not the requested accommodation detail.
+- **Shell/search:** all six main layouts and completed delivery/sidebar/search-state groups pass, retaining **31 captures**, Ctrl/Cmd keyboard navigation/scope/clear/empty, trap/return, deferred code/cancel, one-overlay switching, failed-code recovery and compact prepaint/reload/cross-tab/private storage. Next 16.4 retries failed chunks; the failure fixture now blocks consistently until explicit reload instead of aborting only one request and mistaking runtime recovery for a missing error.
+- **Home:** all five Home/media/states/clock/delivery groups were rerun during this phase, retaining 38 AA captures; actual manual video playback/retry, active/no-active placements, tasks/undo, portal attributes, real clock boundaries, storage and lazy-code states remain functional.
+- **Preserved workflows:** all 12 positive task/onboarding/menu/RSVP/club approval/bookmark/notification/SRC flags pass with no page exceptions. **First visit `/onboarding` and sign-out user=null / role=student / bookmarks=0 are now explicitly asserted**, closing those Phase 1 gaps. Default seeded memberships still leave no fresh join for Ama; the workflow fixture clears only that seed before creating an actual request.
+- Port-4000 controlled proxy/cookie fixture passes; missing-DB `/api/health` stays honest **503 / `{ "ok": false }`**. This does not test a live backend.
+- Domain gaps remain: community and lost/found submissions are visit-only; lost/found lacks required photo; study constraints are not honored; richer photo feeds/details/12–30-item catalogs and calendar/ICS/GPA/profile depth remain Phase 6. These are not hidden behind auth completion.
+
+### Production Home Lighthouse — current, renderer and scenario disclosed
+
+Lighthouse **13.5.0**, Chromium **153.0.8010.0**, 360×800 / DPR 1, standard simulated mobile RTT **150ms**, throughput **1638.4kbps**, CPU slowdown **4×**. Sequential fresh browsers, dev stopped, zero audit errors; no route/feature/asset or throttle was removed.
+
+The now-correct first-visit guard changes the measurement setup: each browser completes the **actual tour UI**, waits for Home, clears HTTP cache, retains only the local profile/tour preferences, then measures returning Home with `disableStorageReset`. The runner asserts final `/home`; it never publishes an onboarding score as a Home score. This is a returning-visitor HTTP-cache-cleared scenario, not a claim of a never-before-run JS engine or a live authenticated backend.
+
+| Run (UTC, 11 Oct) | Renderer | Performance | Accessibility | FCP | LCP | TBT | CLS |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 07:48:45 | Default SwiftShader | 83 | 100 | 0.9s | 3.3s | 411ms | 0 |
+| 07:49:21 | Explicit CPU raster | 95 | 100 | 0.9s | 2.8s | 115ms | 0 |
+| 07:49:35 | Default SwiftShader | 82 | 100 | 0.9s | 3.3s | 422ms | 0 |
+| 07:49:50 | Explicit CPU raster | 94 | 100 | 0.9s | 2.8s | 166ms | 0 |
+| 07:50:05 | Default SwiftShader | 75 | 100 | 1.0s | 3.3s | 705ms | 0 |
+| 07:50:20 | Explicit CPU raster | 94 | 100 | 0.9s | 2.8s | 147ms | 0 |
+
+**Medians:** default **82 Performance**, LCP **3.3s**, TBT **422ms**; CPU raster **94**, LCP **2.8s**, TBT **147ms**. Accessibility **100** and CLS **0** throughout. The diagnostic removes ANGLE/SwiftShader flags and adds `--disable-gpu`; app/throttling/scenario stay the same. Default/real-device Performance ≥90 is still open; the diagnostic result is not substituted for it.
+
+Initial transfer in this returning-Home scenario is approximately **325,887B**, with **12 scripts / 191,345B**. Framework/build and tour-retention harness differ from Phase 4's fresh-storage measurements, so no isolated auth/refactor or byte-reduction causal claim is made. Historical scores remain below with their original setup.
+
+### Reproduction and remaining verification
+
+Run native lint/typecheck/build and `test:foundation`, `test:shell`, `test:home`, `test:auth`; install the isolated pinned browser tooling documented in README. Start development 3000 and production 3001. Run `phase5-audit.mjs`, existing `phase2/3/4` runners, `design-audit.mjs` and the controlled proxy fixture. For Lighthouse stop dev, set `AUDIT_BASE_URL=http://127.0.0.1:3001` and a unique ignored output directory; run default and `AUDIT_RENDERER=software` sequentially three times each. The updated runner handles the intro and asserts Home.
+
+Native/API tests use mocked fetch; no real sessions, authorization, CSRF/reset-mail/backend uploads/DB or MFA/verification are certified. Safari/Firefox/physical-device, screen-reader/IME/native fullscreen checks remain open. Nine development advisories remain. The optional local avatar is not durable media storage. See [Phase 5 contracts/privacy/replacement](PHASE5_AUTH_ONBOARDING.md), [API guide](API_INTEGRATION_GUIDE.md) and [design system](DESIGN_SYSTEM.md).
+
 ## Phase 4 — magazine Home (11 October 2026)
 
 **Home implementation and functional checks passed. Performance is environment-conditional, not an unqualified completed gate:** the final three explicit CPU-raster Lighthouse runs score 92/91/91 (median **91**), but default sandbox SwiftShader runs score 60/63/63 (median **63**). Accessibility is **100** in all six. Default-renderer/real-device performance ≥90 remains open. No auth/domain redesign or real backend is claimed.

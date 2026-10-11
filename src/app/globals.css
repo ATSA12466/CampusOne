@@ -2,6 +2,7 @@
 @import "./styles/foundation.css";
 @import "./styles/shell.css";
 @import "./styles/home.css";
+@import "./styles/auth.css";
 
 :root,
 [data-theme="light"] {

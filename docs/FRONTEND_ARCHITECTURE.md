@@ -2,7 +2,7 @@
 
 ## Product and phase boundary
 
-CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Phase 3 adds the grouped/collapsible shell, mobile tabs + More and global search. Phase 4 adds the server-composed magazine Home with a bounded typed feed, actual deferred video and device-only planner. Later phases replace auth/feature experiences in the agreed order; this is not a finished live campus platform.
+CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Phase 3 adds the grouped/collapsible shell, mobile tabs + More and global search. Phase 4 adds the server-composed magazine Home with a bounded typed feed, actual deferred video and device-only planner. Phase 5 adds photo-led auth/onboarding, explicit hydration/sanitized persistence and a lazy proposed cookie-auth adapter. Later phases replace domain experiences in the agreed order; this is not a finished live campus platform.
 
 ## Directory map
 
@@ -31,10 +31,11 @@ src/
     home/                   # Concurrent bounded snapshot assembly
     demo/                   # Deterministic/read-only typed fixtures + compatibility
     api/                    # Validated requests and provisional backend adapter
-    auth/                   # Explicit local demo authentication
+    auth/                   # Lazy typed demo / proposed cookie API authentication
+    profile/                # Cloned local personalization + owned visit photo URL
     validation/             # Runtime entity/page/query schemas
   data/demo/                # Fixture storage; UI never imports it directly
-  stores/                   # Zustand auth/app demo state; small serializable data
+  stores/                   # Zustand source-aware auth/onboarding/app state; sanitized small data
   hooks/                    # Shell overlay and sidebar external-store hooks
   lib/media/                # Pure crop geometry + native canvas compression
   lib/search/               # Pure search normalization and ranking
@@ -81,9 +82,9 @@ The development `/design` navigation section supplies explicit error/partial/slo
 - Demo list results are cloned; search/category/sort/pagination/abort are predictable.
 - API response/query schemas validate the boundary. HTTP/offline/invalid-envelope/abort are distinct outcomes.
 - Legacy synchronous exports remain demo-only. API mode is **not** a promise that all old UI now uses a real server.
-- Mutations, auth, uploads, real-time/AI and authoritative academic data require actual backend contracts and future feature integration.
+- Auth now has a typed proposed cookie adapter; secure sessions/CSRF/permissions still need a real backend. Domain mutations, uploads, real-time/AI and authoritative academics require future integration.
 
-Small serializable local state is suitable for a labelled demo. Do not persist image files, blob URLs, private tokens or pretend client role changes are authorization. Legacy sign-out/persistence limitations remain documented in the test report/audit and are scheduled auth/feature work.
+Small serializable local state is suitable for a labelled demo. Do not persist image files, blob URLs, private tokens or pretend client role changes are authorization. Phase 5 closes the legacy first-visit and retained-role/private-activity sign-out gaps; other domain persistence limitations remain documented for Phase 6.
 
 ## Design and media boundaries
 
@@ -112,3 +113,17 @@ Native Node tests cover pure TypeScript geometry, contracts, adapters, theme/boo
 Use the installed Next/React/TypeScript/Tailwind/Zustand/RHF/Zod/Lucide/CVA stack. Before adding a dependency, justify its shipped bundle cost and why native/installed capabilities are insufficient. Keep modules small, strict and explicit; there is no need for `any`, a duplicate design palette, arbitrary photo hosts or direct UI fixture imports.
 
 See [design system](DESIGN_SYSTEM.md), [API integration guide](API_INTEGRATION_GUIDE.md), [audit](DESIGN_AUDIT.md) and [test report](TEST_REPORT.md) for contracts, observed limitations and the latest measured evidence.
+
+## Photo-led auth, intro and account isolation
+
+Dynamic auth/public pages validate a narrow student-only `next` destination before passing it to leaf forms. `AuthLayout` composes an SSR-visible `PhotoStory` and form content from centralized generated imagery; auth CSS is semantic and scoped. RHF/Zod handles normalized input, explicit preview acknowledgment, associated errors and invalid-field focus. `useAuthAction` owns duplicate protection, abort/sequence guards, cancellation and input-preserving code/service error feedback.
+
+`SessionBootstrap` explicitly hydrates auth/intro state before the first-visit guard. Demo default missing storage preserves Ama for compatibility; explicit stored-null/logout remains guest. API mode ignores persisted identity/role and reads only the cookie session endpoint; failures clear private local state and never create demo fallback. The intro guard is not an auth/security boundary.
+
+`authService` lazy-loads one typed adapter. API POSTs omit demo role/confirmation/acknowledgment; validated backend DTOs determine identity. Requests use same-origin port-4000 proxy, credentials, no-store and 10-second caller-aware deadlines. These paths/envelopes are proposed and tested with mocked fetch, not certified backend authentication.
+
+A changed source/account clears six private activity arrays and personalization. Same-user demo role changes preserve executive requests/approvals. Logout clears role/user/photo/private activity; demo storage events also handle logout, new owners and external storage clearing. Remember-disabled sessions are visit-only. Corrupt JSON recovers with an explicit notice; denied auth/tour storage uses memory without promising durable removal. API logout failure still clears local state but warns that server sign-out is unconfirmed.
+
+Profile setup saves valid drafts on Back and only personalizes local demo identity; API mode saves preferences without pretending to change university records. Intent-loaded `PhotoEditor` uses the existing uploader/canvas primitives, with cancellation/late-chunk guard and reload recovery. `localPhotoService` owns/revokes a visit-only object URL; persisted projections omit passwords/tokens/files/blob/data URLs. Programme/interest lists are illustrative, not authoritative catalogs or recommendation inputs.
+
+See [Phase 5](PHASE5_AUTH_ONBOARDING.md) and [API integration](API_INTEGRATION_GUIDE.md) for replacement/retention/security requirements.

@@ -1,6 +1,6 @@
 # API integration guide
 
-Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search; Phase 4 uses it for server-composed Home. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
+Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search; Phase 4 uses it for server-composed Home; Phase 5 adds a separate lazy typed cookie-auth boundary. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
 
 ## 1. Environment and preview safety
 
@@ -13,7 +13,7 @@ The versioned, credential-free source is `config/env.example`. The generator wil
 
 | Variable | Default / purpose |
 | --- | --- |
-| `NEXT_PUBLIC_DATA_SOURCE` | `demo`; `api` selects the new async catalog implementation |
+| `NEXT_PUBLIC_DATA_SOURCE` | `demo`; `api` selects async catalog and proposed cookie-auth adapters |
 | `NEXT_PUBLIC_API_BASE_URL` | `/api`; browser-facing request prefix |
 | `API_PROXY_TARGET` | `http://127.0.0.1:4000`; server-only API origin, without a trailing `/api` |
 | `API_SESSION_COOKIE_NAMES` | Empty; server-only comma-separated exact backend session-cookie names; empty forwards no cookies |
@@ -46,7 +46,7 @@ const club = await campusService.get("clubs", "club-1"); // Club | null
 
 `CatalogService`, `CollectionMap`, `ListQuery`, `Page<T>` and `ServiceOptions` live in `src/types/service-contracts.ts`. Catalog/API implementations load only when called, keeping unused API schemas out of the initial client path.
 
-**Important:** current synchronous exports such as `engagementService`, `academicsService` and the local auth/state adapters are compatibility readers and **remain demo-only**. Setting API mode does not silently convert all legacy workflows to live behaviour. The `/design` and Home server compositions use the async boundary; the agreed feature phases will migrate their pages/clients one at a time. No automatic demo fallback occurs after a live request fails.
+**Important:** current synchronous exports such as `engagementService`, `academicsService` and domain state adapters are compatibility readers and **remain demo-only**; `authService` now separately selects demo/proposed cookie API. Setting API mode does not silently convert all legacy workflows to live behaviour. The `/design` and Home server compositions use the async boundary; the agreed feature phases will migrate their pages/clients one at a time. No automatic demo fallback occurs after a live request fails.
 
 ### Global search (Phase 3)
 
@@ -155,7 +155,7 @@ const clubs = await campusService.list("clubs", {
 
 Set the real session-cookie names agreed with the backend; the default empty allowlist forwards none. Only exact names survive, not analytics/role/other cookies. Do not forward every incoming header or put session values in URLs, component props, logs or public environment variables. Server data caching/revalidation must be scoped correctly for authenticated resources; define it with the real backend instead of caching private feeds globally.
 
-Production needs a real session/auth lifecycle, secure host-appropriate cookies, CSRF handling, role authorization **on the server**, rate limits and privacy controls. The demo role switch/Zustand state is not authentication or an authorization boundary. A visible management/executive panel does not confer official authority. Sign-out isolation and profile/security flows remain scheduled feature work.
+Production needs a real session/auth lifecycle, secure host-appropriate cookies, CSRF handling, role authorization **on the server**, rate limits and privacy controls. The demo role switch/Zustand state is not authentication or an authorization boundary. A visible management/executive panel does not confer official authority. Phase 5 implements local sign-out/account isolation and a proposed cookie-auth adapter; actual server lifecycle/security is still unverified.
 
 ## 6. Media and uploads
 
@@ -183,3 +183,27 @@ The local showcase's “Photo ready” and callback-failure simulation are **not
 7. Check loading/empty/error/retry, missing detail/media, keyboard operation, light/dark and 360/768/1280 layouts. Run lint, typecheck, tests and build.
 
 Needed before full integration: final authentication and permissions, private attachment storage, notifications/real-time delivery, authoritative academic/timetable data, event ticket verification, payment authority, and server-side AI contracts. These remain unverified integrations, not hidden fake services.
+
+## 8. Authentication and onboarding replacement (Phase 5)
+
+`AuthService` in `src/types/auth.ts` has a source, typed sign-in/register/reset/session/sign-out methods and caller abort options. UI calls the public lazy `authService`, never a dataset. Default demo sign-in accepts valid made-up input; registration actually uses submitted name/email with a new local student ID. Neither verifies a password. Demo recovery explicitly sends no email.
+
+The API adapter uses the existing credentialed client, `cache: "no-store"` and a 10-second deadline combined with caller cancellation. Browser `/api` stays same-origin; server resolution uses platform 4000. Proposed contracts:
+
+| Method/path after `/api` | Body | Validated outcome |
+| --- | --- | --- |
+| `POST /auth/sign-in` | `{ email, password }` | `{ user: UserProfile }` + backend session cookie |
+| `POST /auth/register` | `{ name, email, password }` | `{ user: UserProfile }` + backend session cookie |
+| `POST /auth/password-reset` | `{ email }` | `{ accepted: true }`; request accepted, not mailbox delivery |
+| `GET /auth/session` | None; cookie credentials | `{ user: UserProfile \| null }`; HTTP 401 means signed-out |
+| `POST /auth/sign-out` | None; cookie credentials | HTTP 204 or `{ ok: true }` |
+
+`UserProfile` requires bounded id/name/email, a known backend role, programme/level strings and an optional approved avatar URL. Role/confirmation/preview acknowledgment are not included in API request bodies. API profile/role is never restored as authentication from localStorage. Session null/failure clears local account activity; no demo is substituted. A demo role switch or a visible executive panel is not official authorization.
+
+All endpoint/envelope examples are **proposals**, tested with mocked fetch and not a live auth backend. Establish hashing, verification/MFA, secure production cookies/TLS, server permissions, CSRF/Origin policy, throttling, uniqueness, reset token lifecycle and email delivery first. If verification is required before a session exists, extend the typed registration outcome/UI. Supply the backend's agreed CSRF handshake/header rather than claiming the current transport solves it. Browser-accessible bearer/session tokens must not enter persisted state.
+
+Logout clears local user/role, six private activity arrays, preferences and prepared photo even if the API action fails. The UI explicitly warns when server sign-out is unconfirmed and asks the user to retry on a shared device. Cross-tab logout/account synchronization is verified for **demo mode only**; cookie revocation and API cross-tab behavior need real integration tests. If device storage refuses clearing, the visit is cleared but older saved data may return when access recovers; this limitation is displayed.
+
+The five-step introduction stores local progress/preferences; it is not an authorization gate. In demo mode personalization clones identity and preserves the role; in API mode it does not call an unimplemented profile-update endpoint. Interests do not yet affect feeds. The optional locally prepared avatar is an owned visit-only blob URL, revoked on replacement/logout and omitted from persistence. Add a server-validated private upload/profile-write service before making a durability claim.
+
+Detailed demo/default-guest migration, return-path rules, privacy and browser verification are in [Phase 5](PHASE5_AUTH_ONBOARDING.md).

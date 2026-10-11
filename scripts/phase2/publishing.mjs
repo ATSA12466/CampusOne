@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
-import { restrictToApp, waitForScreen } from "../audit/browser.mjs";
+import { restrictToApp, waitForScreen, seedOnboarding } from "../audit/browser.mjs";
 
 export async function checkPublishing(browser, production) {
   const context = await browser.newContext({ viewport: { width: 360, height: 900 } });
+  // Publishing metadata/font checks target a returning student detail route,
+  // not the first-visit tour now correctly enforced by the client guard.
+  await seedOnboarding(context);
   await restrictToApp(context, production);
   const page = await context.newPage();
   await page.goto(`${production}/accommodation/h1`, { waitUntil: "networkidle" });

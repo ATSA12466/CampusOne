@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
+import { SessionBootstrap } from "@/components/layout/session-bootstrap";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { sidebarInitScript } from "@/config/sidebar";
@@ -57,7 +58,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className="font-sans antialiased">
         <ThemeProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <SessionBootstrap />
+            {children}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

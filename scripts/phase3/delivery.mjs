@@ -90,9 +90,10 @@ export async function checkDelivery(browser, baseUrl, output) {
   await seedOnboarding(failed);
   await restrictToApp(failed, baseUrl);
   let blocked = false;
+  let failRequests = true;
   await failed.route("**/_next/static/chunks/*.js", (route) => {
     if (
-      !blocked &&
+      failRequests &&
       searchChunks.includes(new URL(route.request().url()).pathname.split("/").at(-1))
     ) {
       blocked = true;
@@ -113,6 +114,9 @@ export async function checkDelivery(browser, baseUrl, output) {
     await focusIs(page, trigger);
     await trigger.click();
     await page.getByRole("alert").filter({ hasText: "This panel couldn't open." }).waitFor();
+    // Next 16.4 may retry a failed chunk request. Keep the outage persistent until
+    // the user explicitly reloads, rather than relying on a one-request failure.
+    failRequests = false;
     await Promise.all([
       page.waitForNavigation({ waitUntil: "networkidle" }),
       page.getByRole("button", { name: "Reload page", exact: true }).click(),

@@ -1,50 +1,85 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { Button, Input } from "@/components/ui";
+import { ArrowLeft, MailCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { forgotPasswordSchema, type ForgotPasswordValues } from "../validation/auth.schemas";
-
-export function ForgotPasswordForm() {
+import { EmailField } from "./email-field";
+import { ActionFeedback } from "./action-feedback";
+import { useAuthAction } from "../hooks/use-auth-action";
+import { useAuthService } from "../hooks/use-auth-service";
+import type { AuthPreview, ResetResult } from "@/types/auth";
+export function ForgotPasswordForm({
+  next = "/home",
+  preview,
+}: {
+  next?: string;
+  preview?: AuthPreview;
+}) {
+  const service = useAuthService(preview),
+    action = useAuthAction();
+  const [result, setResult] = useState<ResetResult | null>(null);
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitSuccessful },
-  } = useForm<ForgotPasswordValues>({ resolver: zodResolver(forgotPasswordSchema) });
-
+    formState: { errors },
+  } = useForm<ForgotPasswordValues>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: { email: "" },
+  });
   return (
-    <form noValidate className="space-y-4" onSubmit={handleSubmit(() => undefined)}>
-      <div>
-        <label htmlFor="auth-email" className="mb-1 block text-sm font-medium">
-          Email
-        </label>
-        <Input
-          id="auth-email"
-          autoComplete="email"
-          aria-invalid={!!errors.email}
-          aria-describedby={errors.email ? "auth-email-error" : undefined}
-          type="email"
-          {...register("email")}
-        />
-        {errors.email ? (
-          <p id="auth-email-error" role="alert" className="mt-1 text-xs text-danger">
-            {errors.email.message}
-          </p>
-        ) : null}
-      </div>
-      <Button className="w-full" type="submit">
-        Send reset link (demo)
-      </Button>
-      {isSubmitSuccessful ? (
-        <p className="rounded-xl bg-success-soft p-2 text-xs text-success">
-          Demo confirmation shown. Backend email service will be integrated later.
+    <form
+      noValidate
+      className="space-y-5"
+      aria-busy={action.pending}
+      onSubmit={handleSubmit(async (values) => {
+        setResult(null);
+        const response = await action.run((signal) =>
+          service.requestReset(values.email, { signal }),
+        );
+        if (response) setResult(response);
+      })}
+    >
+      {preview ? (
+        <p className="rounded-control bg-warning-soft p-3 text-xs text-warning">
+          Development-only {preview} fixture, not email delivery.
         </p>
       ) : null}
+      <EmailField {...register("email")} error={errors.email?.message} disabled={action.pending} />
+      <ActionFeedback {...action} onCancel={action.cancel} />
+      <Button type="submit" className="w-full" disabled={action.pending}>
+        {action.pending
+          ? "Requesting…"
+          : service.source === "demo"
+            ? "Preview reset request"
+            : "Request reset link"}
+      </Button>
+      {result ? (
+        <div
+          role="status"
+          className="rounded-card border border-border bg-success-soft p-5 text-success"
+        >
+          <MailCheck className="mb-3 size-6" aria-hidden="true" />
+          <h2 className="font-semibold">
+            {result.delivery === "preview"
+              ? "Preview complete. No email was sent."
+              : "Request accepted."}
+          </h2>
+          <p className="mt-2 text-sm">
+            {result.delivery === "preview"
+              ? "Your email format is valid. A real reset link needs a connected email and authentication service."
+              : "If an account exists for that address, the backend can send recovery instructions. We cannot verify mailbox delivery here."}
+          </p>
+        </div>
+      ) : null}
       <Link
-        href="/sign-in"
-        className="inline-flex min-h-11 items-center text-xs text-brand underline underline-offset-4"
+        prefetch={false}
+        href={`/sign-in?next=${encodeURIComponent(next)}`}
+        className="inline-flex min-h-11 items-center gap-2 rounded-control text-sm font-semibold text-brand"
       >
+        <ArrowLeft className="size-4" aria-hidden="true" />
         Back to sign in
       </Link>
     </form>

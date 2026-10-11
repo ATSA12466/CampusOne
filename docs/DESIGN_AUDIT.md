@@ -343,3 +343,23 @@ Run `npm run lint`, `npm run typecheck`, and `npm run build` **after every phase
 | Home mobile Lighthouse | No current measurement | Performance 95; Accessibility 92 (remaining work, not target achieved) |
 
 **Phase 1 conclusion:** the repo can now be verified reproducibly, its existing useful behavior is identified, and the premium upgrade has a concrete route-by-route backlog. Next is the shared design/image foundation, not isolated cosmetic changes to Home.
+
+## 10. Audit resolution through Phase 5 (11 October 2026)
+
+The route-by-route baseline above is retained as historical evidence, not silently rewritten to describe the redesign. Phases 2–5 resolve the following shared/frontend findings:
+
+| Baseline finding | Implemented resolution / remaining scope |
+| --- | --- |
+| Flat/incomplete mobile navigation and static search | Phase 3: 24 grouped destinations, collapsible desktop rail, mobile tabs + More, keyboard typed global search with resilient source/code states. |
+| Placeholder Home with no image hierarchy | Phase 4: active-only sponsor/video placements, large generated Clubs story, snap photo actions, verified-source HTTPS LMS/SIP links, bounded typed server feed, Accra now/next and task completion/undo/progress. |
+| First visit bypassed introduction | Phase 5: explicit auth/tour hydration precedes the guard; first visit reaches the five-step photo intro and completion/skip return safely to the originating route. |
+| Registration discarded submitted identity | Phase 5: validated name/email create a new local student ID; returning local sign-in preserves the saved profile, while a new registration uses new submitted details. This is not secure real authentication. |
+| Sign-out retained role/bookmarks and stale private activity | Phase 5: user/elevated role, six activity arrays, preferences and photo clear; explicit guest survives reload, remember-disabled profiles are visit-only, and demo logout/external storage clearing sync across tabs. |
+| No honest photo/avatar attachment workflow | Foundation/Phase 5: native local crop/compression/validation, intent-loaded editor, owned visit-only avatar/revocation and explicit no-upload/no-persistence notice. Required lost/found attachment and real server storage remain Phase 6/backend work. |
+| Missing visual/accessibility/service foundation | Semantic light/dark/system tokens, locally licensed Manrope/Fraunces, registry/provenance/fallback image system, expanded accessible primitives and proposed typed read/auth boundaries. Official SRC artwork is still pending. |
+
+Current verification: lint/strict TS/optimized Next 16.4.0 build; **68 native tests**; **105 auth AA/layout/tap captures**; shared foundation/shell/Home/video/legacy regressions including executive approval; and **222 route cases / 74 AA analyses** with zero overflow/44px flags. Visual auth review at 360/1280 in both themes caught and corrected a genuine photo/copy stacking defect that width checks missed. No accessibility rule was disabled.
+
+Latest production returning-Home Lighthouse after the actual tour UI and HTTP-cache clearing: default scores **83/82/75, median 82**; disclosed CPU-raster diagnostics **95/94/94, median 94**; Accessibility **100** throughout. Performance ≥90 remains open on the default renderer/real hardware. Earlier Phase 4 scores (default median 63, CPU median 91) remain in the dated test report; changed framework/returning-visitor harness prevents attributing the difference to one optimization.
+
+Runtime-only dependency audit: **0 vulnerabilities**. Full toolchain audit: **9** (5 high, 4 moderate, 0 critical); a force downgrade is not used as a false fix. Backend auth/CSRF/roles/reset mail/DB/upload integration, screen-reader/IME/Safari/Firefox/physical-device checks remain unverified. Community/lost-found persistence, required report photo, study constraints, expanded 12–30-item feeds and deeper photo-domain details remain Phase 6, followed by polish/final verification. Exact reproduction and limitations are in [TEST_REPORT.md](TEST_REPORT.md) and [Phase 5](PHASE5_AUTH_ONBOARDING.md).
