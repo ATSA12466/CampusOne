@@ -1,3 +1,4 @@
+import { extraReports } from "./report-catalog";
 import { extraMarketplace, marketDetails } from "./marketplace-catalog";
 import { extraAccommodations, housingDetails } from "./accommodation-catalog";
 import type {
@@ -49,6 +50,7 @@ export const reports: LostFoundReport[] = [
     date: "2026-10-05",
     status: "open",
   },
+  ...extraReports,
 ];
 
 export const accommodations: AccommodationListing[] = [

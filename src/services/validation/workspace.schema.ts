@@ -51,6 +51,7 @@ export const workspaceSchemas: {
       "marketplace",
       "opportunities",
       "resources",
+      "lost-found",
     ]),
     listingId: recordIdSchema,
     message: z.string().min(15).max(1500),

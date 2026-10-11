@@ -93,3 +93,21 @@ test("12 opportunities preserve original provider/deadline and include honest cl
   assert.ok(page.items.find((i) => i.id === "o12").deadline < "2026-10-11");
   assert.ok(first.details.eligibility.length > 0);
 });
+
+test("12 lost/found reports keep original records, validated states and board-only destinations", async () => {
+  const raw = await demoCatalog.list("lostFound", { pageSize: 30 });
+  assert.equal(raw.total, 12);
+  assert.equal(
+    raw.items.find((i) => i.id === "lf1").item,
+    "Black HP laptop sleeve",
+  );
+  for (const item of raw.items)
+    assert.equal(entitySchemas.lostFound.safeParse(item).success, true);
+  const section =
+    await createDiscoverCatalog(demoCatalog).section("lost-found");
+  assert.ok(
+    section.page.items.every(
+      (i) => i.destination === "board" && i.href === "/lost-and-found",
+    ),
+  );
+});

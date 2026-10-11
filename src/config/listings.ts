@@ -1,6 +1,13 @@
 import { images } from "./images";
 import type { ListingDomain } from "@/types/listings";
 export const listingConfig = {
+  "lost-found": {
+    title: "A little help finding home.",
+    subtitle: "Careful reports and safe handovers.",
+    label: "Lost & Found",
+    image: images.studyCorner,
+    action: "Prepare a safe contact note",
+  },
   accommodation: {
     title: "A place to call your own.",
     subtitle: "Find a little space for your next chapter.",

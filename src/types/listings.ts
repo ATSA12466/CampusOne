@@ -3,7 +3,8 @@ export type ListingDomain =
   | "accommodation"
   | "marketplace"
   | "opportunities"
-  | "resources";
+  | "resources"
+  | "lost-found";
 export interface ListingDetails {
   intro: string;
   body: string[];

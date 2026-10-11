@@ -1,0 +1,9 @@
+# Phase 6G — Lost & Found (11 October 2026)
+
+Twelve fictional public reports preserve original `lf1`/`lf2`, dates/types/locations and board-only destinations. Photo-led search/lost-found/Saved views, six-record pages, status facts and accessible report sheets replace the plain list. Category illustrations are clearly not item photographs. Canonical saves remain shared with Discover. Contact/claim notes are device-only drafts; safe handover/identity-document warnings do not invent a contacted campus desk.
+
+**Your reports** requires a prepared photo and meaningful description/location, supports crop/compression, persists the current local profile's report/photo, edits, closes/reopens and confirms deletion. Uploaded photos are bounded owned JPEG/PNG/WebP data; object URLs are revoked and account/logout cleanup applies. API `/workspace/reports` is proposed, without local fallback or real upload/auth/storage proof. Submitted reports are not broadcast to other students in demo mode.
+
+Lint/typecheck/build and **163 native tests** pass. **102 report AA/layout/44px captures** are clean: 90 public-board/12-sheet/filter/paging/Saved states across 360/768/1280 light/dark, plus 12 photo-required/crop/reload/edit/close/delete states at 360/1280. Actual screenshots were inspected. The runner now waits for acknowledged save readiness before durability/reload assertions, rather than treating an optimistic bookmark as an accepted write. Complete JSON evidence was independently asserted for zero violations/overflow/small targets. Reproduction: `phase6-lost-audit.mjs`, `AUDIT_DOMAIN=reports phase6-photo-audit.mjs`, `test:life`; ignored evidence `.cache/phase6/life/{lost-found,reports-photos}`.
+
+No new individual report URL, real claim delivery or backend verification is fabricated. Next: Academics automatically, then Timetable/Calendar, Profile and remaining screens.

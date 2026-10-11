@@ -45,9 +45,16 @@ export const readListing = cache(async (domain: ListingDomain, id: string) => {
       { category: domain, id },
       options,
     ),
-    raw = await campusService.get(domain, id, {
-      ...options,
-      signal: AbortSignal.timeout(8000),
-    });
-  return { normalized, details: raw?.details };
+    raw = await campusService.get(
+      domain === "lost-found" ? "lostFound" : domain,
+      id,
+      {
+        ...options,
+        signal: AbortSignal.timeout(8000),
+      },
+    );
+  return {
+    normalized,
+    details: raw && "details" in raw ? raw.details : undefined,
+  };
 });
