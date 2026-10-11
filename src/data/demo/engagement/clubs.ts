@@ -1,29 +1,7 @@
-import { images } from "@/config/images";
-import type { Announcement, Campaign, Club, ClubMembership, EventItem, Opportunity } from "@/types";
+import type { Announcement, Campaign, EventItem, Opportunity } from "@/types";
 
-export const clubs: Club[] = [
-  {
-    id: "club-1",
-    name: "Code Collective",
-    category: "Technology",
-    description: "Peer coding sessions, hackathons, and product showcases.",
-    cover: images.clubCode.src,
-    objectives: ["Build practical projects", "Mentor freshers", "Host coding events"],
-  },
-  {
-    id: "club-2",
-    name: "Debate Assembly",
-    category: "Public Speaking",
-    description: "Weekly debate and communication mastery workshops.",
-    cover: images.clubDebate.src,
-    objectives: ["Critical thinking", "Confident public speaking"],
-  },
-];
-
-export const memberships: ClubMembership[] = [
-  { id: "m1", clubId: "club-1", userId: "user-1", status: "approved" },
-  { id: "m2", clubId: "club-2", userId: "user-1", status: "pending" },
-];
+export { clubs } from "./club-catalog";
+export { memberships } from "./membership-seeds";
 
 export const announcements: Announcement[] = [
   {

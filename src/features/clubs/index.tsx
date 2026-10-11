@@ -1,83 +1,79 @@
 "use client";
-
-import { useMemo, useState } from "react";
-import { PageHeader } from "@/components/shared/page-header";
-import { SearchInput } from "@/components/shared/search-input";
-import { Select } from "@/components/ui";
-import { engagementService } from "@/services";
-import { useAppStore } from "@/stores/app-store";
+import { useState } from "react";
+import { clubActionService } from "@/services";
+import { appConfig } from "@/config/app-config";
 import { useAuthStore } from "@/stores/auth-store";
-import { ClubCard } from "./components/club-card";
+import { Button } from "@/components/ui";
+import type { Club, ClubCatalog } from "@/types";
+import { useClubActivity } from "./hooks/use-club-activity";
+import { useClubMutations } from "./hooks/use-club-mutations";
+import { useClubDirectory } from "./hooks/use-club-directory";
+import { DirectoryHero } from "./components/directory-hero";
+import { DirectoryResults } from "./components/directory-results";
 import { ExecutiveRequestsPanel } from "./components/executive-requests-panel";
-
-export function ClubsFeature() {
-  const clubs = engagementService.listClubs();
-  const memberships = useAppStore((state) => state.memberships);
-  const requestMembership = useAppStore((state) => state.requestMembership);
-  const reviewMembership = useAppStore((state) => state.reviewMembership);
-  const user = useAuthStore((state) => state.user);
-  const role = useAuthStore((state) => state.role);
-
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("all");
-
-  const categories = useMemo(
-    () => ["all", ...new Set(clubs.map((club) => club.category))],
-    [clubs],
-  );
-
-  const filteredClubs = clubs.filter((club) => {
-    const queryMatch = club.name.toLowerCase().includes(query.toLowerCase());
-    const categoryMatch = category === "all" || club.category === category;
-    return queryMatch && categoryMatch;
-  });
-
-  const pendingRequests = memberships.filter((membership) => membership.status === "pending");
-
+import { RequestDialog } from "./components/request-dialog";
+export function ClubsFeature({ initial }: { initial: ClubCatalog }) {
+  const user = useAuthStore((s) => s.user),
+    role = useAuthStore((s) => s.role),
+    activity = useClubActivity(),
+    action = useClubMutations(activity.refresh);
+  const state = useClubDirectory(initial, activity, user?.id),
+    [selection, setSelection] = useState<{ club: Club; owner: string } | null>(null);
+  const executive = ["club-executive", "administrator"].includes(role);
   return (
-    <div className="space-y-4">
-      <PageHeader
-        title="Clubs & Participation"
-        description="Discover clubs, request membership, and track participation."
+    <div className="mx-auto max-w-6xl space-y-8 pb-6">
+      <DirectoryHero count={state.catalog.page?.total} />
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-bold tracking-widest text-brand uppercase">
+            A little curiosity goes a long way
+          </p>
+          <h2 className="mt-2 font-display text-2xl font-semibold md:text-3xl">
+            A community for your kind of thing.
+          </h2>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Start with an interest. Try something new. Your next good conversation might be here.
+          </p>
+        </div>
+        {executive ? (
+          <Button asChild variant="secondary">
+            <a href="#executive-reviews">Membership reviews</a>
+          </Button>
+        ) : null}
+      </div>
+      {appConfig.dataSource === "demo" ? (
+        <p className="rounded-control border border-border bg-surface-muted p-4 text-xs leading-relaxed text-muted-foreground">
+          Demo communities · All groups, member counts, people, venues and fees are fictional.
+          Generated scenes are illustrative; nothing here enrolls you in a real GCTU club.
+        </p>
+      ) : null}
+      <DirectoryResults
+        state={state}
+        activity={activity}
+        action={action}
+        user={user}
+        onRequest={(club) => user && setSelection({ club, owner: `${user.id}:${user.email}` })}
       />
-      <div className="grid gap-3 md:grid-cols-[1fr_220px]">
-        <SearchInput value={query} onChange={setQuery} placeholder="Search clubs" />
-        <Select
-          aria-label="Filter clubs by category"
-          value={category}
-          onChange={(event) => setCategory(event.target.value)}
-        >
-          {categories.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </Select>
-      </div>
-      <div className="grid gap-3 md:grid-cols-2">
-        {filteredClubs.map((club) => {
-          const membership = memberships.find(
-            (item) => item.clubId === club.id && item.userId === user?.id,
-          );
-          return (
-            <ClubCard
-              key={club.id}
-              club={club}
-              membership={membership}
-              canRequest={!membership && !!user}
-              onRequestJoin={() => {
-                if (!user) return;
-                requestMembership(club.id, user.id);
-              }}
-            />
-          );
-        })}
-      </div>
-      {role === "club-executive" ? (
+      {executive ? (
         <ExecutiveRequestsPanel
-          pendingRequests={pendingRequests}
-          clubs={clubs}
-          onReview={reviewMembership}
+          clubs={state.clubs}
+          pendingRequests={activity.memberships.filter((item) => item.status === "pending")}
+          busy={!!action.busy}
+          onReview={(id, status) =>
+            void action.run(
+              `review:${id}`,
+              (signal) => clubActionService.review(id, status, { signal }),
+              `${clubActionService.source === "demo" ? "Demo " : ""}Membership ${status === "approved" ? "approved" : "declined"}`,
+            )
+          }
+        />
+      ) : null}
+      {selection && selection.owner === (user ? `${user.id}:${user.email}` : null) ? (
+        <RequestDialog
+          key={`${selection.club.id}:${selection.owner}`}
+          club={selection.club}
+          action={action}
+          onClose={() => setSelection(null)}
         />
       ) : null}
     </div>

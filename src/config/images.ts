@@ -1,3 +1,4 @@
+import { clubImageBlurs } from "./club-image-blurs";
 import { homeImageBlurs } from "./image-blurs";
 import type { CampusMedia } from "@/types/media";
 
@@ -14,6 +15,56 @@ const placeholder = (src: string, alt: string): CampusMedia => ({
   sourceNote: "Original local SVG stand-in, retained for replacement with authorized photography.",
 });
 export const images = {
+  clubMakers: {
+    src: "/images/demo/club-makers.webp",
+    alt: "Fictional Ghanaian students building a small robotics prototype together in a sunny workshop — AI-generated demo, not an actual club or GCTU photograph.",
+    width: 1200,
+    height: 675,
+    blurDataURL: clubImageBlurs.makers,
+    focalPoint: { x: 55, y: 48 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  clubDebate: {
+    src: "/images/demo/club-debate.webp",
+    alt: "Fictional Ghanaian students sharing ideas in a friendly seminar-room debate — AI-generated campus demonstration.",
+    width: 1200,
+    height: 675,
+    blurDataURL: clubImageBlurs.debate,
+    focalPoint: { x: 55, y: 48 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  clubArts: {
+    src: "/images/demo/club-arts.webp",
+    alt: "Fictional Ghanaian students painting, sketching and photographing artwork in a bright studio — AI-generated demonstration.",
+    width: 1200,
+    height: 675,
+    blurDataURL: clubImageBlurs.arts,
+    focalPoint: { x: 55, y: 48 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  clubSport: {
+    src: "/images/demo/club-sport.webp",
+    alt: "Fictional student friends enjoying a basketball practice on a tropical campus court — AI-generated demonstration, not an actual team.",
+    width: 1200,
+    height: 675,
+    blurDataURL: clubImageBlurs.sport,
+    focalPoint: { x: 55, y: 48 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  clubService: {
+    src: "/images/demo/club-service.webp",
+    alt: "Fictional student volunteers planting seedlings together in a tropical garden — AI-generated demonstration, not an actual volunteering project.",
+    width: 1200,
+    height: 675,
+    blurDataURL: clubImageBlurs.service,
+    focalPoint: { x: 55, y: 48 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
   clubsHero: {
     src: "/images/demo/clubs-hero.webp",
     alt: "Fictional Ghanaian student friends gathered in a tropical campus courtyard \u2014 AI-generated demo, not GCTU or actual students.",
@@ -103,7 +154,7 @@ export const images = {
     "/images/placeholders/club-code.svg",
     "Placeholder illustration for the Code Collective club.",
   ),
-  clubDebate: placeholder(
+  clubDebatePlaceholder: placeholder(
     "/images/placeholders/club-debate.svg",
     "Placeholder illustration for the Debate Assembly club.",
   ),

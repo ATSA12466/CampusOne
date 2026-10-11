@@ -102,3 +102,7 @@ export function authPreviewService(
     },
   };
 }
+
+// Clubs Phase 6: typed bounded catalog + intent-loaded source-specific actions.
+export { clubCatalogService } from "./clubs/catalog.service";
+export { clubActionService } from "./clubs/actions.service";

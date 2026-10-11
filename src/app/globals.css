@@ -3,6 +3,7 @@
 @import "./styles/shell.css";
 @import "./styles/home.css";
 @import "./styles/auth.css";
+@import "./styles/clubs.css";
 
 :root,
 [data-theme="light"] {

@@ -1,5 +1,31 @@
 # CampusOne test report
 
+## Phase 6A — photo-first Clubs (11 October 2026)
+
+**Clubs frontend subphase implemented and verified; Events is next.** Sixteen fictional communities now have photo discovery/details, composed filters/sort/views, real six-per-page pagination, local request/withdraw/leave/reapply/save and preserved executive reviews. API integration remains proposed and mocked, not secure/deployed real enrollment. No new direct runtime dependency.
+
+| Check | Result |
+| --- | --- |
+| Lint / strict typecheck / production build | Passed; Next 16.4.0, 32 generated pages, Clubs server routes dynamic; final cached compile 6.4s / TS 6.4s |
+| Native tests | **15 foundation + 12 shell + 18 Home + 23 auth + 24 Clubs = 92 passed**, zero failed |
+| Clubs AA/layout/44px | **203 captures**: directory 30, all 16 details at 360/768/1280 both themes 96, membership/save/gallery 24, executive 12, privacy 8, storage/fallback 8, code outage 1, isolated mocked API 24; zero violations/overflow/small-target flags |
+| Shared browser regressions | Foundation/showcase/dialog/theme/touch/upload/legacy publishing; shell/search/delivery/sidebar; Home/media/clock/feedback/delivery; auth session/executive/cross-tab; same-origin proxy/health passed |
+| Full shared-route regression | **222 cases / 74 AA analyses**, zero AA/overflow/44px flags; production `/design` 404; existing streamed not-found behavior retained |
+| Dependency audit | Runtime **0**; full **9 development advisories: 5 high / 4 moderate / 0 critical** |
+| New media | Five fictional generated 1200×675 activity WebPs, **526,288 bytes** total, central meaningful alt/provenance/blurs; no official people/photo/logo claims |
+
+Coverage exercises pagination uniqueness/clamping/filter resets, legacy categories, accent search/objectives/venues and sorts; request acknowledgment/400-character note/first-invalid focus; trap/Escape/return focus, gallery keys and clickable overlay saves; actual persisted local request/save/withdraw/leave/reapply/Approve/Reject; student/executive/guest and changed-profile isolation; stale old-owner action after an intentionally delayed catalogue read; denied storage only reporting visit-only when memory changed; failed image geometry and held action-code outage without a fabricated mutation.
+
+The API browser runner uses an isolated current-source `api` dev snapshot and a controlled port-4000 fixture. Four 360/1280 light/dark runs prove error→server refresh→catalog recovery, honest 30-of-35 loaded-record disclosure/load-more, activity error disabling writes, preserved failed form, single-flight POST, fixture-backed reload/save/request/withdraw/review, legacy missing-field and closed-request states, and exact SSR cookie allowlisting. **Real backend/database/auth/role/CSRF/security/mail/upload integration remains unverified.** The verification fixture/server are shut down afterward. API mutation acknowledgments are validated; no client role/user ID/consent is treated as authority.
+
+All detail and directory variants were captured with Playwright; manual 360/1280 light/dark review covers all sixteen header/gallery panels and representative workflow sheets. An initial invalid nested definition-list structure was fixed rather than suppressed. The save overlay gets explicit stacking. The old auth session test now targets the review panel and waits for the asynchronous decision before the same persisted-approval assertion. Source/data leaves are split around 150 lines; generated API audit copies are ignored by lint/typecheck.
+
+Evidence: `.cache/phase6/clubs/{browser-final,browser-details,api-browser-final,routes,regressions,review}` (ignored and not guaranteed to persist). Versioned reproduction: `npm run test:clubs`, `scripts/phase6-clubs-audit.mjs`, `scripts/phase6-clubs-api-audit.mjs`; see [Phase 6A](PHASE6A_CLUBS.md) for the complete handoff.
+
+**Performance gate remains open:** no new Home Lighthouse benchmark is claimed in this Clubs subphase. Retained Phase 5 results below are default 83/82/75 (median 82) and disclosed software diagnostic 95/94/94 (median 94), Accessibility 100 throughout. Diagnostic scores do not replace the default/real-device ≥90 requirement. Safari/Firefox/physical-device/IME/full screen-reader checks and remaining ordered domain migrations are still open.
+
+---
+
 ## Phase 5 — photo-led auth and onboarding (11 October 2026)
 
 **Frontend milestone implemented and verified.** Local registration now uses submitted identity, first visit reliably reaches the five-step introduction, profile drafts/progress return safely, optional crop/avatar preparation is visit-only, and sign-out isolates private demo data across tabs. This is not secure real authentication or a claim that later domain redesigns are complete. The default-renderer Home Performance ≥90 gate remains open.

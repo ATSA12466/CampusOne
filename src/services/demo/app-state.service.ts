@@ -1,4 +1,4 @@
-import { memberships } from "@/data/demo/engagement/clubs";
+import { memberships } from "@/data/demo/engagement/membership-seeds";
 import { initialStudentRequests } from "@/data/demo/engagement/src-office";
 import { notifications } from "@/data/demo/community/social";
 import { initialTasks } from "@/data/demo/productivity/tasks";

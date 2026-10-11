@@ -2,7 +2,7 @@
 
 ## Product and phase boundary
 
-CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Phase 3 adds the grouped/collapsible shell, mobile tabs + More and global search. Phase 4 adds the server-composed magazine Home with a bounded typed feed, actual deferred video and device-only planner. Phase 5 adds photo-led auth/onboarding, explicit hydration/sanitized persistence and a lazy proposed cookie-auth adapter. Later phases replace domain experiences in the agreed order; this is not a finished live campus platform.
+CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Phase 3 adds the grouped/collapsible shell, mobile tabs + More and global search. Phase 4 adds the server-composed magazine Home with a bounded typed feed, actual deferred video and device-only planner. Phase 5 adds photo-led auth/onboarding, explicit hydration/sanitized persistence and a lazy proposed cookie-auth adapter. Phase 6A adds server-read photo-first Clubs with owner-qualified local/API actions and preserved executive reviews. Remaining phases replace domain experiences in the agreed order; this is not a finished live campus platform.
 
 ## Directory map
 
@@ -32,6 +32,7 @@ src/
     demo/                   # Deterministic/read-only typed fixtures + compatibility
     api/                    # Validated requests and provisional backend adapter
     auth/                   # Lazy typed demo / proposed cookie API authentication
+    clubs/                  # Bounded async catalog + lazy source-specific actions
     profile/                # Cloned local personalization + owned visit photo URL
     validation/             # Runtime entity/page/query schemas
   data/demo/                # Fixture storage; UI never imports it directly
@@ -39,6 +40,7 @@ src/
   hooks/                    # Shell overlay and sidebar external-store hooks
   lib/media/                # Pure crop geometry + native canvas compression
   lib/search/               # Pure search normalization and ranking
+  lib/clubs/                # Pure directory pagination/filter/sort, category labels and media
   lib/home/                 # Active/date selectors and Accra now/next/tasks
 ```
 
@@ -127,3 +129,13 @@ A changed source/account clears six private activity arrays and personalization.
 Profile setup saves valid drafts on Back and only personalizes local demo identity; API mode saves preferences without pretending to change university records. Intent-loaded `PhotoEditor` uses the existing uploader/canvas primitives, with cancellation/late-chunk guard and reload recovery. `localPhotoService` owns/revokes a visit-only object URL; persisted projections omit passwords/tokens/files/blob/data URLs. Programme/interest lists are illustrative, not authoritative catalogs or recommendation inputs.
 
 See [Phase 5](PHASE5_AUTH_ONBOARDING.md) and [API integration](API_INTEGRATION_GUIDE.md) for replacement/retention/security requirements.
+
+## Clubs domain migration (Phase 6A)
+
+The existing Clubs URLs now compose per-request async catalog/detail reads on the server. Cached detail reads share metadata inside a request; only selected session-cookie headers reach the API, never client props. Serializable optional-rich `Club` DTOs enter the client directory/detail leaves; UI never imports fixtures. A deterministic hash of the initial result makes server refresh replace stale client initial catalog state.
+
+`useClubDirectory` owns composed search/category/sort/view/page and loaded-record pagination; pure selectors and legacy category labels stay in `lib/clubs`. The 6-item UI pages are separate from 30-record upstream reads. Async load-more deduplicates records, propagates cancellation and keeps loaded-record limits visible. `useClubActivity` reacts to demo state or validated API activity; source/owner/email/role and sequence/abort guards prevent stale private state from crossing identities. `useClubMutations` owns single-flight actions, cancellation and source-aware toasts. Demo services recheck current authority before writing and verify memory before reporting visit-only persistence.
+
+Membership seeds are a separate small module, not an eager dependency on sixteen rich catalog profiles. Feature/data leaves stay around 150 lines, with typed contracts in `types/clubs.ts`, form schema in feature validation and shared DTO/note validators in service validation (not a service→UI dependency). `.cache` audit snapshots are excluded from lint/typecheck so generated verification copies are not application source.
+
+API endpoints are proposed, no-store/credentialed and same-origin → port 4000. Real club-scoped access control/CSRF/database/uploads/notifications remain backend work; local demo approvals are not enrollment. See [Phase 6A](PHASE6A_CLUBS.md) and the [API guide](API_INTEGRATION_GUIDE.md).

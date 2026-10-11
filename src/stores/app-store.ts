@@ -21,7 +21,12 @@ interface AppState {
   removeTask: (id: string) => void;
   updateTask: (task: TaskItem) => void;
   toggleBookmark: (item: Bookmark) => void;
-  requestMembership: (clubId: string, userId: string) => void;
+  requestMembership: (
+    clubId: string,
+    userId: string,
+    details?: Pick<ClubMembership, "applicantName" | "note" | "requestedAt">,
+  ) => void;
+  withdrawMembership: (clubId: string, userId: string) => void;
   reviewMembership: (membershipId: string, status: "approved" | "rejected") => void;
   toggleEventRegistration: (eventId: string) => void;
   markNotificationRead: (id: string) => void;
@@ -77,18 +82,32 @@ export const useAppStore = create<AppState>()(
               : [...state.bookmarks, item],
           };
         }),
-      requestMembership: (clubId, userId) => {
+      requestMembership: (clubId, userId, details = {}) => {
         const existing = get().memberships.find(
           (membership) => membership.clubId === clubId && membership.userId === userId,
         );
-        if (existing) return;
+        if (existing && existing.status !== "rejected") return;
+        if (existing) {
+          set((state) => ({
+            memberships: state.memberships.map((item) =>
+              item.id === existing.id ? { ...item, ...details, status: "pending" } : item,
+            ),
+          }));
+          return;
+        }
         set((state) => ({
           memberships: [
             ...state.memberships,
-            { id: crypto.randomUUID(), clubId, userId, status: "pending" },
+            { ...details, id: crypto.randomUUID(), clubId, userId, status: "pending" },
           ],
         }));
       },
+      withdrawMembership: (clubId, userId) =>
+        set((state) => ({
+          memberships: state.memberships.filter(
+            (item) => item.clubId !== clubId || item.userId !== userId,
+          ),
+        })),
       reviewMembership: (membershipId, status) =>
         set((state) => ({
           memberships: state.memberships.map((membership) =>

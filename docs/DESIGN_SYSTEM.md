@@ -1,8 +1,8 @@
 # CampusOne design system
 
-Foundation Phase 2, extended through Phase 5 · 11 October 2026 · Package: `campusone-web` · Product: **CampusOne**
+Foundation Phase 2, extended through Phase 6A · 11 October 2026 · Package: `campusone-web` · Product: **CampusOne**
 
-A photo-centered, campus-magazine foundation for GCTU student life: editorial character without making everyday work harder. This is a frontend prototype, not an official campus service. The grouped shell, magazine Home and photo-led auth/onboarding are implemented; domain redesigns follow in the agreed phase order.
+A photo-centered, campus-magazine foundation for GCTU student life: editorial character without making everyday work harder. This is a frontend prototype, not an official campus service. The grouped shell, magazine Home and photo-led auth/onboarding and Clubs directory/details are implemented; remaining domain redesigns follow in the agreed phase order.
 
 ## 1. Principles and source of truth
 
@@ -371,3 +371,11 @@ Required fields have associated Zod/RHF errors and first-error focus. Password r
 Portrait choices are labelled keyboard radio controls. The optional local photo editor is intent-loaded, trapped/named, Escape-closeable with return focus, and shares the foundation crop/compression/error primitives. Cancellation ignores late code delivery; failed code has truthful reload recovery. Output is an ephemeral visit avatar, not a server upload or durable attachment; files/blob/data URLs are not persisted.
 
 Light/dark/system and reduced motion stay semantic. The production auth suite records **105 WCAG A/AA + 2.1 AA captures** with zero overflow/sub-44px flags at 360/768/1280; manual 360/1280 light/dark sheets and individual editor/story checks cover composition. All 222 preserved route variants / 74 route AA analyses also pass. See [Phase 5](PHASE5_AUTH_ONBOARDING.md) for privacy/API boundaries and [test report](TEST_REPORT.md) for honest performance/backend/device caveats.
+
+## Phase 6A Clubs composition
+
+The magazine direction extends to sixteen photo communities: a people-first hero, seven readable interest groups, six-card pages and a detail story/facts/crew/gallery hierarchy. `clubs.css` only uses semantic tokens and responsive geometry. Compact/full facts are valid definition lists; card bodies stretch their footer actions to a consistent row baseline. Cover/save overlays use explicit stacking. On mobile, membership controls sit above—not on—the persistent nav, and content has end padding for reachable gallery actions.
+
+Five new fictional activity photos use centralized alt/provenance/dimensions/focal points and raster blur, 1200×675 WebP sources (526,288 bytes total), responsive Next images and quality-60 card requests. They are not actual GCTU photos; existing authorized SRC slot remains empty. Gallery/lightbox and RHF/Zod/Radix controls reuse the kit without a runtime library addition. Request consent/fee/member/approval copy distinguishes demo from a supplied API listing and never implies a real payment or enrollment.
+
+Clubs' 203 AA/layout/44px captures include 360/768/1280 light/dark detail geometry, keyboard/focus/dialog/gallery behavior, honest empty/error/retry/visit-only states and controlled API failures. The initial nested definition-list violation was corrected without disabling rules; unknown catalog totals remain unavailable, not fake zero. See [Phase 6A](PHASE6A_CLUBS.md).

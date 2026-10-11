@@ -207,3 +207,24 @@ Logout clears local user/role, six private activity arrays, preferences and prep
 The five-step introduction stores local progress/preferences; it is not an authorization gate. In demo mode personalization clones identity and preserves the role; in API mode it does not call an unimplemented profile-update endpoint. Interests do not yet affect feeds. The optional locally prepared avatar is an owned visit-only blob URL, revoked on replacement/logout and omitted from persistence. Add a server-validated private upload/profile-write service before making a durability claim.
 
 Detailed demo/default-guest migration, return-path rules, privacy and browser verification are in [Phase 5](PHASE5_AUTH_ONBOARDING.md).
+
+## Phase 6A — Clubs read/activity/action replacement
+
+`clubCatalogService` consumes the existing `GET /clubs` list envelope and `GET /clubs/{id}` entity contract with eight-second caller-aware read deadlines. Clubs SSR/metadata forwards only `API_SESSION_COOKIE_NAMES` via the shared exact-name allowlist. The rich `details` object is optional for existing DTO compatibility; if supplied, meeting/venue/fee/count/founded/accepting/rank/story/highlights/leaders/gallery are validated and bounded. Cover/gallery/leader image sources must pass the approved-source policy; transient blobs are not API media. Old demo `technology` and `public-speaking` identifiers remain queryable; display labels group interests without changing those identifiers.
+
+The client calls **`clubActionService`**, not Zustand/fixtures directly. It lazy-loads `ClubActionService`'s demo/API adapter from `NEXT_PUBLIC_DATA_SOURCE`. API activity uses `{ memberships, savedIds }`; memberships have ID/club ID/user ID/status and optional bounded applicant name/note/ISO date. The backend must return only permitted personal/executive scopes. Client filtering is not authorization.
+
+| Proposed route (browser `/api` prefix) | Method/body | Response |
+| --- | --- | --- |
+| `/clubs/activity` | GET | `{ memberships: ClubMembership[], savedIds: string[] }` |
+| `/clubs/{encodedId}/membership` | POST `{ note }` / DELETE | `{ ok: true }` |
+| `/clubs/memberships/{encodedId}` | PATCH `{ status: "approved" \| "rejected" }` | `{ ok: true }` |
+| `/clubs/{encodedId}/saved` | PUT / DELETE | `{ ok: true }` |
+
+All actions are credentialed/no-store, caller-cancelable and bounded at ten seconds. They omit client identity/role/acknowledgment as authority; API failures never invoke local demo fallback. Success reloads validated activity rather than manufacturing an enrollment count. Frontend duplicate/cancellation guards cannot replace transactional/idempotent writes or undo an already-accepted server write. Real identity/ownership/executive scope, CSRF, database, counts, licensing/private media and notifications must be implemented by the backend.
+
+The directory shows six local results per page. API reads initially request 30; while upstream pages remain, filters/search explicitly cover only loaded records and a retryable load-more action merges/deduplicates the next page. Missing rich details show facts as not supplied, not invented demo venue/fees. Activity errors disable membership/save actions until retry. A changed server catalog result deterministically remounts client initial state on refresh.
+
+Default demo changes are device-local. Account/source changes/logout isolate activity; same-student role changes deliberately preserve the executive workflow. Denied local storage reports visit-only only after verifying that memory changed. No real club receives a demo request, no fee is collected and no official enrollment/security claim is made.
+
+See [Phase 6A Clubs](PHASE6A_CLUBS.md) for media budgets and **24 native / 203 AA-layout captures**, including controlled cookie/no-store/encoding/failure/single-flight/proxy checks. The API browser fixture is an implementation test double, **not a connected or certified production backend**.

@@ -1,4 +1,9 @@
-export type UserRole = "student" | "club-executive" | "committee-member" | "src-representative" | "administrator";
+export type UserRole =
+  | "student"
+  | "club-executive"
+  | "committee-member"
+  | "src-representative"
+  | "administrator";
 
 export interface UserProfile {
   id: string;
@@ -14,6 +19,7 @@ export interface Bookmark {
   id: string;
   entityId: string;
   entityType:
+    | "club"
     | "resource"
     | "announcement"
     | "opportunity"

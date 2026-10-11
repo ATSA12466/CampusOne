@@ -30,10 +30,12 @@ export async function checkSession(browser, base) {
     await page.getByLabel("Role (demo switch)", { exact: true }).selectOption("club-executive");
     await page.getByRole("button", { name: "Sign in (demo)", exact: true }).click();
     await page.waitForURL((url) => url.pathname === "/clubs");
-    const panel = page
-      .getByRole("heading", { name: "Club executive demo panel", exact: true })
-      .locator("..");
+    const panel = page.locator("#executive-reviews");
+    await panel.getByRole("heading", { name: "Club executive demo panel", exact: true }).waitFor();
     await panel.getByRole("button", { name: "Approve", exact: true }).last().click();
+    await panel
+      .getByRole("group", { name: "Membership request for Debate Assembly", exact: true })
+      .waitFor({ state: "hidden" });
     assert.equal(
       (await stored(page, "campusone-app")).memberships.find((item) => item.id === request.id)
         .status,

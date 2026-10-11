@@ -1,3 +1,4 @@
+import { clubDetailsSchema, clubImageSourceSchema } from "./club.schema";
 import { z } from "zod";
 const text = z.string();
 const date = z.iso.date();
@@ -7,8 +8,9 @@ export const engagementSchemas = {
     name: text,
     category: text,
     description: text,
-    cover: text,
+    cover: clubImageSourceSchema,
     objectives: z.array(text),
+    details: clubDetailsSchema.optional(),
   }),
   events: z.object({
     id: text,

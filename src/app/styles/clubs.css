@@ -1,0 +1,25 @@
+@layer components {
+  .club-hero {
+    min-height: 25rem;
+  }
+  .club-hero-content {
+    min-height: inherit;
+  }
+  .club-detail-actions {
+    position: fixed;
+    bottom: calc(6.5rem + env(safe-area-inset-bottom));
+    left: 1rem;
+    right: 1rem;
+    z-index: 35;
+  }
+}
+@media (min-width: 1024px) {
+  .club-detail-actions {
+    position: sticky;
+    top: 6rem;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    z-index: auto;
+  }
+}

@@ -1,3 +1,4 @@
+import type { ClubDetails } from "./clubs";
 export interface Club {
   id: string;
   name: string;
@@ -5,6 +6,7 @@ export interface Club {
   description: string;
   cover: string;
   objectives: string[];
+  details?: ClubDetails;
 }
 
 export interface ClubMembership {
@@ -12,6 +14,9 @@ export interface ClubMembership {
   clubId: string;
   userId: string;
   status: "pending" | "approved" | "rejected";
+  applicantName?: string;
+  note?: string;
+  requestedAt?: string;
 }
 
 export interface Announcement {
