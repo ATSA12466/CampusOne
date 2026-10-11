@@ -22,5 +22,12 @@ export default async function MarketplaceDetailPage({
   const { id } = await params;
   const { normalized: item, details } = await readListing("marketplace", id);
   if (!item) notFound();
-  return <ListingDetail domain="marketplace" item={item} details={details} />;
+  return (
+    <ListingDetail
+      initialNow={new Date().toISOString()}
+      domain="marketplace"
+      item={item}
+      details={details}
+    />
+  );
 }

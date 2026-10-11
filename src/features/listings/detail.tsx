@@ -1,4 +1,5 @@
 "use client";
+import { CampusClockProvider } from "@/components/providers/campus-clock";
 import Link from "next/link";
 import { MagazineHeader } from "@/components/shared/magazine-header";
 import { Gallery } from "@/components/media/gallery";
@@ -11,7 +12,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import type { ListingDomain, ListingDetails } from "@/types/listings";
 import type { DiscoverItem } from "@/types/discover";
 import { ListingSidebar } from "./components/listing-sidebar";
-export function ListingDetail({
+function ListingDetailContent({
   domain,
   item,
   details,
@@ -105,5 +106,16 @@ export function ListingDetail({
         />
       </div>
     </div>
+  );
+}
+
+export function ListingDetail({
+  initialNow,
+  ...props
+}: Parameters<typeof ListingDetailContent>[0] & { initialNow: string }) {
+  return (
+    <CampusClockProvider initialNow={initialNow}>
+      <ListingDetailContent {...props} />
+    </CampusClockProvider>
   );
 }

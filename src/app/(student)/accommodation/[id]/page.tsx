@@ -22,5 +22,12 @@ export default async function AccommodationDetailPage({
   const { id } = await params;
   const { normalized: item, details } = await readListing("accommodation", id);
   if (!item) notFound();
-  return <ListingDetail domain="accommodation" item={item} details={details} />;
+  return (
+    <ListingDetail
+      initialNow={new Date().toISOString()}
+      domain="accommodation"
+      item={item}
+      details={details}
+    />
+  );
 }

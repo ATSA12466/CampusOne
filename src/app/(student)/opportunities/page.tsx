@@ -1,7 +1,12 @@
 import { routeMetadata } from "@/config/metadata";
-import { OpportunitiesFeature } from "@/features/opportunities";
+import { ListingDirectoryPage } from "@/features/listings/server";
 export const metadata = routeMetadata("opportunities");
-
-export default function OpportunitiesPage() {
-  return <OpportunitiesFeature />;
+export default async function OpportunitiesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  return (
+    <ListingDirectoryPage domain="opportunities" searchParams={searchParams} />
+  );
 }

@@ -1,3 +1,4 @@
+import { extraOpportunities, opportunityDetails } from "./opportunity-catalog";
 import type { Announcement, Campaign, Opportunity } from "@/types";
 
 export { clubs } from "./club-catalog";
@@ -27,6 +28,7 @@ export { events } from "./event-catalog";
 export const opportunities: Opportunity[] = [
   {
     id: "o1",
+    details: opportunityDetails("MTN Summer Internship", "Internship"),
     title: "MTN Summer Internship",
     provider: "MTN Ghana",
     category: "Internship",
@@ -35,12 +37,14 @@ export const opportunities: Opportunity[] = [
   },
   {
     id: "o2",
+    details: opportunityDetails("Women in Tech Scholarship", "Scholarship"),
     title: "Women in Tech Scholarship",
     provider: "TechBridge Africa",
     category: "Scholarship",
     deadline: "2026-10-28",
     summary: "Tuition support for outstanding women in STEM.",
   },
+  ...extraOpportunities,
 ];
 
 export const campaigns: Campaign[] = [

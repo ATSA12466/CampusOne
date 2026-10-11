@@ -1,3 +1,5 @@
+import { discoverStatus } from "@/lib/discover/status";
+import { useCampusClock } from "@/components/providers/campus-clock";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { listingConfig } from "@/config/listings";
@@ -27,10 +29,19 @@ export function ListingSidebar({
   error: string;
   onSave: () => void;
 }) {
+  const now = useCampusClock();
   return (
     <aside className="space-y-4 lg:sticky lg:top-24">
       <Card>
         <h2 className="font-display text-xl font-semibold">Good to know.</h2>
+        {domain === "opportunities" && now ? (
+          <p
+            role="status"
+            className="mt-3 rounded-control bg-surface-muted p-3 text-sm"
+          >
+            {discoverStatus(item, now)}
+          </p>
+        ) : null}
         <dl className="mt-4 space-y-3 text-sm">
           {item.facts.map((f) => (
             <div key={f.label}>

@@ -81,3 +81,15 @@ test("12 marketplace records keep original titles/prices and labelled illustrati
   assert.equal(page.items.find((i) => i.id === "mk1").priceLabel, "GH₵ 40");
   assert.equal(page.items.find((i) => i.id === "mk2").priceLabel, "GH₵ 25");
 });
+
+test("12 opportunities preserve original provider/deadline and include honest closed and optional eligibility states", async () => {
+  const page = await demoCatalog.list("opportunities", { pageSize: 30 });
+  assert.equal(page.total, 12);
+  for (const item of page.items)
+    assert.equal(entitySchemas.opportunities.safeParse(item).success, true);
+  const first = page.items.find((i) => i.id === "o1");
+  assert.equal(first.provider, "MTN Ghana");
+  assert.equal(first.deadline, "2026-11-01");
+  assert.ok(page.items.find((i) => i.id === "o12").deadline < "2026-10-11");
+  assert.ok(first.details.eligibility.length > 0);
+});

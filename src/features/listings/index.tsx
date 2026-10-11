@@ -5,6 +5,10 @@ const PhotoRecordBoard = dynamic(() =>
     (m) => m.PhotoRecordBoard,
   ),
 );
+import {
+  CampusClockProvider,
+  useCampusClock,
+} from "@/components/providers/campus-clock";
 import { useState } from "react";
 import { ListingIntro } from "./components/listing-intro";
 import { ErrorState } from "@/components/shared/error-state";
@@ -27,7 +31,7 @@ import {
 import type { DiscoverSnapshot, DiscoverFilter } from "@/types/discover";
 import type { ListingDomain } from "@/types/listings";
 import { ListingFilters } from "./components/listing-filters";
-export function ListingsFeature({
+function ListingsDirectory({
   domain,
   initial,
   initialFilter,
@@ -43,7 +47,7 @@ export function ListingsFeature({
     { filter, change } = useDiscoverFilters(initialFilter),
     [tag, setTag] = useState("all"),
     config = listingConfig[domain],
-    now = new Date(initial.now);
+    now = useCampusClock();
   const sections = catalog.sections.map((s) => ({
     ...s,
     page: s.page
@@ -170,5 +174,15 @@ export function ListingsFeature({
         <PhotoRecordBoard collection="marketPosts" />
       ) : null}
     </div>
+  );
+}
+
+export function ListingsFeature(
+  props: Parameters<typeof ListingsDirectory>[0],
+) {
+  return (
+    <CampusClockProvider initialNow={props.initial.now}>
+      <ListingsDirectory {...props} />
+    </CampusClockProvider>
   );
 }
