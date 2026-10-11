@@ -1,4 +1,4 @@
-import type { Announcement, Campaign, EventItem, Opportunity } from "@/types";
+import type { Announcement, Campaign, Opportunity } from "@/types";
 
 export { clubs } from "./club-catalog";
 export { memberships } from "./membership-seeds";
@@ -22,26 +22,7 @@ export const announcements: Announcement[] = [
   },
 ];
 
-export const events: EventItem[] = [
-  {
-    id: "e1",
-    title: "Innovation Night",
-    venue: "Main Auditorium",
-    date: "2026-10-16",
-    category: "Showcase",
-    seats: 300,
-    registered: 120,
-  },
-  {
-    id: "e2",
-    title: "Data Science Career Talk",
-    venue: "Seminar Hall A",
-    date: "2026-10-20",
-    category: "Career",
-    seats: 180,
-    registered: 86,
-  },
-];
+export { events } from "./event-catalog";
 
 export const opportunities: Opportunity[] = [
   {

@@ -1,0 +1,8 @@
+export const eventImageBlurs = {
+  showcase:
+    "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAAAwBACdASoSAAoAPwFqrE8rJiQiMAgBYCAJYgC06BwysN2N++I62Xwp6YAA/uNFQTEw98jiS1C5RQIR/ZlLvGmWbY3UVzA09YbSkUBgKWJmocA8HBHiqLa46Qez52i8CdNen43bbPaYvnkeOtdXKalxf9DrXAAA",
+  music:
+    "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADwAwCdASoSAAoAPwFqrU8rJiQiMAgBYCAJYwDG9Bjs3bkRDJlK2IgAAP7ujB3tGJJBPDRioX78WlCHU2ownf82K83pS48AWeqVXrynZ39PsVtUplpY78gEHAA2CSAA",
+  social:
+    "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAADwAwCdASoSAAoAPwFqrE6rJiQiMAgBYCAJZgCdABxLcTRtyiL+aNbAAP5AAyLXqbVCKxouMh8NRw5H4L4B6is5/xanRsl/TOigVbzMu3puY0YdIc5CbTsVb9zEvx4ShazADMeKTzolCHRHS/MvAAAA",
+} as const;

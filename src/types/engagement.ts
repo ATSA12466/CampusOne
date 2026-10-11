@@ -1,3 +1,4 @@
+import type { EventDetails } from "./events";
 import type { ClubDetails } from "./clubs";
 export interface Club {
   id: string;
@@ -36,6 +37,7 @@ export interface EventItem {
   category: string;
   seats: number;
   registered: number;
+  details?: EventDetails;
 }
 
 export interface Opportunity {

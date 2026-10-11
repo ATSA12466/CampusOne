@@ -29,6 +29,7 @@ interface AppState {
   withdrawMembership: (clubId: string, userId: string) => void;
   reviewMembership: (membershipId: string, status: "approved" | "rejected") => void;
   toggleEventRegistration: (eventId: string) => void;
+  setEventRegistration: (eventId: string, going: boolean) => void;
   markNotificationRead: (id: string) => void;
   submitSrcRequest: (payload: Pick<StudentRequest, "title" | "category" | "description">) => void;
 }
@@ -119,6 +120,12 @@ export const useAppStore = create<AppState>()(
           registrations: state.registrations.includes(eventId)
             ? state.registrations.filter((registrationId) => registrationId !== eventId)
             : [...state.registrations, eventId],
+        })),
+      setEventRegistration: (eventId, going) =>
+        set((state) => ({
+          registrations: going
+            ? [...new Set([...state.registrations, eventId])]
+            : state.registrations.filter((id) => id !== eventId),
         })),
       markNotificationRead: (id) =>
         set((state) => ({

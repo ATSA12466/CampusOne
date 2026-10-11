@@ -12,7 +12,8 @@
     "test:shell": "node scripts/phase3-tests.mjs",
     "test:home": "node scripts/phase4-tests.mjs",
     "test:auth": "node scripts/phase5-tests.mjs",
-    "test:clubs": "node scripts/phase6-clubs-tests.mjs"
+    "test:clubs": "node scripts/phase6-clubs-tests.mjs",
+    "test:events": "node scripts/phase6-events-tests.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

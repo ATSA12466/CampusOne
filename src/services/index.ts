@@ -106,3 +106,7 @@ export function authPreviewService(
 // Clubs Phase 6: typed bounded catalog + intent-loaded source-specific actions.
 export { clubCatalogService } from "./clubs/catalog.service";
 export { clubActionService } from "./clubs/actions.service";
+
+// Events Phase 6B: bounded catalog and intent-loaded source-aware RSVP/tickets.
+export { eventCatalogService } from "./events/catalog.service";
+export { eventActionService } from "./events/actions.service";

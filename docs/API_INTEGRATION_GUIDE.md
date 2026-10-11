@@ -1,6 +1,6 @@
 # API integration guide
 
-Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search; Phase 4 uses it for server-composed Home; Phase 5 adds a separate lazy typed cookie-auth boundary. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
+Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search; Phase 4 uses it for server-composed Home; Phase 5 adds a separate lazy typed cookie-auth boundary; Phases 6A/6B add owner-aware Clubs/Events read/activity/action contracts. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
 
 ## 1. Environment and preview safety
 
@@ -13,7 +13,7 @@ The versioned, credential-free source is `config/env.example`. The generator wil
 
 | Variable | Default / purpose |
 | --- | --- |
-| `NEXT_PUBLIC_DATA_SOURCE` | `demo`; `api` selects async catalog and proposed cookie-auth adapters |
+| `NEXT_PUBLIC_DATA_SOURCE` | `demo`; `api` selects typed catalog/auth/Clubs/Events adapters |
 | `NEXT_PUBLIC_API_BASE_URL` | `/api`; browser-facing request prefix |
 | `API_PROXY_TARGET` | `http://127.0.0.1:4000`; server-only API origin, without a trailing `/api` |
 | `API_SESSION_COOKIE_NAMES` | Empty; server-only comma-separated exact backend session-cookie names; empty forwards no cookies |
@@ -228,3 +228,24 @@ The directory shows six local results per page. API reads initially request 30; 
 Default demo changes are device-local. Account/source changes/logout isolate activity; same-student role changes deliberately preserve the executive workflow. Denied local storage reports visit-only only after verifying that memory changed. No real club receives a demo request, no fee is collected and no official enrollment/security claim is made.
 
 See [Phase 6A Clubs](PHASE6A_CLUBS.md) for media budgets and **24 native / 203 AA-layout captures**, including controlled cookie/no-store/encoding/failure/single-flight/proxy checks. The API browser fixture is an implementation test double, **not a connected or certified production backend**.
+
+
+## Phase 6B — Events read/activity/RSVP/ticket replacement
+
+Use public `eventCatalogService` / `eventActionService`; UI imports no fixtures. Existing `/events` and detail routes use per-request async reads, 30-record upstream pages, 8-second catalog bounds and the exact SSR session-cookie allowlist. `EventItem` preserves the seven base fields; optional rich `details` adds approved cover/alt, tagline/description, Accra UTC instants/booking deadline, price/organizer/status, highlights/agenda/hosts/access/gallery. Validations enforce integer capacity/count relationships, bounded arrays/text/fees/media, supported catalog IDs, date/start consistency, ≤7-day duration and in-event agenda. Legacy responses retain unknown time/price and produce all-day, not fabricated timed ICS.
+
+| Proposed path after the `/api` prefix | Request | Validated response |
+| --- | --- | --- |
+| `GET /events` / `GET /events/{id}` | Existing paged catalog / encoded ID | Existing Page envelope / EventItem / 404 |
+| `GET /events/activity` | Backend cookie session | `{ goingIds: string[], savedIds: string[], attendance?: { eventId: string, registered: number }[] }` |
+| `PUT` / `DELETE /events/{id}/rsvp` | Session; desired going/not-going | `{ ok: true }` |
+| `PUT` / `DELETE /events/{id}/saved` | Session; desired saved/not-saved | `{ ok: true }` |
+| `GET /events/{id}/ticket` | Session / owned RSVP | `{ eventId, reference, payload, status: "valid" | "revoked" }` |
+
+Activity/ticket/mutations use caller-aware 10-second bounds, credentials, no-store and runtime validation. PUT/DELETE must be idempotent. Client acknowledgment is form consent, never authorization; no client identity/role is supplied as authority. API count reports already include publisher attendance—**never client +1**; absent optional attendance keeps the supplied catalog count. Demo count increments are clearly local/fictional and clamped. Fresh activity is read after accepted actions; owner/source/ID/email/role/sequence/abort guards prevent stale UI state crossing accounts.
+
+Ticket event ID must match the requested event; QR payload is bounded to 1024 characters / 1400 UTF-8 bytes. Only a validated publisher payload renders in API mode; failures/revocation/wrong event have no locally invented credential. Ticket data is not app-persisted. Demo payload/reference/visible warning are explicitly **NOT VALID FOR ENTRY** and contain no personal identifiers. The existing QR bundle loads on ticket intent, not discovery or RSVP; failed code has reconnect/save/reload recovery. Calendar export is a real escaped/folded UTF-8 CRLF `.ics` with UTC rich instants or exclusive next-day all-day dates, source-qualified local UID and honest demo/tentative/cancelled status; it is not live sync or admission proof.
+
+The real backend must derive identity, protect payload/ownership, enforce permissions/CSRF/capacity/time/cancellation atomically, revoke tickets and return current counts/activity. Client cancellation only stops waiting; it cannot undo an accepted server write. Source switching, real secure auth/database/payments/uploads/entry validation are not certified by a frontend build.
+
+**Mocked verification, not deployment:** `phase6-events-api-snapshot.mjs` creates an ignored source-only API-mode copy; start it on 0.0.0.0:3002 with `/api` → server 4000 and exact fixture cookie name. `phase6-events-api-audit.mjs` owns/shuts down its controlled 35-record port-4000 fixture, and tests 48 states across 360/1280 light/dark: retry/load-more/failure retention, consent/single-flight PUT, publisher counts/reload/save without local API persistence, publisher ticket/error/revoked/wrong-event, actual timed/all-day ICS, multi-day dates, closed/full/cancelled/past, exact SSR cookies, and an accepted cancellation with a held response: Stop waiting cannot undo that write, produces no false success, and reopen reads the publisher result. Do not run concurrent 4000 fixtures. Full setup, media provenance and boundaries are in [Phase 6B](PHASE6B_EVENTS.md).

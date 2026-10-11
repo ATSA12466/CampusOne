@@ -7,3 +7,5 @@ export * from "./life";
 export * from "./productivity";
 export * from "./auth";
 export * from "./clubs";
+
+export * from "./events";

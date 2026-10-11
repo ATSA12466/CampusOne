@@ -33,6 +33,7 @@ interface Props {
   kind?: "dialog" | "sheet" | "lightbox";
   className?: string;
   returnFocusRef?: RefObject<HTMLElement | null>;
+  fallbackFocusSelector?: string;
   onKeyDown?: KeyboardEventHandler<HTMLDivElement>;
 }
 export function Dialog({
@@ -45,6 +46,7 @@ export function Dialog({
   kind,
   className,
   returnFocusRef,
+  fallbackFocusSelector,
   onKeyDown,
 }: Props) {
   return (
@@ -57,9 +59,16 @@ export function Dialog({
           className={cn(contentVariants({ kind }), className)}
           onKeyDown={onKeyDown}
           onCloseAutoFocus={(event) => {
-            if (returnFocusRef?.current) {
+            const preferred = returnFocusRef?.current;
+            const target =
+              preferred?.isConnected && !preferred.hasAttribute("disabled")
+                ? preferred
+                : fallbackFocusSelector
+                  ? document.querySelector<HTMLElement>(fallbackFocusSelector)
+                  : null;
+            if (target) {
               event.preventDefault();
-              returnFocusRef.current.focus();
+              target.focus();
             }
           }}
         >

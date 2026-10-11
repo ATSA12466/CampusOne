@@ -1,5 +1,33 @@
 # CampusOne test report
 
+## Phase 6B — photo-first Events (11 October 2026)
+
+**Events frontend subphase implemented and verified; Discover is next.** Sixteen fictional events have photo discovery/details, composed filters/sort/views/pagination, source-aware RSVP/save/cancel, truthful count/deadline/status gates, lazy explicit non-entry demo QR and actual timed/all-day ICS. Original `e1`/`e2` records/URLs and registrations compatibility remain. No new direct runtime dependency; API tests are mocked contracts, not secure deployment or real admission.
+
+| Check | Result |
+| --- | --- |
+| Lint / strict typecheck / optimized build | Passed; Next 16.4.0, 32 generated pages, Events dynamic; final cached compile 4.1s / TS 7.2s |
+| Native tests | **15 foundation +12 shell +18 Home +23 auth +24 Clubs +30 Events =122 passed**, zero failed |
+| Events AA/layout/44px | **244 captures:** directory 30; all 16 details ×360/768/1280 ×light/dark 96; RSVP/save/cancel/ticket/ICS/gallery 36; clock/deadline 16; privacy 8; denied-storage/photo fallback 8; code failures 2; mocked API 48; zero rule violations/overflow/small-target flags |
+| Actual exports | Six demo workflow QR raster decodes match `CAMPUSONE_DEMO_NOT_VALID_FOR_ENTRY|e1`; real timed/demo/API/all-day `.ics` downloads and object-URL revocation pass; revoked/wrong-event/API failures never synthesize a QR |
+| Shared regressions | Foundation/theme/dialog/upload/publishing; shell/search/sidebar/delivery; Home/media/clock/errors/delivery; auth session/tour/executive/cross-tab; Clubs membership/executive; proxy/health pass |
+| Maintained baseline workflows | **12 positive assertions**, first-visit `/onboarding` and cleared guest/role/bookmarks pass; new Event/Club acknowledgment and async decision waits retain strong store-persistence assertions |
+| Full route regression | **222 cases /74 AA analyses**, zero layout/AA/44px flags; production `/design` 404; prior streamed not-found behavior preserved |
+| Media / dependencies | Three fictional generated 1200×675 registered WebPs, **319,998 bytes**, all <150 KB; runtime audit **0**, full **9 development advisories (5 high /4 moderate /0 critical)** |
+
+Thirty Events native tests cover exact original record preservation, photos/budgets, six-record pages/uniqueness/clamping, composed search/category/free/date/sort/My/Saved, deterministic non-mutating selectors, legacy/multi-day time truth, minute/deadline/status/capacity/API count behavior, bounded/invalid DTOs/IDs/consent, real local idempotence/persistence/storage/abort/owner races, HTTP/schema/authority omission and wrong-ticket errors, and RFC5545 CRLF/escaping/75-octet UTF-8 folding/date rollover. Already-correct memory is not assumed durably saved when storage is denied.
+
+The 35-record API browser fixture verifies catalog error → server retry, 30-of-35 disclosure and failed/retried load-more with record retention; activity-error mutation disabling; failed acknowledgment retention and exactly one PUT despite duplicate submit; fixture-backed save/RSVP/reload/counts (**121, not double-added 122**) without local API event state; actual publisher payload/error/revoked/wrong-event; timed/all-day calendar download, multi-day agenda/end dates; full/closed/cancelled/past; exact SSR cookie allowlisting, and stopping an accepted DELETE with its acknowledgment held: no rollback promise or false cancellation-success toast, and the fresh listing reflects the backend result. **Real backend/secure authorization/CSRF/database/uploads/mail/payment/entry gate remain unverified.** Its verification dev server and mock fixture were stopped after tests.
+
+All sixteen routes have 360/768/1280 light/dark capture/geometry checks. Manual 360/1280 light/dark review covers each header/story/footer panel plus representative directory/consent/ticket/API screens. Proper fact-list grouping replaced invalid nested markup; removed/disabled trigger focus falls back to the named action panel/result heading. No accessibility rule was disabled. Full-page fixed-overlay screenshots compose viewport-anchored overlays; content outside the active viewport is not an uncovered active dialog. The complete 196-capture production suite, 48-capture API suite and 222-route regression were rerun against the final source after multi-day/ID hardening and cancellation wording changes. Fixed single-day demo labels are unchanged.
+
+Evidence: `.cache/phase6/events/{browser-final,api-browser-final,routes,regressions,review}`, `build-final.log`, `native-all-final.log`, runtime/full audit JSON (ignored; binary retention not guaranteed). Versioned reproduction: `test:events`, `phase6-events-audit.mjs`, `phase6-events-api-snapshot.mjs`, `phase6-events-api-audit.mjs`; see [Phase 6B](PHASE6B_EVENTS.md). Audit-only `jsqr@1.4.0` is not an application dependency.
+
+**Remaining acceptance is explicit:** no new Home Lighthouse measurement in this subphase. Retained default scores 83/82/75 (median **82**), software diagnostic 95/94/94 (median **94**), Accessibility **100**. Default/real-device ≥90 is still open; diagnostics are not substituted. Community/report persistence, required report photo and study constraints remain false in the maintained workflow observations; timetable/calendar/GPA and later domains are not completed by Event ICS. Safari/Firefox/physical-device/IME/full screen-reader traversal and real backend/security are still open.
+
+---
+
+
 ## Phase 6A — photo-first Clubs (11 October 2026)
 
 **Clubs frontend subphase implemented and verified; Events is next.** Sixteen fictional communities now have photo discovery/details, composed filters/sort/views, real six-per-page pagination, local request/withdraw/leave/reapply/save and preserved executive reviews. API integration remains proposed and mocked, not secure/deployed real enrollment. No new direct runtime dependency.

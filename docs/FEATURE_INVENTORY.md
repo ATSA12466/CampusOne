@@ -1,6 +1,6 @@
 # FEATURE_INVENTORY
 
-> Phase 6A: sixteen photo-first Clubs and their directory/details/local membership/save/executive workflows are implemented and verified. Home, auth/onboarding and the shared shell are preserved. Typed API paths are tested with controlled fixtures, not a deployed secure backend. Events and the remaining ordered domain redesigns are still ahead.
+> Phase 6B: photo-first Events and Clubs frontend subphases are implemented and verified. Sixteen fictional events add composed discovery, explicit RSVP/save/cancel, countdown gates, intent-loaded demo QR and actual ICS downloads. Clubs executive reviews, Home, auth/onboarding and the shared shell are preserved. Typed APIs are tested with controlled fixtures, not a deployed secure backend. Discover is next; the remaining domains/performance gate are not complete.
 
 
 ## Implemented modules (functional frontend)
@@ -19,7 +19,7 @@
 - Participation: membership status + recognition view
 - SRC Office: representatives, projects, validated request submission + status preview
 - Announcements: searchable feed, pinned badges, detail pages, bookmarking
-- Events: discovery, registration toggles, detail pages, demo QR ticket preview
+- Events: 16 fictional photo listings/details; six interests; search/date/free/sort/All/My RSVPs/Saved; six-per-page pagination; source-aware RSVP/cancel/save; full/closed/cancelled/past/countdown states; lazy explicit non-entry demo QR; publisher-only API tickets and actual timed/all-day ICS export
 - Community: post creation, reactions, report affordance
 - Messages: conversation list + detail placeholder state
 - Notifications: read/unread state and destination navigation
@@ -72,4 +72,14 @@
 - 92 native tests, 203 Clubs AA/layout captures and fresh 222 route cases / 74 AA checks pass; shared foundation/shell/Home/auth-session/proxy regressions pass. Runtime audit 0; development advisories 9. No new direct runtime dependency.
 - Five new registered generated photos total 526,288 bytes. Neither scene nor member number is actual GCTU evidence. Required attachment/real uploads remain later-phase/backend work.
 - Retained Home Lighthouse default median 82 / software diagnostic 94, Accessibility 100; no new benchmark claimed here. Default/real-device ≥90 remains open.
-- Next: Events → Discover → Accommodation → Marketplace → Opportunities → Lost & Found → Academics → Timetable/Calendar → Profile → remaining, then polish/final verification. See [Phase 6A](PHASE6A_CLUBS.md).
+- Historical Phase 6A handoff: Events followed Clubs. Events is now complete; the current next domain is Discover (see Phase 6B below). See [Phase 6A](PHASE6A_CLUBS.md).
+
+
+## Phase 6B boundaries and next work
+
+- Events is complete as a frontend subphase, not a real enrollment/payment/admission platform. `e1`/`e2` original fields/URLs, app registrations and executive approvals are retained. Fixtures are explicitly fictional and their October 2026 dates age truthfully.
+- Optional rich DTOs validate time/date/agenda/media/capacity/price and supported IDs. Legacy data does not acquire invented times/fees; multi-day ranges show dates. API counts are publisher values, never blindly incremented. API credentials are never synthesized locally; revoked/wrong-event tickets have no QR.
+- RSVP consent, single-flight/idempotent desired states, cancellation, owner/abort guards, correct focus, persistence/verified visit-only and cross-tab ticket logout are checked. ICS is an actual UTF-8-folded download, not live sync or completion of the later timetable/calendar/GPA domain.
+- **122 native tests, 244 Events AA/layout captures, 222 current shared route cases / 74 AA checks** pass. Shared foundation/shell/Home/auth session/tour/Clubs executive and 12 positive workflow assertions pass; original community/report persistence/photo and study-constraint gaps remain recorded. Runtime audit 0; development advisories 9. No new runtime package; audit-only QR decoder is isolated.
+- Three registered fictional 1200×675 photos total 319,998 bytes. Full media provenance and proposed API contracts are in [Phase 6B](PHASE6B_EVENTS.md).
+- No new Home Lighthouse result is claimed: default median 82, CPU diagnostic 94, Accessibility 100. Default/real-device ≥90 remains open. Next: Discover → Accommodation → Marketplace → Opportunities → Lost & Found → Academics → Timetable/Calendar → Profile → remaining.

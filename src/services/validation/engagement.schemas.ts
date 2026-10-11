@@ -1,3 +1,4 @@
+import { eventItemSchema } from "./event.schema";
 import { clubDetailsSchema, clubImageSourceSchema } from "./club.schema";
 import { z } from "zod";
 const text = z.string();
@@ -12,15 +13,7 @@ export const engagementSchemas = {
     objectives: z.array(text),
     details: clubDetailsSchema.optional(),
   }),
-  events: z.object({
-    id: text,
-    title: text,
-    venue: text,
-    date,
-    category: text,
-    seats: z.number().nonnegative(),
-    registered: z.number().nonnegative(),
-  }),
+  events: eventItemSchema,
   opportunities: z.object({
     id: text,
     title: text,

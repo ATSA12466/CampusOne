@@ -1,8 +1,8 @@
 # CampusOne design system
 
-Foundation Phase 2, extended through Phase 6A · 11 October 2026 · Package: `campusone-web` · Product: **CampusOne**
+Foundation Phase 2, extended through Phase 6B · 11 October 2026 · Package: `campusone-web` · Product: **CampusOne**
 
-A photo-centered, campus-magazine foundation for GCTU student life: editorial character without making everyday work harder. This is a frontend prototype, not an official campus service. The grouped shell, magazine Home and photo-led auth/onboarding and Clubs directory/details are implemented; remaining domain redesigns follow in the agreed phase order.
+A photo-centered, campus-magazine foundation for GCTU student life: editorial character without making everyday work harder. This is a frontend prototype, not an official campus service. The grouped shell, magazine Home and photo-led auth/onboarding and Clubs/Events directory/details are implemented; remaining domain redesigns follow in the agreed phase order.
 
 ## 1. Principles and source of truth
 
@@ -379,3 +379,14 @@ The magazine direction extends to sixteen photo communities: a people-first hero
 Five new fictional activity photos use centralized alt/provenance/dimensions/focal points and raster blur, 1200×675 WebP sources (526,288 bytes total), responsive Next images and quality-60 card requests. They are not actual GCTU photos; existing authorized SRC slot remains empty. Gallery/lightbox and RHF/Zod/Radix controls reuse the kit without a runtime library addition. Request consent/fee/member/approval copy distinguishes demo from a supplied API listing and never implies a real payment or enrollment.
 
 Clubs' 203 AA/layout/44px captures include 360/768/1280 light/dark detail geometry, keyboard/focus/dialog/gallery behavior, honest empty/error/retry/visit-only states and controlled API failures. The initial nested definition-list violation was corrected without disabling rules; unknown catalog totals remain unavailable, not fake zero. See [Phase 6A](PHASE6A_CLUBS.md).
+
+
+## Phase 6B Events composition
+
+Events applies the same editorial vocabulary to sixteen fictional plans: a warm photo-led directory, six readable interests, composed date/free/search/sort/collection controls and six-card pages. The detail hierarchy reserves a generated cover, proper definition-list facts, programme/highlights, agenda, hosts, access notes and gallery. Full/closed/cancelled/past states and an Accra minute/visibility countdown are clear, not invented urgency. Missing legacy time/fee stays missing; multi-day ranges expose the actual end/agenda dates.
+
+`events.css` adds only semantic/responsive geometry. Fixed mobile actions clear navigation and have enough end padding for gallery access; desktop actions are sticky. QR paper/ink use existing invariant `on-photo`/`nav` tokens, not component hex or a second dark palette; the actual QR is readable in both themes. Three new generated WebPs (1200×675, 319,998 bytes total, all <150 KB) have central alt/provenance/focal points/raster blur. Priority quality-60 lead and lazy default-quality-75 cards/gallery use `CampusImage`.
+
+RHF/Zod acknowledgment, Radix dialogs and native controls give first-error focus/trap/Escape/44px targets. Shared Dialog now supports a safe focus fallback when an RSVP/cancel trigger is removed or disabled. Save/RSVP/cancel/ticket/calendar are source-aware; fees are never collected and demo QR previews are conspicuously non-entry credentials. The existing QR library is intent-loaded, with recoverable code/API failure and no QR for revoked/wrong-event tickets. Calendar download is a real `.ics`, not a fake action or live synchronization.
+
+**244 Events AA/layout/44px captures** include all sixteen details at 360/768/1280 both themes, workflows/actual QR decode/download, clock/privacy/storage/code failures and 48 mocked API states. Four all-route header/story/footer overview sheets and representative dialogs/tickets were manually reviewed at 360/1280 light/dark. No rule was disabled; the initial invalid fact-list grouping was corrected. Official artwork and Home's default/real-device ≥90 performance gate remain open. See [Phase 6B](PHASE6B_EVENTS.md).

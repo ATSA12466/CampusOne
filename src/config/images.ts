@@ -1,3 +1,4 @@
+import { eventImageBlurs } from "./event-image-blurs";
 import { clubImageBlurs } from "./club-image-blurs";
 import { homeImageBlurs } from "./image-blurs";
 import type { CampusMedia } from "@/types/media";
@@ -15,6 +16,36 @@ const placeholder = (src: string, alt: string): CampusMedia => ({
   sourceNote: "Original local SVG stand-in, retained for replacement with authorized photography.",
 });
 export const images = {
+  eventShowcase: {
+    src: "/images/demo/event-showcase.webp",
+    alt: "Fictional Ghanaian students sharing a robotics project at a golden-hour courtyard showcase — AI-generated demonstration, not an actual GCTU event.",
+    width: 1200,
+    height: 675,
+    blurDataURL: eventImageBlurs.showcase,
+    focalPoint: { x: 64, y: 46 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  eventMusic: {
+    src: "/images/demo/event-music.webp",
+    alt: "Fictional Ghanaian students performing an intimate courtyard open-mic with microphone and guitar — AI-generated demonstration, not actual performers.",
+    width: 1200,
+    height: 675,
+    blurDataURL: eventImageBlurs.music,
+    focalPoint: { x: 60, y: 48 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
+  eventSocial: {
+    src: "/images/demo/event-social.webp",
+    alt: "Fictional Ghanaian student friends sharing a board game at a sunny tropical picnic table — AI-generated demonstration, not an actual campus gathering.",
+    width: 1200,
+    height: 675,
+    blurDataURL: eventImageBlurs.social,
+    focalPoint: { x: 62, y: 50 },
+    provenance: "generated",
+    sourceNote: generatedSource,
+  },
   clubMakers: {
     src: "/images/demo/club-makers.webp",
     alt: "Fictional Ghanaian students building a small robotics prototype together in a sunny workshop — AI-generated demo, not an actual club or GCTU photograph.",

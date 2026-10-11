@@ -2,7 +2,7 @@
 
 ## Product and phase boundary
 
-CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Phase 3 adds the grouped/collapsible shell, mobile tabs + More and global search. Phase 4 adds the server-composed magazine Home with a bounded typed feed, actual deferred video and device-only planner. Phase 5 adds photo-led auth/onboarding, explicit hydration/sanitized persistence and a lazy proposed cookie-auth adapter. Phase 6A adds server-read photo-first Clubs with owner-qualified local/API actions and preserved executive reviews. Remaining phases replace domain experiences in the agreed order; this is not a finished live campus platform.
+CampusOne (`campusone-web`) is a Next.js 16 App Router / React 19 student-app frontend. Phase 1 audited the baseline. Phase 2 establishes semantic light/dark themes, local fonts, media/UI primitives, development showcase, route metadata and a typed read-service boundary. Phase 3 adds the grouped/collapsible shell, mobile tabs + More and global search. Phase 4 adds the server-composed magazine Home with a bounded typed feed, actual deferred video and device-only planner. Phase 5 adds photo-led auth/onboarding, explicit hydration/sanitized persistence and a lazy proposed cookie-auth adapter. Phase 6A adds server-read photo-first Clubs with owner-qualified local/API actions and preserved executive reviews. Phase 6B adds server-read photo Events, explicit owner-safe RSVP/save/ticket adapters, a shared minute clock and pure ICS export. Remaining phases replace domain experiences in the agreed order; this is not a finished live campus platform.
 
 ## Directory map
 
@@ -23,6 +23,7 @@ src/
     media/                  # CampusImage, cards/hero/gallery/uploader + scoped hooks
     shared/                 # Brand, page header, loading/empty/error/404 states
     theme/                  # Pre-paint bootstrap + external store/controls
+    providers/              # Shared SSR-initialized minute/visibility campus clock
     layout/, navigation/    # Persistent grouped shell + lazy overlay entry points
   config/                   # App/env, theme, image registry, metadata, API paths
   types/                    # Shared entities, media/UI/theme/service contracts
@@ -139,3 +140,14 @@ The existing Clubs URLs now compose per-request async catalog/detail reads on th
 Membership seeds are a separate small module, not an eager dependency on sixteen rich catalog profiles. Feature/data leaves stay around 150 lines, with typed contracts in `types/clubs.ts`, form schema in feature validation and shared DTO/note validators in service validation (not a service→UI dependency). `.cache` audit snapshots are excluded from lint/typecheck so generated verification copies are not application source.
 
 API endpoints are proposed, no-store/credentialed and same-origin → port 4000. Real club-scoped access control/CSRF/database/uploads/notifications remain backend work; local demo approvals are not enrollment. See [Phase 6A](PHASE6A_CLUBS.md) and the [API guide](API_INTEGRATION_GUIDE.md).
+
+
+## Events domain migration (Phase 6B)
+
+Server routes use bounded async catalog snapshots and request-cached details/metadata with exact SSR cookie allowlisting. The initial serializable result includes a stable server clock; public catalog refresh changes the result hash to replace stale client state. Optional rich `EventItem.details` leaves the original seven base fields intact. External DTO schemas bound media/arrays/fees/counts, match the Accra date/time and reject catalog IDs the existing detail route cannot open.
+
+`useEventDirectory` separates six-record client pages from 30-record upstream reads; composed search/category/date/free/sort/view and honest loaded-record load-more are pure selectors plus small hooks. `useEventActivity` subscribes to local registrations/bookmarks or validated owner-qualified API activity. `useEventMutations` adds single-flight/abort/live-owner/sequence guards; demo services re-read catalog/time/owner immediately before changing state. Already-correct memory is not treated as proof of durable storage. The old store toggle remains compatible; UI uses an explicit desired RSVP setter through the service.
+
+`CampusClockProvider` generalizes Home's established SSR-minute/60-second/visibility clock without changing the Home import contract. API attendance is authoritative, with no client +1. `useEventTicket` keeps publisher data in owned component memory; `event-dialogs` intent-loads the existing QR library, supplies a code-delivery recovery dialog and renders no QR for failed/revoked/wrong-event tickets. Shared Dialog can return focus to a safe named panel/result heading after a trigger is removed or disabled.
+
+`lib/events/calendar.ts` has no dependency: escaped CRLF/UTF-8-folded ICS, UTC rich instants, date-only next-day ends, source-qualified local UIDs and demo/tentative/cancelled semantics. Browser download/revocation is separate from mutation/persistence. Feature/data/service leaves stay around 150 lines; UI uses the public service boundary, not fixtures. Source-aware API endpoints remain proposed, not a deployed admission/authorization/capacity/CSRF backend. See [Phase 6B](PHASE6B_EVENTS.md).
