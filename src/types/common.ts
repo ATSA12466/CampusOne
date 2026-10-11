@@ -25,6 +25,8 @@ export interface Bookmark {
     | "opportunity"
     | "event"
     | "marketplace"
+    | "accommodation"
+    | "lost-found"
     | "media"
     | "community";
 }

@@ -1,0 +1,8 @@
+@layer components {
+  .discover-hero {
+    min-height: 28rem;
+  }
+  .discover-hero-content {
+    min-height: inherit;
+  }
+}

@@ -5,6 +5,7 @@
 @import "./styles/auth.css";
 @import "./styles/clubs.css";
 @import "./styles/events.css";
+@import "./styles/discover.css";
 
 :root,
 [data-theme="light"] {

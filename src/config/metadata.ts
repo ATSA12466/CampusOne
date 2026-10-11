@@ -71,7 +71,7 @@ const routeCopy = {
   community: ["Community", "Follow campus conversations and connect with your student community."],
   discover: [
     "Discover",
-    "Find your next campus community, event, opportunity or learning resource.",
+    "Explore the campus edit: clubs, events, study resources, opportunities, living, marketplace, media and lost-and-found.",
   ],
   events: [
     "Events",

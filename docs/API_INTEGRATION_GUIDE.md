@@ -1,6 +1,6 @@
 # API integration guide
 
-Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search; Phase 4 uses it for server-composed Home; Phase 5 adds a separate lazy typed cookie-auth boundary; Phases 6A/6B add owner-aware Clubs/Events read/activity/action contracts. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
+Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search; Phase 4 uses it for server-composed Home; Phase 5 adds a separate lazy typed cookie-auth boundary; Phases 6A/6B add owner-aware Clubs/Events read/activity/action contracts; Phase 6C composes eight bounded Discover sources with canonical shared saves. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
 
 ## 1. Environment and preview safety
 
@@ -13,7 +13,7 @@ The versioned, credential-free source is `config/env.example`. The generator wil
 
 | Variable | Default / purpose |
 | --- | --- |
-| `NEXT_PUBLIC_DATA_SOURCE` | `demo`; `api` selects typed catalog/auth/Clubs/Events adapters |
+| `NEXT_PUBLIC_DATA_SOURCE` | `demo`; `api` selects typed catalog/auth/Clubs/Events/Discover adapters |
 | `NEXT_PUBLIC_API_BASE_URL` | `/api`; browser-facing request prefix |
 | `API_PROXY_TARGET` | `http://127.0.0.1:4000`; server-only API origin, without a trailing `/api` |
 | `API_SESSION_COOKIE_NAMES` | Empty; server-only comma-separated exact backend session-cookie names; empty forwards no cookies |
@@ -249,3 +249,13 @@ Ticket event ID must match the requested event; QR payload is bounded to 1024 ch
 The real backend must derive identity, protect payload/ownership, enforce permissions/CSRF/capacity/time/cancellation atomically, revoke tickets and return current counts/activity. Client cancellation only stops waiting; it cannot undo an accepted server write. Source switching, real secure auth/database/payments/uploads/entry validation are not certified by a frontend build.
 
 **Mocked verification, not deployment:** `phase6-events-api-snapshot.mjs` creates an ignored source-only API-mode copy; start it on 0.0.0.0:3002 with `/api` → server 4000 and exact fixture cookie name. `phase6-events-api-audit.mjs` owns/shuts down its controlled 35-record port-4000 fixture, and tests 48 states across 360/1280 light/dark: retry/load-more/failure retention, consent/single-flight PUT, publisher counts/reload/save without local API persistence, publisher ticket/error/revoked/wrong-event, actual timed/all-day ICS, multi-day dates, closed/full/cancelled/past, exact SSR cookies, and an accepted cancellation with a held response: Stop waiting cannot undo that write, produces no false success, and reopen reads the publisher result. Do not run concurrent 4000 fixtures. Full setup, media provenance and boundaries are in [Phase 6B](PHASE6B_EVENTS.md).
+
+## Phase 6C — Discover sources/activity/canonical saves
+
+`discoverCatalogService` composes the existing catalog paths for `clubs`, `events`, `resources`, `opportunities`, `accommodation`, `marketplace`, `media`, `lostFound`; reference/UI `lost-found` maps to raw collection `lostFound` and `/lost-found`. Each source is an 8-second caller-aware, 30-record bounded read, not a dedicated `/discover` feed endpoint. Normalization keeps optional legacy facts honest and validates page/ID/total/media/text/fact bounds. Partial source failure remains visible and retryable; a failed next page retains prior records. Search, sort and Saved are loaded-record scoped.
+
+`discoverActionService` lazily chooses demo or credentialed no-store 10-second API actions: `GET /discover/activity` → `{saved:[{category,id}]}` (max 500 validated references), `PUT /discover/{category}/{encodedId}/saved` and `DELETE` at the same path → `{ok:true}`, no request body. The backend must infer authenticated owner, validate resource/category access and implement idempotent desired-state writes. **Club/Event saves are canonical shared records**, visible to their existing activity/action paths, not Discover-only duplicates. API activity/saves never write demo bookmarks to local persistence.
+
+Same-origin `/api` proxy → server port 4000, exact SSR `API_SESSION_COOKIE_NAMES`, caller cancellation and no-store follow the existing API boundary. Guest/owner/source/email/role/abort guards are frontend defense, not authorization/CSRF/database proof; an interrupted request may already have been accepted by the backend.
+
+The isolated snapshot + browser fixture verifies 48 360/1280 light/dark states: partial retry, >30 paging/failed-next-page retention, activity failure versus false empty, optimistic rollback/single-flight, publisher reload without local bookmarks, canonical Club/Event saves, accommodation PUT/DELETE, sparse legacy facts, true empty versus complete source error and cookie allowlisting. It owns/shuts down its 4000 mock; do not run concurrent fixtures. Full setup/limits are in [Phase 6C](PHASE6C_DISCOVER.md). No deployed backend verification is claimed.

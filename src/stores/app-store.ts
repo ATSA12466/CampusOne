@@ -21,6 +21,7 @@ interface AppState {
   removeTask: (id: string) => void;
   updateTask: (task: TaskItem) => void;
   toggleBookmark: (item: Bookmark) => void;
+  setBookmark: (item: Bookmark, saved: boolean) => void;
   requestMembership: (
     clubId: string,
     userId: string,
@@ -81,6 +82,21 @@ export const useAppStore = create<AppState>()(
                     ),
                 )
               : [...state.bookmarks, item],
+          };
+        }),
+      setBookmark: (item, saved) =>
+        set((state) => {
+          const matches = (bookmark: Bookmark) =>
+            bookmark.entityId === item.entityId &&
+            bookmark.entityType === item.entityType;
+          const exists = state.bookmarks.some(matches);
+          return {
+            bookmarks:
+              exists === saved
+                ? [...state.bookmarks]
+                : saved
+                  ? [...state.bookmarks, item]
+                  : state.bookmarks.filter((bookmark) => !matches(bookmark)),
           };
         }),
       requestMembership: (clubId, userId, details = {}) => {

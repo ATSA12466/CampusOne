@@ -9,3 +9,5 @@ export * from "./auth";
 export * from "./clubs";
 
 export * from "./events";
+
+export type * from "./discover";

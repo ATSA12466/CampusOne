@@ -1,6 +1,33 @@
 # CampusOne test report
 
-## Phase 6B — photo-first Events (11 October 2026)
+## Phase 6C — photo-first Discover (11 October 2026)
+
+**Discover frontend hub implemented and verified; Accommodation is next.** Eight categories retain 45 canonical records, a balanced edit of 24, loaded-record search/category/mix/name/date/Saved and URL-backed six-record pages. Sparse covers are labelled illustrations; library/board links remain honest. Shared demo/API save contracts preserve Club/Event private workflows and executive reviews. No new runtime package or application image file; API evidence uses controlled fixtures, not a deployed secure backend.
+
+| Check | Observed result |
+| --- | --- |
+| Lint / strict typecheck / optimized build | Passed; Next 16.4.0, 32 generated pages, final cached compile 2.1s / TS 5.9s |
+| Native tests | **15 foundation +12 shell +18 Home +23 auth +24 Clubs +30 Events +28 Discover =150 passed**, zero failed/skipped |
+| Discover AA/layout/44px | **176 captures:** 84 directory; 12 eight-type/shared-save workflows; 8 each privacy, denied-storage/photo fallback, SSR/code recovery, clock/visibility; 48 mocked API; no AA violations/overflow/small-target flags |
+| Production layout coverage | Directory and save workflows: **360/768/1280 × light/dark**; other states and mocked API: **360/1280 × light/dark** |
+| Route regression | **222 fresh cases**, 37 routes ×3 widths ×2 themes; **74 AA scans**, all clear; no route overflow/small-target flags |
+| Shared browser regressions | Foundation/controls/upload/themes/prod-design-404; shell/search; Home/media/states/clock/delivery; auth session/tour; Clubs membership/executive; Events RSVP/save/cancel/decoded demo QR/actual ICS; proxy/health; **12 maintained positive workflow assertions**, no page exceptions |
+| Static/dependency checks | Diff whitespace clean; TypeScript AST finds **zero `any` nodes** in app source; runtime audit **0**, full audit **9 development advisories** (5 high / 4 moderate) |
+| Human visual inspection | Actual full hub and all eight category/result plus Saved/guest/failure panels at 360/1280 light/dark inspected; no new layout defects |
+| Home Lighthouse | Retained historical default median **82 /100**, CPU-raster diagnostic **94 /100**; **default/physical-device Performance ≥90 stays OPEN**, no new Discover score claimed |
+
+The eight-source snapshot measured 45,511 serialized bytes. Tests prove canonical IDs/destinations, all 45 unique listings over eight pages, bounded DTO/page/ID/duplicate validation, loaded-record sort/search/Saved scope, URL reload/back/forward, minute/visibility status, eight-type local persistence/idempotence, owner/source/role/abort/storage truth and restrictive path-only sign-in returns.
+
+The 48-state API fixture proves partial source error/retry, 30-of-35 disclosure and failed/retried next-page retention, activity-error mutation disabling/no false Saved-empty, rejected-save rollback/input retention, pending duplicate-click single-flight, publisher-owned saves/reload without local bookmarks, canonical Event/Club removal, accommodation PUT/DELETE, legacy no-invented-fee/illustration, genuine-empty versus all-error and exact SSR cookie allowlisting. **Real backend authorization/CSRF/database/durability/uploads/mail remain unverified.** Its API-only dev server and mock fixture were stopped after tests. Source/native checks also reject wrong get IDs, invalid totals, duplicate pages and inconsistent empty-more results.
+
+Shared workflow observations still record community/report persistence as false, missing required report-photo input and ignored study constraints; these remain later-domain work, not waived assertions. Club approvals, Event tickets/cancellation, task/bookmark/notification/SRC persistence and logout isolation pass. The broken query-bearing guest return link was fixed without broadening the auth redirect validator; the native API harness's loader-order and browser test's explicit Saved-selection setup were corrected, then complete suites rerun.
+
+Evidence: ignored `.cache/phase6/discover/{browser-final,api-browser,routes,regressions,review}`, `build.log`, `native-all.log`, runtime/full audit JSON. Binary retention is not guaranteed. Versioned reproduction: `test:discover`, `phase6-discover-audit.mjs`, `phase6-discover-api-snapshot.mjs`, `phase6-discover-api-audit.mjs` and [Phase 6C scope/API instructions](PHASE6C_DISCOVER.md). Next is **Accommodation → Marketplace → Opportunities → Lost & Found → Academics → Timetable/Calendar → Profile → remaining**; broader backend/device/performance gates remain open.
+
+---
+
+
+## Phase 6B — photo-first Events (11 October 2026; historical handoff)
 
 **Events frontend subphase implemented and verified; Discover is next.** Sixteen fictional events have photo discovery/details, composed filters/sort/views/pagination, source-aware RSVP/save/cancel, truthful count/deadline/status gates, lazy explicit non-entry demo QR and actual timed/all-day ICS. Original `e1`/`e2` records/URLs and registrations compatibility remain. No new direct runtime dependency; API tests are mocked contracts, not secure deployment or real admission.
 

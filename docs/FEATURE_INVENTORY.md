@@ -1,6 +1,6 @@
 # FEATURE_INVENTORY
 
-> Phase 6B: photo-first Events and Clubs frontend subphases are implemented and verified. Sixteen fictional events add composed discovery, explicit RSVP/save/cancel, countdown gates, intent-loaded demo QR and actual ICS downloads. Clubs executive reviews, Home, auth/onboarding and the shared shell are preserved. Typed APIs are tested with controlled fixtures, not a deployed secure backend. Discover is next; the remaining domains/performance gate are not complete.
+> Phase 6C: photo-first Discover joins the completed Clubs/Events frontend subphases. Eight categories, a balanced 24-record edit, all 45 canonical loaded listings, URL-backed filters/pages and owner-safe shared saves are implemented and verified. Sparse covers are labelled illustrations, existing destinations and Club/Event private workflows remain intact. Typed APIs use controlled fixtures, not a deployed secure backend. Accommodation is next; remaining domains and the Home performance gate are not complete.
 
 
 ## Implemented modules (functional frontend)
@@ -10,7 +10,7 @@
 - Authentication: photo-led sign-in/register/recovery, Zod/RHF validation/error focus, password reveal/hide, remembered local profile choice, submitted registration identity, loading/cancel/error/resubmit, clearly demo-only role switch and lazy proposed cookie API adapter
 - Home: conditional active sponsor/video-first feed, generated Clubs hero, six native snap photo destinations, official HTTPS LMS/SIP links, Accra now/next class, overdue/today tasks, completion/undo/progress, chronological event/deadline recommendations, honest partial/empty/retry states
 - Deferred UI: player and native media bytes on Play, header appearance menu on first click, Radix toast stack on first message with a native failure fallback
-- Discover: cross-domain search with category filter
+- Discover: eight-source photo hub; balanced edit 24/all 45/Saved; URL-backed search/category/mix/name/supplied-date sorts; six-per-page pagination; partial/retry/load-more; canonical eight-type saves and explicit sparse-cover/library/board truth
 - Academics: resource listing/filtering/bookmarking/detail view/download state
 - AI Study Assistant: demo planning interface with explicit demo output labeling
 - Tasks: add/edit/delete/complete/reopen/filter/search/stats
@@ -72,7 +72,7 @@
 - 92 native tests, 203 Clubs AA/layout captures and fresh 222 route cases / 74 AA checks pass; shared foundation/shell/Home/auth-session/proxy regressions pass. Runtime audit 0; development advisories 9. No new direct runtime dependency.
 - Five new registered generated photos total 526,288 bytes. Neither scene nor member number is actual GCTU evidence. Required attachment/real uploads remain later-phase/backend work.
 - Retained Home Lighthouse default median 82 / software diagnostic 94, Accessibility 100; no new benchmark claimed here. Default/real-device ≥90 remains open.
-- Historical Phase 6A handoff: Events followed Clubs. Events is now complete; the current next domain is Discover (see Phase 6B below). See [Phase 6A](PHASE6A_CLUBS.md).
+- Historical Phase 6A handoff: Events followed Clubs. Events and Discover are now complete; the current next domain is Accommodation (see Phase 6C below). See [Phase 6A](PHASE6A_CLUBS.md).
 
 
 ## Phase 6B boundaries and next work
@@ -82,4 +82,13 @@
 - RSVP consent, single-flight/idempotent desired states, cancellation, owner/abort guards, correct focus, persistence/verified visit-only and cross-tab ticket logout are checked. ICS is an actual UTF-8-folded download, not live sync or completion of the later timetable/calendar/GPA domain.
 - **122 native tests, 244 Events AA/layout captures, 222 current shared route cases / 74 AA checks** pass. Shared foundation/shell/Home/auth session/tour/Clubs executive and 12 positive workflow assertions pass; original community/report persistence/photo and study-constraint gaps remain recorded. Runtime audit 0; development advisories 9. No new runtime package; audit-only QR decoder is isolated.
 - Three registered fictional 1200×675 photos total 319,998 bytes. Full media provenance and proposed API contracts are in [Phase 6B](PHASE6B_EVENTS.md).
-- No new Home Lighthouse result is claimed: default median 82, CPU diagnostic 94, Accessibility 100. Default/real-device ≥90 remains open. Next: Discover → Accommodation → Marketplace → Opportunities → Lost & Found → Academics → Timetable/Calendar → Profile → remaining.
+- No new Home Lighthouse result is claimed: default median 82, CPU diagnostic 94, Accessibility 100. Default/real-device ≥90 remains open. Historical Phase 6B handoff: Discover followed Events; the current next domain is Accommodation → Marketplace → Opportunities → Lost & Found → Academics → Timetable/Calendar → Profile → remaining.
+
+## Phase 6C boundaries and next work
+
+- Discover is complete as a frontend hub, not an authoritative recommendation, property/product photograph or full media/reporting service. All 45 canonical records retain their existing IDs/destinations; no fake detail/player URLs were added. The edit is a deterministic balanced mix, not popularity or personalization. Search and Saved cover loaded records only.
+- Eight bounded typed sources provide partial/error/initial-or-next-page retry without API-mode demo fallback. URL query uses replaceState; meaningful filter/page changes use pushState; deep links/reload/back/forward pass.
+- Shared demo saves use existing Club/Event bookmarks plus the added accommodation/lost-found types. API saves stay publisher-owned and the fixture proves canonical Club/Event cross-feature removal, rollback/single-flight and no local API bookmarks. These are proposed backend contracts, not authorization/CSRF/database proof.
+- **150 native tests, 176 Discover AA/layout/44px captures, 222 fresh shared route cases / 74 AA scans** pass. Foundation/shell/Home/auth, Club membership/executive, Event RSVP/ticket/ICS, proxy/health and 12 maintained positive workflow regressions pass. Runtime audit 0; development advisories 9; no runtime package/image file added.
+- Actual 360/1280 light/dark hub and all eight category/Saved/guest/error panels were visually inspected; 768 has automated coverage. Full scope/contract/reproduction are in [Phase 6C](PHASE6C_DISCOVER.md).
+- Home default median 82, CPU diagnostic 94 and Accessibility 100 are retained historical scores, not a new benchmark or a waived ≥90 gate. Next: **Accommodation → Marketplace → Opportunities → Lost & Found → Academics → Timetable/Calendar → Profile → remaining**. Community/report persistence, required report photo, study constraints, broader calendar/GPA and real backend/security remain open.
