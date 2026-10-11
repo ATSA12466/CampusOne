@@ -1,7 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
+import type { AspectRatio } from "@/types/media";
 import { CampusImage } from "./campus-image";
-export function OwnedPhoto({ data, alt }: { data: string; alt: string }) {
+export function OwnedPhoto({
+  data,
+  alt,
+  aspect = "video",
+}: {
+  data: string;
+  alt: string;
+  aspect?: AspectRatio;
+}) {
   const [url, setUrl] = useState("");
   useEffect(() => {
     let active = true,
@@ -12,6 +21,9 @@ export function OwnedPhoto({ data, alt }: { data: string; alt: string }) {
         if (!active) return;
         current = URL.createObjectURL(blob);
         setUrl(current);
+      })
+      .catch(() => {
+        if (active) setUrl("");
       });
     return () => {
       active = false;
@@ -21,6 +33,7 @@ export function OwnedPhoto({ data, alt }: { data: string; alt: string }) {
   return (
     <CampusImage
       image={url ? { src: url, alt, provenance: "upload" } : null}
+      aspect={aspect}
       alt={alt}
       className="rounded-media"
     />

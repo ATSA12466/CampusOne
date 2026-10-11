@@ -2,7 +2,7 @@
 
 `campusone-web` — a GCTU student-app frontend moving toward a photo-first campus magazine and social super-app.
 
-**Current milestone: Phase 6D Accommodation, continuing automatically through the remaining agreed features.** Twelve fictional homes have photo discovery/details, search/type/location/Saved, gallery/lightbox, canonical saves, private device-only enquiry/report drafts and an honest Maps area search. Original prices/IDs are preserved. Discover, Clubs/executive reviews, Events RSVP/ticket/ICS, Home, auth and shell remain intact. See [Phase 6D](docs/PHASE6D_ACCOMMODATION.md). Marketplace is next; real backend/security and Home's default-renderer/physical-device Performance ≥90 gate remain open.
+**Current milestone: Phase 6J Profile, continuing automatically to the remaining screens, polish and final verification.** Accommodation, Marketplace, Opportunities, Lost & Found, Academics and Timetable/Calendar now have committed photo-led experiences, private validated persistence, photo reports/listings, GPA/notes and truthful ICS export. Profile adds safe editable preferences and persistent cropped local photos without editable identity/authority. See [Phase 6J](docs/PHASE6J_PROFILE.md). Community/messaging/study and secondary screens are next; real backend/security and Home's default-renderer/physical-device Performance ≥90 gate remain open.
 
 This is an explicitly labelled **demo/prototype**, not an official GCTU/SRC service. Generated photographs depict fictional people/a campus. The official SRC artwork is still pending; `BrandMark` keeps a clean labelled slot rather than inventing a logo. Real auth, uploads, messaging, payments, AI and authoritative campus data are not connected.
 
@@ -80,6 +80,8 @@ The eight pre-Clubs generated WebPs total **626,572 bytes**; five additional fic
 - [Phase 6A Clubs, photos, workflows and API replacement](docs/PHASE6A_CLUBS.md)
 - [Phase 6B Events, RSVP/tickets/calendar and API replacement](docs/PHASE6B_EVENTS.md)
 - [Phase 6C Discover, loaded-record scope, shared saves and API replacement](docs/PHASE6C_DISCOVER.md)
+- [Phase 6D Accommodation](docs/PHASE6D_ACCOMMODATION.md) · [6E Marketplace](docs/PHASE6E_MARKETPLACE.md) · [6F Opportunities](docs/PHASE6F_OPPORTUNITIES.md)
+- [Phase 6G Lost & Found](docs/PHASE6G_LOST_FOUND.md) · [6H Academics](docs/PHASE6H_ACADEMICS.md) · [6I Schedule](docs/PHASE6I_SCHEDULE.md) · [6J Profile](docs/PHASE6J_PROFILE.md)
 - [Frontend architecture](docs/FRONTEND_ARCHITECTURE.md)
 - [Feature inventory](docs/FEATURE_INVENTORY.md)
 - [Latest tests, screenshots, Lighthouse and remaining work](docs/TEST_REPORT.md)

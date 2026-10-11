@@ -1,5 +1,9 @@
 # CampusOne test report
 
+## Phase 6J — Profile
+
+176 native tests, lint/typecheck/build and 22 clean 360/768/1280 light/dark AA/layout/44px profile captures pass. Name/programme/bio/preferences and required owned-photo crop/persistence/removal are verified; authority fields remain unchanged and API mode does not use local demo counts/preferences. Actual captures reviewed and square portrait/focus defects corrected. No runtime dependency added. Details and limits: [Phase 6J](PHASE6J_PROFILE.md). Work continues automatically to remaining screens and final gates.
+
 ## Phase 6D — Accommodation
 
 Twelve fictional homes, **159 native tests**, clean lint/TS/build and **104 housing AA/layout/44px browser captures** pass. All 12 details plus directory/search/paging/Saved-reload run at 360/768/1280 in light/dark; gallery and validated device-only enquiry run at 360/1280. Actual mobile/desktop screens were inspected; duplicate supplied Type presentation was corrected and cover variety improved. Workspace HTTP tests are native fetch mocks, not real backend proof. [Full scope and reproduction](PHASE6D_ACCOMMODATION.md). Moving directly to Marketplace.

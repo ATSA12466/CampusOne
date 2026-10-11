@@ -117,3 +117,5 @@ export { discoverCatalogService, discoverActionService } from "./discover/discov
 export { workspaceService } from "./workspace/workspace.service";
 
 export { photoRecordService } from "./profile/photo-record.service";
+
+export { profileService } from "./profile/profile.service";
