@@ -89,8 +89,8 @@ export async function checkShell(browser, baseUrl, output) {
           const links = await menu
             .getByRole("link")
             .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href")));
-          assert.equal(links.length, 24);
-          assert.equal(new Set(links).size, 24);
+          assert.equal(links.length, 25);
+          assert.equal(new Set(links).size, 25);
           assert.equal(
             await menu
               .getByRole("link", { name: "Clubs", exact: true })

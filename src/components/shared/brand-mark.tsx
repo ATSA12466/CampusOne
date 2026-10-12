@@ -1,4 +1,6 @@
+"use client";
 import { cva, type VariantProps } from "class-variance-authority";
+import { useEffect, useState } from "react";
 import { CampusImage } from "@/components/media/campus-image";
 import { srcLogo } from "@/config/images";
 import { cn } from "@/lib/utils/cn";
@@ -10,15 +12,47 @@ const variants = cva("inline-flex min-w-0 items-center gap-3", {
   },
   defaultVariants: { tone: "default", size: "md" },
 });
+
+interface PublicBranding {
+  displayName: string;
+  tagline: string;
+  logoLight: string;
+  logoDark: string;
+}
+
+/** Header brand: built-in defaults first, enhanced by published Super Admin branding. */
 export function BrandMark({
   tone,
   size,
   className,
   wordmark = true,
 }: VariantProps<typeof variants> & { className?: string; wordmark?: boolean }) {
+  const [branding, setBranding] = useState<PublicBranding | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/branding/public", { headers: { Accept: "application/json" } })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload: { branding?: PublicBranding } | null) => {
+        if (!cancelled && payload?.branding) setBranding(payload.branding);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const name = branding?.displayName?.trim() || "CampusOne";
+  const tagline = branding?.tagline?.trim() || "YOUR CAMPUS, CONNECTED";
+  const customLogo = branding?.logoLight?.trim() || "";
   return (
     <span className={cn(variants({ tone, size }), className)}>
-      {srcLogo ? (
+      {customLogo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={customLogo}
+          alt={`${name} logo`}
+          className="size-11 shrink-0 rounded-control object-contain"
+        />
+      ) : srcLogo ? (
         <CampusImage
           image={srcLogo}
           aspect="square"
@@ -42,9 +76,9 @@ export function BrandMark({
       )}
       {wordmark ? (
         <span className="font-semibold tracking-tight">
-          CampusOne
+          {name}
           <span className="block text-[10px] font-medium tracking-[0.13em] opacity-70">
-            YOUR CAMPUS, CONNECTED
+            {tagline.toUpperCase()}
           </span>
         </span>
       ) : null}

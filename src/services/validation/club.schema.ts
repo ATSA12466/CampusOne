@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { isAllowedImageSrc } from "@/config/image-policy";
+import { isAllowedImageSrc } from "../../config/image-policy";
 const label = z.string().min(1).max(240);
 export const clubImageSourceSchema = z
   .string()

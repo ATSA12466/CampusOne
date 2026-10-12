@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { isAllowedImageSrc } from "@/config/image-policy";
-import { campusDate } from "@/lib/home/schedule";
+import { isAllowedImageSrc } from "../../config/image-policy";
+import { campusDate } from "../../lib/home/schedule";
 const text = z.string().min(1).max(240),
   instant = z.iso.datetime({ offset: true }).max(40);
 const photo = z

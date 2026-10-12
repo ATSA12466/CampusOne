@@ -1,4 +1,5 @@
 export const nativeSuites = Object.freeze({
+  server: "server-tests.mjs",
   foundation: "foundation-tests.mjs",
   shell: "phase3-tests.mjs",
   home: "phase4-tests.mjs",

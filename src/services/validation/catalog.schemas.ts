@@ -1,5 +1,5 @@
-import { studentReturnPath } from "@/lib/auth/return-path";
-import { isAllowedImageSrc } from "@/config/images";
+import { studentReturnPath } from "../../lib/auth/return-path";
+import { isAllowedImageSrc } from "../../config/images";
 import { recordIdSchema } from "./owned-media.schema";
 import { sessionInputSchema } from "./schedule.schema";
 import { listingDetailsSchema } from "./listing.schema";

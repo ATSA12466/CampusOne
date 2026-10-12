@@ -107,7 +107,7 @@ test("Invalid or incomplete npm results fail closed", () => {
 });
 test("Native suites enumerate every maintained runner and preserve isolation", () => {
   const selected = selectedNativeSuites([]);
-  assert.equal(selected.length, 14);
+  assert.equal(selected.length, 15);
   for (const suite of selected) assert.ok(existsSync(suite.file));
   assert.deepEqual(
     selectedNativeSuites(["home", "release"]).map((s) => s.name),
