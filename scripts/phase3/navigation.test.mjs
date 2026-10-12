@@ -10,12 +10,12 @@ const {
   isDestinationActive,
 } = await import("../../src/config/navigation.ts");
 const { sidebarInitScript, sidebarStorageKey } = await import("../../src/config/sidebar.ts");
-test("all 24 static student routes have one grouped navigation destination", async () => {
+test("all 25 static student routes have one grouped navigation destination", async () => {
   const files = await readdir("src/app/(student)", { recursive: true });
   const routes = files
     .filter((file) => file.endsWith("/page.tsx") && !file.includes("["))
     .map((file) => `/${file.replace(/\/page\.tsx$/, "")}`);
-  assert.equal(destinations.length, 24);
+  assert.equal(destinations.length, 25);
   assert.equal(navigationGroups.length, 5);
   assert.deepEqual(new Set(destinations.map((item) => item.href)), new Set(routes));
   assert.equal(new Set(destinations.map((item) => item.href)).size, destinations.length);
@@ -27,7 +27,7 @@ test("all 24 static student routes have one grouped navigation destination", asy
 test("mobile tabs are four unique destinations; detail-prefix activation is bounded", () => {
   assert.deepEqual(
     mobileDestinations.map((item) => item.href),
-    ["/home", "/discover", "/tasks", "/community"],
+    ["/home", "/discover", "/freshers", "/messages"],
   );
   assert.equal(currentDestination("/clubs/club-1").href, "/clubs");
   assert.equal(currentDestination("/academics/resources/r1").href, "/academics");

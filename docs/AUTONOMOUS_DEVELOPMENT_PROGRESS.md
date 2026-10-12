@@ -42,7 +42,7 @@ Base commit: `0d590bf` — chore(release): harden dev tooling and add isolated v
 
 ## Implementation checklist
 - [x] Phase 1: audit + baseline + this document
-- [ ] Phase 2: design + mobile foundation (tokens, bottom nav, Freshers route, shared components)
+- [x] Phase 2: design + mobile foundation (tokens, bottom nav, Freshers route, shared components)
 - [ ] Phase 3: auth + permissions (server auth, sessions, RBAC, guards, seeded roles)
 - [ ] Phase 4: SRC dashboard (overview, clubs approvals, appointments, content, requests, reports)
 - [ ] Phase 5: Super Admin dashboard (users, roles, branding, content, accommodation, moderation, audit)
@@ -66,6 +66,17 @@ Base commit: `0d590bf` — chore(release): harden dev tooling and add isolated v
   labelled demo content; branding manager allows later upload.
 - No external mail/SMS/push/AI/native apps → documented contracts only.
 
+## Phase 2 record (DONE 2026-10-12)
+- Retuned light tokens to mission palette: brand `#1769AA`, ink `#123B63`, gold `#F5B82E`,
+  cream `#FFF8E7`, bg `#F5F7FA`, text `#182230`, border `#E4E7EC`, success/warning/danger
+  per mission. Two contrast-driven deviations: muted text `#5D6B7E` (mission `#667085`
+  failed 4.5:1 on tinted surfaces) and success-soft `#EBF8F0`. All theme contrast tests pass.
+- Mobile bottom nav is now Home / Discover / Freshers / Messages / More.
+- New `/freshers` route + `src/features/freshers/` (first-week checklist, interest-filtered
+  club preview, settle-in cards). Added `freshers` NavIcon, nav destination, route metadata,
+  auth return-path root. Updated native nav tests 24→25 routes; browser shell audit 24→25.
+- Verified: `typecheck`, `lint`, `npm test` (14/14), `next build` (includes `/freshers`).
+
 ## Next action
-Phase 2: retune design tokens to mission palette, rebuild mobile bottom nav
-(Home/Discover/Freshers/Messages/More), create `/freshers` route reusing community foundations.
+Phase 3: server auth + sessions + RBAC. Files: `src/server/*`, `src/app/api/auth/*`,
+`src/app/api/users/*` (scoped), session cookie + guards, seed script, client session hook.

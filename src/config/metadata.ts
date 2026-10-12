@@ -77,6 +77,10 @@ const routeCopy = {
     "Events",
     "Explore campus events and preview student RSVP and demo ticket interactions.",
   ],
+  freshers: [
+    "Freshers Hub",
+    "Meet students, find interest groups and settle into GCTU campus life.",
+  ],
   "lost-and-found": [
     "Lost & found",
     "Help a campus item find its way home. Browse student lost-and-found reports.",

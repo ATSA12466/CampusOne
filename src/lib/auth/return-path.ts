@@ -1,6 +1,7 @@
 const studentRoots = new Set([
   "home",
   "discover",
+  "freshers",
   "academics",
   "calendar",
   "timetable",

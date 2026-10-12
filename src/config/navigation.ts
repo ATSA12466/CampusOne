@@ -9,7 +9,7 @@ export const navigationGroups: readonly NavGroup[] = [
   toolsGroup,
 ];
 export const destinations = navigationGroups.flatMap<NavDestination>((group) => group.destinations);
-export const mobileDestinations = ["/home", "/discover", "/tasks", "/community"].map(
+export const mobileDestinations = ["/home", "/discover", "/freshers", "/messages"].map(
   (href) => destinations.find((item) => item.href === href)!,
 );
 export const isDestinationActive = (path: string, href: string) =>

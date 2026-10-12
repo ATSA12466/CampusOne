@@ -17,6 +17,13 @@ export const exploreGroup = {
       description: "Find a new corner of campus.",
     },
     {
+      label: "Freshers",
+      href: "/freshers",
+      icon: "freshers",
+      description: "Meet students, join groups and settle into campus.",
+      keywords: "freshers first-year connect groups friends",
+    },
+    {
       label: "Clubs",
       href: "/clubs",
       icon: "clubs",
