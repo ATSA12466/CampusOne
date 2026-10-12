@@ -20,7 +20,7 @@ const patchSchema = z.object({
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const hit = limited(request, "admin:users:update", 60);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.users.manage");
+  const guarded = await requirePermission("platform.users.manage", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

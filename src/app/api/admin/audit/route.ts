@@ -6,7 +6,7 @@ import type { AuditEntry } from "@/server/types";
 export async function GET(request: Request) {
   const hit = limited(request, "admin:audit:list", 120);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.audit.view");
+  const guarded = await requirePermission("platform.audit.view", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   const params = new URL(request.url).searchParams;
   const query = (params.get("q") ?? "").toLowerCase();

@@ -6,7 +6,7 @@ import { invalidInput, limited, requirePermission } from "@/server/guards";
 export async function POST(request: Request) {
   const hit = limited(request, "admin:branding:assets", 30);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.branding.manage");
+  const guarded = await requirePermission("platform.branding.manage", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   let form: FormData;
   try {

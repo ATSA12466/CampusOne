@@ -16,7 +16,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const guarded = await requireAnyPermission([
     "accommodation.listings.review",
     "platform.users.manage",
-  ]);
+  ], request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

@@ -1,7 +1,7 @@
 // Next.js route-handler/page guards. Server-only: imports next/headers.
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, getServerUser, getSessionUser } from "./auth";
+import { SESSION_COOKIE, getServerUser, getSessionUser, parseBearerToken } from "./auth";
 import { can, type Permission } from "./permissions";
 import { rateLimit } from "./rate-limit";
 import type { ServerUser, SessionUser } from "./types";
@@ -22,13 +22,17 @@ export function limited(request: Request, route: string, maxPerMinute: number): 
   return null;
 }
 
-export async function currentSessionUser(): Promise<SessionUser | null> {
+export async function currentSessionUser(request?: Request): Promise<SessionUser | null> {
   const jar = await cookies();
-  return getSessionUser(jar.get(SESSION_COOKIE)?.value);
+  const fromCookie = await getSessionUser(jar.get(SESSION_COOKIE)?.value);
+  if (fromCookie) return fromCookie;
+  // Native mobile clients authenticate with a Bearer session token (same table).
+  if (request) return getSessionUser(parseBearerToken(request.headers.get("authorization")));
+  return null;
 }
 
-export async function currentServerUser(): Promise<ServerUser | null> {
-  const session = await currentSessionUser();
+export async function currentServerUser(request?: Request): Promise<ServerUser | null> {
+  const session = await currentSessionUser(request);
   if (!session) return null;
   return getServerUser(session.id);
 }
@@ -38,8 +42,8 @@ export interface Guarded {
   serverUser: ServerUser;
 }
 
-export async function requireUser(): Promise<Guarded | NextResponse> {
-  const session = await currentSessionUser();
+export async function requireUser(request?: Request): Promise<Guarded | NextResponse> {
+  const session = await currentSessionUser(request);
   if (!session)
     return NextResponse.json({ error: "Please sign in to continue." }, { status: 401 });
   const serverUser = await getServerUser(session.id);
@@ -51,8 +55,9 @@ export async function requireUser(): Promise<Guarded | NextResponse> {
 export async function requirePermission(
   permission: Permission,
   scope?: { type: "global" | "club" | "event" | "user"; id?: string },
+  request?: Request,
 ): Promise<Guarded | NextResponse> {
-  const guarded = await requireUser();
+  const guarded = await requireUser(request);
   if (guarded instanceof NextResponse) return guarded;
   if (!can(guarded.serverUser, permission, scope))
     return NextResponse.json(
@@ -65,8 +70,9 @@ export async function requirePermission(
 /** Passes when the caller holds ANY of the listed global permissions. */
 export async function requireAnyPermission(
   candidates: readonly Permission[],
+  request?: Request,
 ): Promise<Guarded | NextResponse> {
-  const guarded = await requireUser();
+  const guarded = await requireUser(request);
   if (guarded instanceof NextResponse) return guarded;
   if (!candidates.some((permission) => can(guarded.serverUser, permission)))
     return NextResponse.json(

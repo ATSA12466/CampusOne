@@ -30,6 +30,15 @@ export interface StoreShape {
   rsvps: Record<string, unknown>[];
   officers: Record<string, unknown>[];
   resources: Record<string, unknown>[];
+  attendance_sessions: Record<string, unknown>[];
+  attendance_records: Record<string, unknown>[];
+  badge_definitions: Record<string, unknown>[];
+  badges_awarded: Record<string, unknown>[];
+  notifications: Record<string, unknown>[];
+  conversations: Record<string, unknown>[];
+  conversation_members: Record<string, unknown>[];
+  messages: Record<string, unknown>[];
+  devices: Record<string, unknown>[];
   [collection: string]: Record<string, unknown>[] | number;
 }
 
@@ -55,7 +64,16 @@ export type CollectionName =
   | "saves"
   | "rsvps"
   | "officers"
-  | "resources";
+  | "resources"
+  | "attendance_sessions"
+  | "attendance_records"
+  | "badge_definitions"
+  | "badges_awarded"
+  | "notifications"
+  | "conversations"
+  | "conversation_members"
+  | "messages"
+  | "devices";
 
 function dataDir(): string {
   return process.env.CAMPUSONE_DATA_DIR?.trim() || join(process.cwd(), ".data");
@@ -88,6 +106,15 @@ const KNOWN_COLLECTIONS: CollectionName[] = [
   "rsvps",
   "officers",
   "resources",
+  "attendance_sessions",
+  "attendance_records",
+  "badge_definitions",
+  "badges_awarded",
+  "notifications",
+  "conversations",
+  "conversation_members",
+  "messages",
+  "devices",
 ];
 
 function blank(): StoreShape {
@@ -115,6 +142,15 @@ function blank(): StoreShape {
     rsvps: [],
     officers: [],
     resources: [],
+    attendance_sessions: [],
+    attendance_records: [],
+    badge_definitions: [],
+    badges_awarded: [],
+    notifications: [],
+    conversations: [],
+    conversation_members: [],
+    messages: [],
+    devices: [],
   };
   return shape;
 }
@@ -133,29 +169,64 @@ function readStore(path: string): StoreShape {
   }
 }
 
-let cache: { path: string; data: StoreShape } | null = null;
-let writeChain: Promise<void> = Promise.resolve();
+interface StoreCache {
+  path: string;
+  data: StoreShape;
+  mtimeMs: number;
+  size: number;
+}
+
+function cacheSlot(): { current: StoreCache | null } {
+  // One cache per process even if the bundler evaluates this module twice
+  // (dev servers may keep separate route/page module graphs sharing state).
+  const globalRef = globalThis as unknown as { __campusoneStore?: { current: StoreCache | null } };
+  globalRef.__campusoneStore ??= { current: null };
+  return globalRef.__campusoneStore;
+}
+
+function fingerprint(path: string): { mtimeMs: number; size: number } {
+  try {
+    const stat = statSync(path);
+    return { mtimeMs: stat.mtimeMs, size: stat.size };
+  } catch {
+    return { mtimeMs: 0, size: -1 };
+  }
+}
 
 function current(): StoreShape {
   const path = storePath();
-  if (!cache || cache.path !== path) cache = { path, data: readStore(path) };
-  return cache.data;
+  // Reload when another process (seed scripts, tooling) replaced the file.
+  const fp = fingerprint(path);
+  const slot = cacheSlot();
+  const cached = slot.current;
+  if (
+    !cached ||
+    cached.path !== path ||
+    cached.mtimeMs !== fp.mtimeMs ||
+    cached.size !== fp.size
+  ) {
+    slot.current = { path, data: readStore(path), mtimeMs: fp.mtimeMs, size: fp.size };
+  }
+  return (slot.current as StoreCache).data;
 }
 
-function persist(data: StoreShape): Promise<void> {
+function persist(data: StoreShape): void {
   const path = storePath();
-  writeChain = writeChain.then(() => {
-    mkdirSync(dirname(path), { recursive: true });
-    const tmp = `${path}.${process.pid}.tmp`;
-    writeFileSync(tmp, JSON.stringify(data, null, 2), "utf8");
-    renameSync(tmp, path); // atomic replace; readers never see partial JSON
-  });
-  return writeChain;
+  mkdirSync(dirname(path), { recursive: true });
+  const tmp = `${path}.${process.pid}.tmp`;
+  writeFileSync(tmp, JSON.stringify(data, null, 2), "utf8");
+  renameSync(tmp, path); // atomic replace; readers never see partial JSON
+  const fp = fingerprint(path);
+  const slot = cacheSlot();
+  if (slot.current && slot.current.path === path) {
+    slot.current.mtimeMs = fp.mtimeMs;
+    slot.current.size = fp.size;
+  }
 }
 
 /** Reset the in-process cache (tests / seed scripts). */
 export function resetStoreCache(): void {
-  cache = null;
+  cacheSlot().current = null;
 }
 
 export interface Store {
@@ -204,7 +275,7 @@ export const store: Store = {
         count += 1;
       }
     }
-    if (count > 0) await persist(data);
+    if (count > 0) persist(data);
     return count;
   },
   async remove<T>(collection: CollectionName, predicate: (row: T) => boolean) {
@@ -213,12 +284,12 @@ export const store: Store = {
     const kept = rows.filter((row) => !predicate(structuredClone(row)));
     const removed = rows.length - kept.length;
     data[collection] = kept as unknown as Record<string, unknown>[];
-    if (removed > 0) await persist(data);
+    if (removed > 0) persist(data);
     return removed;
   },
   async replace<T extends object>(collection: CollectionName, rows: T[]) {
     const data = current();
     data[collection] = structuredClone(rows) as unknown as Record<string, unknown>[];
-    await persist(data);
+    persist(data);
   },
 };

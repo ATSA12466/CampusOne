@@ -360,7 +360,9 @@ export const adminRegistry = {
   // Settings
   getSettings: (): Record<string, string> => {
     const out: Record<string, string> = {};
-    for (const row of store.all<Setting>("settings")) out[row.key] = row.value;
+    // Server-managed secrets are never exposed through the settings API.
+    for (const row of store.all<Setting>("settings"))
+      if (!row.key.startsWith("secret.")) out[row.key] = row.value;
     return out;
   },
   saveSetting: async (key: string, value: string, by: string): Promise<Setting> => {

@@ -89,15 +89,17 @@ export async function seedDatabase(): Promise<SeedResult> {
     await store.insert("users", user as unknown as Record<string, unknown>);
     created.push(email);
   }
-  // Scoped club grants for the executive seed on the demo tech club id.
+  // Scoped club grants for the executive seed on the Code Collective fixture club.
   const exec = store.find<ServerUser>("users", (u) => u.email === "kwame.executive@gctu.edu.gh");
   if (exec) {
-    const clubId = "club-tech-1";
+    const clubId = "club-1";
     const wanted: Grant["permission"][] = [
+      "club.members.view",
       "club.members.manage",
       "club.events.manage",
       "club.attendance.manage",
       "club.badges.manage",
+      "club.resources.manage",
     ];
     for (const permission of wanted) {
       const existing = store.find<Grant>(

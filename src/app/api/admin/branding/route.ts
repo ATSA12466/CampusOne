@@ -12,7 +12,7 @@ const actionSchema = z.object({
 export async function GET(request: Request) {
   const hit = limited(request, "admin:branding:get", 120);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.branding.manage");
+  const guarded = await requirePermission("platform.branding.manage", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   return NextResponse.json({
     published: adminRegistry.getPublishedBranding(),
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
 export async function PUT(request: Request) {
   const hit = limited(request, "admin:branding:draft", 30);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.branding.manage");
+  const guarded = await requirePermission("platform.branding.manage", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;
@@ -45,7 +45,7 @@ export async function PUT(request: Request) {
 export async function POST(request: Request) {
   const hit = limited(request, "admin:branding:publish", 20);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.branding.manage");
+  const guarded = await requirePermission("platform.branding.manage", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

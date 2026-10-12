@@ -77,7 +77,7 @@ function publicUser(user: ServerUser): SessionUser {
 
 async function issueSession(
   userId: string,
-  meta: { ip?: string; userAgent?: string } = {},
+  meta: { ip?: string; userAgent?: string; deviceName?: string; client?: string } = {},
 ): Promise<{ token: string; session: ServerSession }> {
   const token = newToken("c1s");
   const now = new Date();
@@ -88,6 +88,8 @@ async function issueSession(
     expiresAt: new Date(now.getTime() + SESSION_TTL_DAYS * 86_400_000).toISOString(),
     ...(meta.ip ? { ip: meta.ip } : {}),
     ...(meta.userAgent ? { userAgent: meta.userAgent.slice(0, 300) } : {}),
+    ...(meta.deviceName ? { deviceName: meta.deviceName.slice(0, 120) } : {}),
+    ...(meta.client ? { client: meta.client.slice(0, 40) } : {}),
   };
   await store.insert("sessions", session as unknown as Record<string, unknown>);
   return { token, session };
@@ -122,7 +124,7 @@ export async function registerUser(
 
 export async function loginUser(
   input: z.infer<typeof loginSchema>,
-  meta: { ip?: string; userAgent?: string } = {},
+  meta: { ip?: string; userAgent?: string; deviceName?: string; client?: string } = {},
 ): Promise<{ user: SessionUser; token: string }> {
   const parsed = loginSchema.parse(input);
   const user = store.find<ServerUser>("users", (u) => u.email === parsed.email);
@@ -134,8 +136,40 @@ export async function loginUser(
   return { user: publicUser(user), token };
 }
 
-export async function getSessionUser(token: string | null | undefined): Promise<SessionUser | null> {
+/** Extract a Bearer token from an Authorization header (native mobile clients). */
+export function parseBearerToken(header: string | null | undefined): string | null {
+  if (!header) return null;
+  const match = /^\s*Bearer\s+([A-Za-z0-9._~+/-]+=*)\s*$/i.exec(header);
+  const token = match?.[1] ?? "";
   if (!token || token.length > 200) return null;
+  return token;
+}
+
+export const mobileTokenSchema = loginSchema.extend({
+  deviceName: z.string().trim().max(120).default(""),
+});
+
+/** Native login: same session table as web; caller must store the token securely. */
+export async function issueMobileToken(
+  input: z.infer<typeof mobileTokenSchema>,
+  meta: { ip?: string; userAgent?: string } = {},
+): Promise<{ user: SessionUser; token: string; expiresAt: string }> {
+  const parsed = mobileTokenSchema.parse(input);
+  const { user, token } = await loginUser(parsed, {
+    ...meta,
+    deviceName: parsed.deviceName || undefined,
+    client: "mobile",
+  });
+  const session = store.find<ServerSession>("sessions", (s) => s.tokenHash === sha256(token));
+  return {
+    user,
+    token,
+    expiresAt:
+      session?.expiresAt ?? new Date(Date.now() + SESSION_TTL_DAYS * 86_400_000).toISOString(),
+  };
+}
+
+export async function getSessionUser(token: string | null | undefined): Promise<SessionUser | null> {  if (!token || token.length > 200) return null;
   const session = store.find<ServerSession>("sessions", (s) => s.tokenHash === sha256(token));
   if (!session) return null;
   if (new Date(session.expiresAt).getTime() <= Date.now()) {

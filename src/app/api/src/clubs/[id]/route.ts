@@ -13,7 +13,7 @@ import { registry } from "@/server/registry";
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const hit = limited(request, "src:clubs:decide", 60);
   if (hit) return hit;
-  const guarded = await requireAnyPermission(["src.clubs.review", "platform.users.manage"]);
+  const guarded = await requireAnyPermission(["src.clubs.review", "platform.users.manage"], request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

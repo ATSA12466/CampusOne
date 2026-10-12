@@ -12,7 +12,7 @@ const patchSchema = z.object({
 export async function GET(request: Request) {
   const hit = limited(request, "admin:settings:get", 120);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.settings.manage");
+  const guarded = await requirePermission("platform.settings.manage", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   return NextResponse.json({ settings: adminRegistry.getSettings(), known: KNOWN_SETTINGS });
 }
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 export async function PATCH(request: Request) {
   const hit = limited(request, "admin:settings:save", 30);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.settings.manage");
+  const guarded = await requirePermission("platform.settings.manage", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

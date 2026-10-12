@@ -7,7 +7,7 @@ import { store } from "@/server/store";
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const hit = limited(request, "admin:grants:revoke", 60);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.roles.manage");
+  const guarded = await requirePermission("platform.roles.manage", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   const { id } = await params;
   const existing = store.find<Grant>("grants", (g) => g.id === id);

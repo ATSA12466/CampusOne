@@ -7,7 +7,7 @@ import { invalidInput, limited, readJson, requireUser } from "@/server/guards";
 export async function POST(request: Request) {
   const hit = limited(request, "reports:submit", 20);
   if (hit) return hit;
-  const guarded = await requireUser();
+  const guarded = await requireUser(request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

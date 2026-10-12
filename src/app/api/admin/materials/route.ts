@@ -9,7 +9,7 @@ const MANAGE = ["academic.materials.manage", "platform.users.manage"] as const;
 export async function GET(request: Request) {
   const hit = limited(request, "admin:materials:list", 120);
   if (hit) return hit;
-  const guarded = await requireAnyPermission([...MANAGE]);
+  const guarded = await requireAnyPermission([...MANAGE], request);
   if (guarded instanceof NextResponse) return guarded;
   const status = new URL(request.url).searchParams.get("status") ?? undefined;
   return NextResponse.json({ items: adminRegistry.listMaterials(status) });
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const hit = limited(request, "admin:materials:create", 30);
   if (hit) return hit;
-  const guarded = await requireAnyPermission([...MANAGE]);
+  const guarded = await requireAnyPermission([...MANAGE], request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

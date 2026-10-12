@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   const guarded = await requireAnyPermission([
     "accommodation.listings.review",
     "platform.users.manage",
-  ]);
+  ], request);
   if (guarded instanceof NextResponse) return guarded;
   const status = new URL(request.url).searchParams.get("status") ?? undefined;
   return NextResponse.json({ items: adminRegistry.listListings(status) });

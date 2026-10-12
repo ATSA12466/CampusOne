@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const hit = limited(request, "listings:submit", 20);
   if (hit) return hit;
-  const guarded = await requireUser();
+  const guarded = await requireUser(request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

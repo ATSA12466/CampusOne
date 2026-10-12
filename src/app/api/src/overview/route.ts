@@ -8,7 +8,7 @@ import type { AuditEntry } from "@/server/types";
 export async function GET(request: Request) {
   const hit = limited(request, "src:overview", 120);
   if (hit) return hit;
-  const guarded = await requireAnyPermission(srcDashboardPermissions);
+  const guarded = await requireAnyPermission(srcDashboardPermissions, request);
   if (guarded instanceof NextResponse) return guarded;
   const pendingClubs = registry.listClubs("pending").length;
   const pendingNominations = registry.listNominations("pending").length;

@@ -41,6 +41,8 @@ export interface ServerSession {
   expiresAt: string;
   ip?: string;
   userAgent?: string;
+  deviceName?: string;
+  client?: string;
 }
 
 export interface AuditEntry {

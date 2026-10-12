@@ -6,7 +6,7 @@ import { limited, requireUser } from "@/server/guards";
 export async function GET(request: Request) {
   const hit = limited(request, "users:me", 120);
   if (hit) return hit;
-  const guarded = await requireUser();
+  const guarded = await requireUser(request);
   if (guarded instanceof NextResponse) return guarded;
   return NextResponse.json({ user: guarded.user });
 }
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 export async function PATCH(request: Request) {
   const hit = limited(request, "users:me:patch", 30);
   if (hit) return hit;
-  const guarded = await requireUser();
+  const guarded = await requireUser(request);
   if (guarded instanceof NextResponse) return guarded;
   let body: unknown;
   try {

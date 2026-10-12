@@ -4,6 +4,6 @@ import { currentSessionUser, limited } from "@/server/guards";
 export async function GET(request: Request) {
   const hit = limited(request, "auth:session", 120);
   if (hit) return hit;
-  const user = await currentSessionUser();
+  const user = await currentSessionUser(request);
   return NextResponse.json({ user });
 }

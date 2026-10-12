@@ -8,7 +8,7 @@ import { store } from "@/server/store";
 export async function GET(request: Request) {
   const hit = limited(request, "admin:overview", 120);
   if (hit) return hit;
-  const guarded = await requireAnyPermission(adminDashboardPermissions);
+  const guarded = await requireAnyPermission(adminDashboardPermissions, request);
   if (guarded instanceof NextResponse) return guarded;
   const users = store.all<{ status: string }>("users");
   return NextResponse.json({

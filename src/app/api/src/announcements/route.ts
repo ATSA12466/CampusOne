@@ -9,7 +9,7 @@ const PUBLISH = ["src.content.publish", "announcements.publish", "platform.users
 export async function GET(request: Request) {
   const hit = limited(request, "src:announcements:list", 120);
   if (hit) return hit;
-  const guarded = await requireAnyPermission([...PUBLISH]);
+  const guarded = await requireAnyPermission([...PUBLISH], request);
   if (guarded instanceof NextResponse) return guarded;
   const status = new URL(request.url).searchParams.get("status") ?? undefined;
   return NextResponse.json({ items: registry.listAnnouncements(status) });
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const hit = limited(request, "src:announcements:create", 30);
   if (hit) return hit;
-  const guarded = await requireAnyPermission([...PUBLISH]);
+  const guarded = await requireAnyPermission([...PUBLISH], request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

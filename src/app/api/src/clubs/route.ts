@@ -7,7 +7,7 @@ import { registry } from "@/server/registry";
 export async function GET(request: Request) {
   const hit = limited(request, "src:clubs:list", 120);
   if (hit) return hit;
-  const guarded = await requireAnyPermission(["src.clubs.review", "platform.users.manage"]);
+  const guarded = await requireAnyPermission(["src.clubs.review", "platform.users.manage"], request);
   if (guarded instanceof NextResponse) return guarded;
   const status = new URL(request.url).searchParams.get("status") ?? undefined;
   return NextResponse.json({ items: registry.listClubs(status) });
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const hit = limited(request, "src:clubs:submit", 20);
   if (hit) return hit;
-  const guarded = await requireUser();
+  const guarded = await requireUser(request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

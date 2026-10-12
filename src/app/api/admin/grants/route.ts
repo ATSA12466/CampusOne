@@ -22,7 +22,7 @@ const createSchema = z.object({
 export async function GET(request: Request) {
   const hit = limited(request, "admin:grants:list", 120);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.roles.manage");
+  const guarded = await requirePermission("platform.roles.manage", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   const userId = new URL(request.url).searchParams.get("userId") ?? undefined;
   const items = store
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const hit = limited(request, "admin:grants:create", 30);
   if (hit) return hit;
-  const guarded = await requirePermission("platform.roles.manage");
+  const guarded = await requirePermission("platform.roles.manage", undefined, request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;

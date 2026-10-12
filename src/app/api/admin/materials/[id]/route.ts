@@ -15,7 +15,7 @@ const MANAGE = ["academic.materials.manage", "platform.users.manage"] as const;
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const hit = limited(request, "admin:materials:update", 60);
   if (hit) return hit;
-  const guarded = await requireAnyPermission([...MANAGE]);
+  const guarded = await requireAnyPermission([...MANAGE], request);
   if (guarded instanceof NextResponse) return guarded;
   const parsed = await readJson(request);
   if (!parsed.ok) return parsed.response;
@@ -40,7 +40,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const hit = limited(request, "admin:materials:delete", 30);
   if (hit) return hit;
-  const guarded = await requireAnyPermission([...MANAGE]);
+  const guarded = await requireAnyPermission([...MANAGE], request);
   if (guarded instanceof NextResponse) return guarded;
   const { id } = await params;
   const removed = await adminRegistry.deleteMaterial(id);
