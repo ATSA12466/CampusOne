@@ -14,6 +14,7 @@ export const nativeSuites = Object.freeze({
   secondary: "phase6-secondary-tests.mjs",
   polish: "phase7-tests.mjs",
   release: "release-tests.mjs",
+  mobile: "mobile-tests.mjs",
 });
 export function selectedNativeSuites(requested) {
   const keys = requested.length ? requested : Object.keys(nativeSuites);
