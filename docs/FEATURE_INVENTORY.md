@@ -33,13 +33,15 @@
 
 ## Verified current gates
 
-- Lint, strict typecheck and production build pass; **210 native tests**, zero failures.
+- Lint, strict typecheck and production build pass; **221 native tests**, zero failures (14 isolated suites; 210 original frontend + 11 release checks).
 - **732 canonical views**, zero AA/visible-overflow/sub-44px flags; 244 mobile AA analyses. **1,439 additional AA/layout workflow captures** pass. All 37 route templates were manually reviewed at 360/1280 in light/dark through 20 overview sheets; tablet and all canonical entity variants have automated coverage.
 - **507 application TS/TSX files**: zero `any` type nodes, direct UI fixture imports or literal component palettes; no forbidden environment/build/dependency artifacts versioned.
 - Route titles/descriptions/Open Graph and demo `noindex` validate for all 122 routes/detail records. `/design` is production 404; existing URLs and streamed detail not-found behavior remain.
 - Production Home Lighthouse: latest default-renderer confirmation **92/92/90 Performance**, **100 Accessibility**, median **92** (preceding isolated set 91/92/91, median 91). This satisfies the requested local lab ≥90/≥95 targets, not a physical-device guarantee.
-- Runtime dependency audit: **0**. Full audit: **9 development advisories** (5 high, 4 moderate, 0 critical), disclosed rather than hidden behind a forced downgrade.
+- Runtime dependency audit: **0**. Current full audit: **5 high development-chain reports** from one unpatched braces advisory (previously 9; four moderate reports removed), disclosed rather than hidden behind a forced downgrade.
 
 ## External release gates — not marked complete
 
 A real backend must supply authentication/session/authorization/CSRF, database/durability, verification/MFA/email/reset, upload scanning/quota/storage, realtime/message delivery/moderation, AI, payment/enrollment/entry and authoritative academic/timetable integration. Client guards and fixtures do not prove those systems. Authorized SRC artwork, physical-device/Safari/Firefox/IME and full screen-reader checks remain external. PWA/offline write caching was optional and is not installed; the frontend does not fabricate offline server acceptance.
+
+Repeatable CI, offline toolchain compatibility and the visible bounded advisory policy are documented in [release hardening](RELEASE_HARDENING.md); the earlier final summary remains historical evidence.

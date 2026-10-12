@@ -2,7 +2,7 @@
 
 `campusone-web` — a GCTU student-app frontend moving toward a photo-first campus magazine and social super-app.
 
-**Current milestone: requested frontend upgrade complete through polish and final verification.** All ordered feature migrations through 6M and Phase 7 are implemented and pushed. The final audit records **210 native passes**, **732 canonical views**, **1,439 supplemental AA/layout captures** and per-route metadata/source-artifact checks. Home meets the requested local production Lighthouse targets: **92/92/90 Performance, 100 Accessibility**, latest median **92**. Read the [final handoff](docs/FINAL_HANDOFF.md) and [compact evidence](docs/audits/final-summary.json). Secure backend integrations, authorized SRC artwork, nine development-toolchain advisories and physical-device/full assistive-technology release gates remain explicit, not falsely closed.
+**Current milestone: requested frontend upgrade complete through polish and final verification.** All ordered feature migrations through 6M and Phase 7 are implemented and pushed. Current release hardening verifies **221 native passes** (the original final snapshot records 210), **732 canonical views**, **1,439 supplemental AA/layout captures** and per-route metadata/source-artifact checks. Home meets the requested local production Lighthouse targets: **92/92/90 Performance, 100 Accessibility**, latest median **92**. Read the [final handoff](docs/FINAL_HANDOFF.md) and [compact evidence](docs/audits/final-summary.json). Secure backend integrations, authorized SRC artwork, five high development-toolchain reports from one unpatched lint dependency chain and physical-device/full assistive-technology release gates remain explicit, not falsely closed.
 
 This is an explicitly labelled **demo/prototype**, not an official GCTU/SRC service. Generated photographs depict fictional people/a campus. The official SRC artwork is still pending; `BrandMark` keeps a clean labelled slot rather than inventing a logo. Real auth, uploads, messaging, payments, AI and authoritative campus data are not connected.
 
@@ -22,6 +22,7 @@ Open `/home` for the magazine Home or **`/design`** for the eight-section workin
 ```bash
 npm run lint
 npm run typecheck
+npm test # All 14 native suites / 221 tests in isolated processes
 npm run test:foundation
 npm run test:shell
 npm run test:home
@@ -139,4 +140,4 @@ AUDIT_BASE_URL=http://127.0.0.1:3001 node scripts/audit/lighthouse.mjs
 
 ## Handoff / external release work
 
-The agreed frontend sequence is complete, including polish and final verification. The club-executive approval/persistence panel remains intact. Supply the authorized SRC artwork and real API/security/upload/transport integrations before an official deployment; complete physical-device, Safari/Firefox, IME and full screen-reader validation. Runtime dependency audit is zero; the full audit retains nine disclosed development-toolchain advisories (5 high/4 moderate). See the final checklist rather than treating demo role selection or fixtures as authorization.
+The agreed frontend sequence is complete, including polish and final verification. The club-executive approval/persistence panel remains intact. Supply the authorized SRC artwork and real API/security/upload/transport integrations before an official deployment; complete physical-device, Safari/Firefox, IME and full screen-reader validation. Runtime dependency audit is zero; the current full audit retains five high development-chain reports from the unpatched braces advisory; none are concealed as a clean audit. See the final checklist rather than treating demo role selection or fixtures as authorization.

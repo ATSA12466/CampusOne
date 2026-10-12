@@ -1,5 +1,11 @@
 # CampusOne test report
 
+## Current follow-up — repository release hardening
+
+**221 native tests / 14 isolated suites** pass after a fresh `npm ci`, lint, strict typecheck and production build. The scoped development esbuild override and stable Drizzle patch pass an offline typed-config/enum/schema SQL generation smoke, without a DB connection. Runtime versions are unchanged and runtime audit remains **zero**; full audit improves **9 → 5** by removing four moderate reports. The remaining five high reports are one unpatched braces lint-tool chain, visibly reported and bounded by a review deadline, not presented as a clean audit.
+
+A least-privilege GitHub workflow with SHA-pinned official actions is added for fresh install/contracts/source/toolchain/audit policy/build. Remote execution is verified after publishing; a local rehearsal is not claimed as an Actions pass. See [release hardening](RELEASE_HARDENING.md) and [current compact evidence](audits/release-hardening.json). The previous frontend completion results below remain historical and the application UI is unchanged.
+
 ## Current final frontend verification — Phases 7–8
 
 **The requested frontend sequence is complete and verified, not a deployed official campus platform.** Phase 6M (`08822d9`) and Phase 7 (`889f6b9`) are pushed on `arena/aa6b22f8-campusone`; this final milestone versions current verification tooling and reconciled docs. See [final handoff](FINAL_HANDOFF.md), [Phase 7](PHASE7_POLISH.md), [inventory](FEATURE_INVENTORY.md) and [compact evidence](audits/final-summary.json).

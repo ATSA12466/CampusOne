@@ -1,0 +1,58 @@
+{
+  "basedOnFrontendHandoffCommit": "a763d16",
+  "branch": "arena/aa6b22f8-campusone",
+  "changes": {
+    "runtimeDependencyVersionsChanged": false,
+    "drizzleKit": "0.31.11",
+    "scopedLegacyEsbuild": "0.25.12",
+    "legacyEsbuildRemoved": "0.18.20",
+    "noCheckedInDatabaseCredentialFallback": true
+  },
+  "verification": {
+    "freshNpmCi": true,
+    "lint": true,
+    "typecheck": true,
+    "build": true,
+    "nativeSuites": 14,
+    "nativeTests": 221,
+    "failedTests": 0,
+    "sourceAudit": {
+      "typescriptFiles": 507,
+      "anyTypes": 0,
+      "UIFixtureImports": 0,
+      "literalComponentColors": 0,
+      "versionedForbiddenArtifacts": [],
+      "packageName": "campusone-web",
+      "realBackendVerified": false
+    },
+    "toolchain": {
+      "drizzleKit": "0.31.11",
+      "legacyLoaderEsbuildOverride": "0.25.12",
+      "typedConfigAndEnumImports": true,
+      "offlineSQLGenerated": true,
+      "databaseConnectionAttempted": false,
+      "realDatabaseVerified": false
+    }
+  },
+  "dependencies": {
+    "productionVulnerabilities": 0,
+    "fullVulnerabilities": 5,
+    "knownDevelopmentRisk": {
+      "advisory": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+      "severity": "high",
+      "packages": [
+        "@next/eslint-plugin-next",
+        "braces",
+        "eslint-config-next",
+        "fast-glob",
+        "micromatch"
+      ],
+      "reviewBy": "2026-11-11"
+    }
+  },
+  "githubActions": {
+    "workflow": ".github/workflows/verify.yml",
+    "remoteExecutionVerified": false
+  },
+  "externalBackendAndDeviceGatesVerified": false
+}

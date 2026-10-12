@@ -1,0 +1,15 @@
+{
+  "knownDevelopmentRisk": {
+    "advisory": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+    "severity": "high",
+    "packages": [
+      "braces",
+      "micromatch",
+      "fast-glob",
+      "@next/eslint-plugin-next",
+      "eslint-config-next"
+    ],
+    "reviewBy": "2026-11-11",
+    "reason": "braces 3.0.3 is the latest published version and the advisory has no patched release. This is a development-only lint dependency chain, not a clean full-audit claim. Never downgrade Next to hide it."
+  }
+}

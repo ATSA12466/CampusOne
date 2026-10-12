@@ -1,5 +1,7 @@
 # CampusOne — final frontend handoff
 
+> **Follow-up:** [release hardening](RELEASE_HARDENING.md) adds fresh-install CI, safer DB CLI configuration and 11 release tests (**221 total**), reducing development audit reports **9 → 5** with runtime still zero. Earlier measurement/summary counts below are preserved as the original frontend completion evidence.
+
 ## Completion and scope
 
 The requested photo-first CampusOne **frontend upgrade is complete through polish and final verification**. All ordered domain migrations through Phase 6M and Phase 7 polish are on `arena/aa6b22f8-campusone`. Existing URLs, canonical record IDs, membership/RSVP persistence and the club executive Approve/Reject panel are preserved.

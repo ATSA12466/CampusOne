@@ -23,7 +23,11 @@
     "test:polish": "node scripts/phase7-tests.mjs",
     "audit:source": "node scripts/phase8-source-audit.mjs",
     "audit:metadata": "node scripts/phase8-metadata-audit.mjs",
-    "audit:journey": "node scripts/audit/interactions.mjs"
+    "audit:journey": "node scripts/audit/interactions.mjs",
+    "test": "node scripts/run-native-tests.mjs",
+    "test:release": "node scripts/release-tests.mjs",
+    "audit:dependencies": "node scripts/release-dependency-audit.mjs",
+    "audit:toolchain": "node scripts/release-toolchain-audit.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -59,11 +63,19 @@
     "@types/pg": "8.18.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "drizzle-kit": "0.31.10",
+    "drizzle-kit": "0.31.11",
     "eslint": "9.39.4",
     "eslint-config-next": "16.4.0",
     "postcss": "8.5.29",
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3"
+  },
+  "overrides": {
+    "@esbuild-kit/core-utils": {
+      "esbuild": "0.25.12"
+    }
+  },
+  "engines": {
+    "node": ">=22.15.0"
   }
 }
