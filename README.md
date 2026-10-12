@@ -22,7 +22,7 @@ Open `/home` for the magazine Home or **`/design`** for the eight-section workin
 ```bash
 npm run lint
 npm run typecheck
-npm test # All 14 native suites / 221 tests in isolated processes
+npm test # All 15 native suites / 233 tests in isolated processes
 npm run test:foundation
 npm run test:shell
 npm run test:home

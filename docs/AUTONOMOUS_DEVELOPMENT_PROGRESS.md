@@ -43,7 +43,7 @@ Base commit: `0d590bf` — chore(release): harden dev tooling and add isolated v
 ## Implementation checklist
 - [x] Phase 1: audit + baseline + this document
 - [x] Phase 2: design + mobile foundation (tokens, bottom nav, Freshers route, shared components)
-- [ ] Phase 3: auth + permissions (server auth, sessions, RBAC, guards, seeded roles)
+- [x] Phase 3: auth + permissions (server auth, sessions, RBAC, guards, seeded roles)
 - [ ] Phase 4: SRC dashboard (overview, clubs approvals, appointments, content, requests, reports)
 - [ ] Phase 5: Super Admin dashboard (users, roles, branding, content, accommodation, moderation, audit)
 - [ ] Phase 6: clubs + events depth (executives, committees, resources, event CRUD, analytics)
@@ -77,6 +77,22 @@ Base commit: `0d590bf` — chore(release): harden dev tooling and add isolated v
   auth return-path root. Updated native nav tests 24→25 routes; browser shell audit 24→25.
 - Verified: `typecheck`, `lint`, `npm test` (14/14), `next build` (includes `/freshers`).
 
+## Phase 3 record (DONE 2026-10-12)
+- New `src/server/`: `store.ts` (atomic JSON FileStore, `.data/`, gitignored), `crypto.ts`
+  (scrypt + HMAC + tokens), `auth.ts` (register/login/session/logout/profile, Zod-validated),
+  `permissions.ts` (22-permission vocabulary, 13 roles, scoped grants, legacy mapping),
+  `rate-limit.ts`, `audit.ts`, `guards.ts` (route-handler auth + permission guards), `seed.ts`.
+- New local API routes matching the existing client contracts: `POST /api/auth/sign-in`,
+  `POST /api/auth/register` (201), `GET /api/auth/session`, `POST /api/auth/sign-out`,
+  `POST /api/auth/password-reset` (honest stub, audited, no mailer yet),
+  `GET/PATCH /api/users/me`. HttpOnly SameSite session cookies, rate limits, audit entries.
+- `npm run db:seed` creates 4 documented dev accounts + exec club grants (idempotent).
+- New `server` native suite (12 tests: auth flows, suspension, RBAC scope/revoke/expiry,
+  rate limits); `npm test` now 15 suites / 233 tests. Release contract updated 14→15.
+- Live-verified with dev server + curl: register 201, session/me 200, duplicate 409,
+  bad login 401, sign-out invalidates.
+- Verified: `typecheck`, `lint`, `npm test` (15/15), `next build` (35 routes incl. /api/auth/*).
+
 ## Next action
-Phase 3: server auth + sessions + RBAC. Files: `src/server/*`, `src/app/api/auth/*`,
-`src/app/api/users/*` (scoped), session cookie + guards, seed script, client session hook.
+Phase 4: SRC dashboard. Route group `src/app/(src)/`, server guards, overview, club
+approvals, appointments/nominations, SRC content + executive profiles, requests, reports.

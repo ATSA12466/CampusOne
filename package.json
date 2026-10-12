@@ -8,6 +8,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "env:example": "node scripts/create-env-example.mjs",
+    "db:seed": "node scripts/seed-server.mjs",
+    "test:server": "node scripts/server-tests.mjs",
     "test:foundation": "node scripts/foundation-tests.mjs",
     "test:shell": "node scripts/phase3-tests.mjs",
     "test:home": "node scripts/phase4-tests.mjs",
