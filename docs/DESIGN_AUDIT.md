@@ -1,5 +1,7 @@
 # CampusOne — Phase 1 Design & Engineering Audit
 
+> **Historical baseline audit.** Its initial gaps/phase boundaries are preserved as evidence, not current unfinished-work claims. The ordered frontend upgrade through polish/final verification is now complete; consult [FINAL_HANDOFF.md](FINAL_HANDOFF.md), [FEATURE_INVENTORY.md](FEATURE_INVENTORY.md) and the current test-report header. External backend/device/artwork gates remain explicit.
+
 - **Audited:** 10 October 2026 (UTC)
 - **Baseline:** `56de21e270e6c3db679f26013c65bff75a720332`
 - **Working branch:** `arena/aa6b22f8-campusone`

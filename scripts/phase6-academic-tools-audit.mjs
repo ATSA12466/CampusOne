@@ -8,7 +8,7 @@ import {
   trackErrors,
 } from "./phase6/events/helpers.mjs";
 const base = process.env.AUDIT_BASE_URL ?? "http://127.0.0.1:3001",
-  out = ".cache/phase6/life/academic-tools";
+  out = process.env.AUDIT_OUTPUT_DIR ?? ".cache/phase6/life/academic-tools";
 await mkdir(out, { recursive: true });
 const browser = await launchAuditBrowser([], { multiProcess: true }),
   captures = [];

@@ -1,6 +1,6 @@
 # API integration guide
 
-Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search; Phase 4 uses it for server-composed Home; Phase 5 adds a separate lazy typed cookie-auth boundary; Phases 6A/6B add owner-aware Clubs/Events read/activity/action contracts; Phase 6C composes eight bounded Discover sources with canonical shared saves. There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
+Phase 2 established a typed, swappable **read** boundary; Phase 3 consumes it for global search; Phase 4 uses it for server-composed Home; Phase 5 adds a separate lazy typed cookie-auth boundary; Phases 6A/6B add owner-aware Clubs/Events read/activity/action contracts; Phase 6C composes eight bounded Discover sources with canonical shared saves; 6D–6M add private workspace/photo/profile/schedule/social/task/SRC and secondary adapters. Phase 7 makes the Home planner use the same task boundary. All frontend migrations are implemented; see the [final handoff](FINAL_HANDOFF.md). There is no supplied/verified CampusOne API, secure authentication or upload server in this repository. The endpoint paths and envelopes below are proposed contracts, not a claim that a PHP or other backend implements them.
 
 ## 1. Environment and preview safety
 
@@ -13,7 +13,7 @@ The versioned, credential-free source is `config/env.example`. The generator wil
 
 | Variable | Default / purpose |
 | --- | --- |
-| `NEXT_PUBLIC_DATA_SOURCE` | `demo`; `api` selects typed catalog/auth/Clubs/Events/Discover adapters |
+| `NEXT_PUBLIC_DATA_SOURCE` | `demo`; `api` selects typed catalog/auth/domain/workspace adapters |
 | `NEXT_PUBLIC_API_BASE_URL` | `/api`; browser-facing request prefix |
 | `API_PROXY_TARGET` | `http://127.0.0.1:4000`; server-only API origin, without a trailing `/api` |
 | `API_SESSION_COOKIE_NAMES` | Empty; server-only comma-separated exact backend session-cookie names; empty forwards no cookies |
@@ -46,7 +46,7 @@ const club = await campusService.get("clubs", "club-1"); // Club | null
 
 `CatalogService`, `CollectionMap`, `ListQuery`, `Page<T>` and `ServiceOptions` live in `src/types/service-contracts.ts`. Catalog/API implementations load only when called, keeping unused API schemas out of the initial client path.
 
-**Important:** current synchronous exports such as `engagementService`, `academicsService` and domain state adapters are compatibility readers and **remain demo-only**; `authService` now separately selects demo/proposed cookie API. Setting API mode does not silently convert all legacy workflows to live behaviour. The `/design` and Home server compositions use the async boundary; the agreed feature phases will migrate their pages/clients one at a time. No automatic demo fallback occurs after a live request fails.
+**Compatibility boundary:** synchronous exports such as `engagementService` and `academicsService` remain demo-only compatibility/seed readers. Current migrated feature feeds/actions use the typed catalog, auth, domain and private-workspace services; they do not convert API failures into demos. Frontend migration is complete, but proposed endpoint implementations and secure backend behavior are not supplied/verified. UI/state seeds import the public facade, never fixtures directly.
 
 ### Global search (Phase 3)
 
@@ -86,7 +86,7 @@ The new eighteenth collection is `featured`, proposed **`GET /api/home/featured`
 
 Event/campaign/deadline responses must use valid ISO calendar dates (`YYYY-MM-DD`), not timestamps or impossible dates. Detail IDs are encoded. For uploaded/publisher thumbnails not in the static registry, Home maps the approved URL and supplied alt to media metadata without inventing a license. Private/signed media, content authorization and source licensing remain backend responsibilities.
 
-Timetable/course previews can come from the API, but the existing task planner is **device-only demo state**, not an API mutation or official LMS/timetable synchronization. Recommendations are sorted by date/deadline, not claimed personalized. Development-only `?home-preview=empty|inactive|partial|offline|recover|truncated` fixtures are visibly labelled and ignored by production. They do not validate a real backend.
+Timetable/course previews can come from the API. Home's private planner now uses the same source-qualified `taskService` as Tasks: demo updates canonical device state; API reads/writes use the proposed owned task endpoints. Loading/failure is not presented as a successful empty list, and Undo is owner-qualified. Neither mode claims official LMS/timetable synchronization. Recommendations are sorted by date/deadline, not claimed personalized. Development-only `?home-preview=empty|inactive|partial|offline|recover|truncated` fixtures are visibly labelled and ignored by production. They do not validate a real backend.
 
 ## 3. Proposed list/detail contract
 
@@ -252,13 +252,23 @@ The real backend must derive identity, protect payload/ownership, enforce permis
 
 ## Phase 6C — Discover sources/activity/canonical saves
 
-`discoverCatalogService` composes the existing catalog paths for `clubs`, `events`, `resources`, `opportunities`, `accommodation`, `marketplace`, `media`, `lostFound`; reference/UI `lost-found` maps to raw collection `lostFound` and `/lost-found`. Each source is an 8-second caller-aware, 30-record bounded read, not a dedicated `/discover` feed endpoint. Normalization keeps optional legacy facts honest and validates page/ID/total/media/text/fact bounds. Partial source failure remains visible and retryable; a failed next page retains prior records. Search, sort and Saved are loaded-record scoped.
+`discoverCatalogService` composes the existing catalog paths for `clubs`, `events`, `resources`, `opportunities`, `accommodation`, `marketplace`, `media`, `lostFound`; Discover category `lost-found` maps to raw collection `lostFound` and the proposed API `/lost-found`; the preserved frontend board is `/lost-and-found`. Each source is an 8-second caller-aware, 30-record bounded read, not a dedicated `/discover` feed endpoint. Normalization keeps optional legacy facts honest and validates page/ID/total/media/text/fact bounds. Partial source failure remains visible and retryable; a failed next page retains prior records. Search, sort and Saved are loaded-record scoped.
 
 `discoverActionService` lazily chooses demo or credentialed no-store 10-second API actions: `GET /discover/activity` → `{saved:[{category,id}]}` (max 500 validated references), `PUT /discover/{category}/{encodedId}/saved` and `DELETE` at the same path → `{ok:true}`, no request body. The backend must infer authenticated owner, validate resource/category access and implement idempotent desired-state writes. **Club/Event saves are canonical shared records**, visible to their existing activity/action paths, not Discover-only duplicates. API activity/saves never write demo bookmarks to local persistence.
 
 Same-origin `/api` proxy → server port 4000, exact SSR `API_SESSION_COOKIE_NAMES`, caller cancellation and no-store follow the existing API boundary. Guest/owner/source/email/role/abort guards are frontend defense, not authorization/CSRF/database proof; an interrupted request may already have been accepted by the backend.
 
 The isolated snapshot + browser fixture verifies 48 360/1280 light/dark states: partial retry, >30 paging/failed-next-page retention, activity failure versus false empty, optimistic rollback/single-flight, publisher reload without local bookmarks, canonical Club/Event saves, accommodation PUT/DELETE, sparse legacy facts, true empty versus complete source error and cookie allowlisting. It owns/shuts down its 4000 mock; do not run concurrent fixtures. Full setup/limits are in [Phase 6C](PHASE6C_DISCOVER.md). No deployed backend verification is claimed.
+
+## Phases 6D–6I — living, reports, academic and schedule workspaces
+
+Public Accommodation/Marketplace/Opportunities/resources/report directories and details use the bounded existing catalog paths and canonical Discover saves; original routes/IDs remain. Rich details are optional and validated, and category illustrations never become claimed property/product photographs. Contact/map actions use validated destinations; enquiries, application preparation and concerns are private drafts, not transmission/completion.
+
+Private `workspaceService` contracts propose credentialed/no-store **GET `/workspace/{collection}`** → a bounded validated array; **PUT `/workspace/{collection}/{encodedId}`** with the complete validated record → `{ok:true}`; **DELETE** → `{ok:true}`. The server derives ownership; client source/user/email/role/abort guards are only frontend defense. Approved collections cover private enquiries/applications/concerns, listing/report drafts, grades/notes, personal schedules and later profile/social/study records. Demo keys are qualified by source/account/normalized email, not an authorization system; same-account role changes retain private work while guarded requests use the current role.
+
+`photoRecordService` prepares required bounded JPEG/PNG/WebP owned images for listing/report records; demo photos remain in that private device workspace. The API record contract does not certify secure uploads, media scanning, quotas, signed URLs or public publication. An actual backend must define those policies before launch. Resource downloads are real labelled demo-note files, not fabricated institutional materials. GPA is a credit-weighted personal estimate; class/plans/ICS are personal/source previews, not official grades, registration or live synchronization.
+
+Exact schemas/bounds, controlled tests and replacements are in [6D Accommodation](PHASE6D_ACCOMMODATION.md), [6E Marketplace](PHASE6E_MARKETPLACE.md), [6F Opportunities](PHASE6F_OPPORTUNITIES.md), [6G Lost & Found](PHASE6G_LOST_FOUND.md), [6H Academics](PHASE6H_ACADEMICS.md) and [6I Schedule](PHASE6I_SCHEDULE.md). Those checks do not verify deployed authorization/CSRF/database/upload services.
 
 ## Phase 6J — private profile preferences
 
@@ -275,3 +285,7 @@ The lazy `taskService` proposes credentialed/no-store GET `/tasks` → bounded u
 ## Phase 6M — campus activity, SRC and secondary reads
 
 Announcements/SRC/projects/representatives/campaigns/Media now consume bounded typed catalog APIs rather than synchronous demo-only UI readers. `GET /campus/activity` returns bounded unique `{savedAnnouncementIds,requests}`. `PUT`/`DELETE /announcements/{encodedId}/saved` and `POST /src-office/requests` accept desired state/request input and return `{ok:true}`. The request body excludes role, user ID and processing status; the backend owns authorization/status. Demo saves reuse canonical bookmarks; private requests preserve the current-owner store. Native mocks verify verbs/body/owner changes/no fallback, not real backend or durable storage. Media rejects unsafe playback sources and never fabricates unavailable recordings. See [Phase 6M](PHASE6M_SECONDARY.md).
+
+## Phase 7 — private Home planner and verified mutation feedback
+
+Home consumes the lazy `taskService`, not a direct demo toggle. Private reads/UI are qualified by configured source, hydrated account, email and role; owner changes abort waiting and hide old results/Undo. Guest/loading/failure states do not fabricate successful zero tasks or progress. Errors have a retry. Demo PUT verifies the complete desired task record and DELETE verifies absence before visit-only feedback; an unrelated setter failure is not a successful mutation. API acknowledgement cannot undo an already accepted server change. [Phase 7](PHASE7_POLISH.md) and the [final handoff](FINAL_HANDOFF.md) distinguish native/demo/fixture evidence from external release gates.

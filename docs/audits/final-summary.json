@@ -1,0 +1,275 @@
+{
+  "verifiedApplicationCommit": "889f6b9",
+  "branch": "arena/aa6b22f8-campusone",
+  "scope": "Frontend/demo verification, not a deployed secure campus platform",
+  "native": {
+    "suites": {
+      "foundation": 15,
+      "shell": 12,
+      "home": 18,
+      "auth": 23,
+      "clubs": 24,
+      "events": 30,
+      "discover": 28,
+      "life": 21,
+      "profile": 5,
+      "social": 10,
+      "study": 12,
+      "secondary": 8,
+      "polish": 4
+    },
+    "total": 210,
+    "failed": 0
+  },
+  "canonicalRoutes": {
+    "routes": 122,
+    "views": 732,
+    "widths": [
+      360,
+      768,
+      1280
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "mobileAAAnalyses": 244,
+    "AAOrLayoutDefects": 0
+  },
+  "supplementaryCaptures": [
+    {
+      "group": "Shell",
+      "captures": 31,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Home",
+      "captures": 38,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Auth/onboarding",
+      "captures": 105,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Clubs",
+      "captures": 179,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Events",
+      "captures": 196,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Discover",
+      "captures": 128,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Accommodation",
+      "captures": 104,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Marketplace",
+      "captures": 104,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Opportunities",
+      "captures": 104,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Resources",
+      "captures": 104,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Lost & Found",
+      "captures": 90,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "GPA/notes",
+      "captures": 8,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Schedule",
+      "captures": 32,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Listing photos",
+      "captures": 12,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Report photos",
+      "captures": 12,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Profile",
+      "captures": 22,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Social",
+      "captures": 46,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Study",
+      "captures": 42,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Secondary",
+      "captures": 64,
+      "AAOrLayoutDefects": 0
+    },
+    {
+      "group": "Cross-feature journey",
+      "captures": 18,
+      "AAOrLayoutDefects": 0
+    }
+  ],
+  "totalSupplementaryCaptures": 1439,
+  "manualReview": {
+    "templates": 37,
+    "views": 148,
+    "widths": [
+      360,
+      1280
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "overviewSheetsRead": 20,
+    "scope": "Template composition review; additional entity variants have automated screenshot/AA/layout coverage"
+  },
+  "sourceAudit": {
+    "typescriptFiles": 507,
+    "anyTypes": 0,
+    "UIFixtureImports": 0,
+    "literalComponentColors": 0,
+    "versionedForbiddenArtifacts": [],
+    "packageName": "campusone-web",
+    "realBackendVerified": false
+  },
+  "metadata": {
+    "validatedRoutes": 122,
+    "routeTitlesDescriptionsOGAndDemoNoindex": true
+  },
+  "lighthouse": {
+    "renderer": "Default SwiftShader, Chrome 153; isolated sequential production runs",
+    "scenario": "Returning Home after completing actual tour; HTTP cache cleared, local profile/tour preferences retained",
+    "runs": [
+      {
+        "run": 1,
+        "timestamp": "2026-10-11T23:57:41.731Z",
+        "benchmark": 3168,
+        "performance": 91,
+        "accessibility": 100,
+        "FCP": 910.671,
+        "LCP": 3351.0065,
+        "TBT": 135.6645000000001,
+        "CLS": 0
+      },
+      {
+        "run": 2,
+        "timestamp": "2026-10-11T23:57:55.988Z",
+        "benchmark": 2982.5,
+        "performance": 92,
+        "accessibility": 100,
+        "FCP": 963.0779,
+        "LCP": 3321.6173077636718,
+        "TBT": 71.50000000000011,
+        "CLS": 0
+      },
+      {
+        "run": 3,
+        "timestamp": "2026-10-11T23:58:09.922Z",
+        "benchmark": 2967,
+        "performance": 91,
+        "accessibility": 100,
+        "FCP": 956.3441,
+        "LCP": 2949.0166077636723,
+        "TBT": 208.5000000000001,
+        "CLS": 0
+      }
+    ],
+    "medianPerformance": 91,
+    "physicalDeviceVerified": false,
+    "postMilestoneConfirmation": {
+      "applicationCommit": "889f6b9",
+      "runs": [
+        {
+          "run": 1,
+          "timestamp": "2026-10-12T00:29:36.095Z",
+          "benchmark": 2753,
+          "performance": 92,
+          "accessibility": 100,
+          "FCP": 915.6708000000001,
+          "LCP": 3367.5062,
+          "TBT": 36.66459999999995,
+          "CLS": 0
+        },
+        {
+          "run": 2,
+          "timestamp": "2026-10-12T00:29:50.138Z",
+          "benchmark": 2704.5,
+          "performance": 92,
+          "accessibility": 100,
+          "FCP": 930.6669999999999,
+          "LCP": 3310.000957763672,
+          "TBT": 44.66650000000004,
+          "CLS": 0
+        },
+        {
+          "run": 3,
+          "timestamp": "2026-10-12T00:30:05.529Z",
+          "benchmark": 2719.5,
+          "performance": 90,
+          "accessibility": 100,
+          "FCP": 929.4834000000001,
+          "LCP": 3499.2251000000006,
+          "TBT": 105.5,
+          "CLS": 0
+        }
+      ],
+      "medianPerformance": 92
+    }
+  },
+  "dependencies": {
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "all": {
+      "info": 0,
+      "low": 0,
+      "moderate": 4,
+      "high": 5,
+      "critical": 0,
+      "total": 9
+    }
+  },
+  "externalGates": {
+    "realBackendVerified": false,
+    "realDatabaseVerified": false,
+    "secureAuthCSRFAndAuthorizationVerified": false,
+    "realUploadsRealtimeAIAndPaymentsVerified": false,
+    "authorizedSRCArtworkSupplied": false,
+    "physicalDeviceSafariFirefoxIMEAndFullScreenReaderVerified": false
+  }
+}

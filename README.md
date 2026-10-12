@@ -2,7 +2,7 @@
 
 `campusone-web` — a GCTU student-app frontend moving toward a photo-first campus magazine and social super-app.
 
-**Current milestone: Phase 6 frontend domain migrations complete through 6M.** Accommodation, Marketplace, Opportunities, Lost & Found, Academics/GPA/notes, Timetable/Calendar/ICS, editable Profile, Community/Messages/Notifications, Tasks/Study planning and the secondary campus screens are committed in sequence. The remaining-screen milestone adds photo announcements/SRC/Media/Participation/Management/Advertising/Settings with typed source-safe workflows and real licensed playback. **Polish and fresh final verification continue automatically**. Backend/security, authorized SRC artwork and Home's standard-renderer/physical-device Performance ≥90 are still open; see [Phase 6M](docs/PHASE6M_SECONDARY.md).
+**Current milestone: requested frontend upgrade complete through polish and final verification.** All ordered feature migrations through 6M and Phase 7 are implemented and pushed. The final audit records **210 native passes**, **732 canonical views**, **1,439 supplemental AA/layout captures** and per-route metadata/source-artifact checks. Home meets the requested local production Lighthouse targets: **92/92/90 Performance, 100 Accessibility**, latest median **92**. Read the [final handoff](docs/FINAL_HANDOFF.md) and [compact evidence](docs/audits/final-summary.json). Secure backend integrations, authorized SRC artwork, nine development-toolchain advisories and physical-device/full assistive-technology release gates remain explicit, not falsely closed.
 
 This is an explicitly labelled **demo/prototype**, not an official GCTU/SRC service. Generated photographs depict fictional people/a campus. The official SRC artwork is still pending; `BrandMark` keeps a clean labelled slot rather than inventing a logo. Real auth, uploads, messaging, payments, AI and authoritative campus data are not connected.
 
@@ -34,6 +34,7 @@ npm run test:profile
 npm run test:social
 npm run test:study
 npm run test:secondary
+npm run test:polish
 npm run build
 npm run start -- --hostname 0.0.0.0 --port 3001
 ```
@@ -47,14 +48,14 @@ The versioned safe template is **`config/env.example`**. `npm run env:example` g
 - `NEXT_PUBLIC_DATA_SOURCE=demo` — default for the new typed catalog.
 - `NEXT_PUBLIC_API_BASE_URL=/api` — same-origin browser requests.
 - `API_PROXY_TARGET=http://127.0.0.1:4000` — server-only platform API origin.
-- `API_SESSION_COOKIE_NAMES` — server-only exact cookie-name allowlist for Home, Clubs, Events and Discover; empty forwards none. Never configure cookie values here.
+- `API_SESSION_COOKIE_NAMES` — server-only exact cookie-name allowlist for bounded server feed/detail reads; empty forwards none. Never configure cookie values here.
 - `NEXT_PUBLIC_APP_URL` — optional real deployment origin for social-preview photos.
 - `NEXT_PUBLIC_IMAGE_HOSTS` — optional exact approved HTTPS image hosts; empty by default.
 - `DATABASE_URL` — optional server-only PostgreSQL connection for the existing health endpoint.
 
 The preview user's browser is not the sandbox: do not put localhost in the browser API base. Next proxies `/api` to port **4000** without shadowing `/api/health`. Health returns `{ "ok": false }` / HTTP 503 when no database is configured. A controlled proxy fixture is tested; actual API and database connectivity remain unverified.
 
-**API-mode limitation:** `campusService.list/get`, `authService`, `clubActionService`, `eventActionService`, `discoverCatalogService` and `discoverActionService` select typed lazy demo/API adapters. Auth cookie endpoints are proposed/unverified; existing synchronous compatibility readers and domain mutations remain local until their scheduled feature migrations. Enabling API mode does not magically make the legacy app live. See the integration guide before changing the mode.
+**API-mode boundary:** modern feeds/actions use lazy typed catalog/auth/Clubs/Events/Discover/workspace/profile/photo/task/study/notification/campus adapters. Synchronous compatibility readers remain demo-only for fixture/state initialization, not an API fallback. The migrations are implemented, but the proposed endpoints, authentication, authorization, CSRF, storage and transport are **not supplied/deployment-verified**. Enabling API mode does not make an unconnected backend live; consult the integration guide.
 
 ## Architecture and assets
 
@@ -72,7 +73,7 @@ The preview user's browser is not the sandbox: do not put localhost in the brows
 - `src/features/clubs/` + `clubCatalogService` / `clubActionService` — server-read photo directory/details, validated owner-aware local/API interactions and preserved reviews.
 - `src/features/{auth,onboarding}/` + `authService` — photo forms/tour, source-aware session restoration, sanitized persistence and optional local photo preparation.
 
-The eight pre-Clubs generated WebPs total **626,572 bytes**; five additional fictional club-activity WebPs total **526,288 bytes**; three Events scenes add **319,998 bytes** (16 generated sources, **1,472,858 bytes** combined). All are registered with meaningful alt/provenance/fallback; a separate CC0 poster is **20,018 bytes**. The five-second **554,058-byte** local MDN CC0 WebM is not GCTU footage and is never requested on initial Home. Source/license notes live in `public/media/demo/README.md`. Existing local SVG stand-ins remain clearly labelled for later replacement. Use generated, licensed/royalty-free or explicitly authorized media only; do not hotlink copyrighted campus photos. The uploader prepares JPEG/PNG/WebP locally, with crop/preview/error/retry and bounded output; it does not claim a real upload without a service callback.
+Static photos are registered with meaningful alt/provenance/fallback and labelled as fictional generated scenes or placeholders. A local **554,058-byte MDN CC0 WebM** and **39,868-byte CC0 sound-effect MP3** provide real deferred playback; neither is GCTU footage/audio. Attribution/full CC0 text is in `public/media/demo/`. Use generated, licensed/royalty-free or explicitly authorized media only. The shared native crop/compression kit prepares bounded owned photos; private demo persistence is not a secure server-upload claim. Full local Fraunces/Manrope licenses are bundled; no remote font service is needed.
 
 ## Verification and docs
 
@@ -87,6 +88,8 @@ The eight pre-Clubs generated WebPs total **626,572 bytes**; five additional fic
 - [Phase 6D Accommodation](docs/PHASE6D_ACCOMMODATION.md) · [6E Marketplace](docs/PHASE6E_MARKETPLACE.md) · [6F Opportunities](docs/PHASE6F_OPPORTUNITIES.md)
 - [Phase 6G Lost & Found](docs/PHASE6G_LOST_FOUND.md) · [6H Academics](docs/PHASE6H_ACADEMICS.md) · [6I Schedule](docs/PHASE6I_SCHEDULE.md) · [6J Profile](docs/PHASE6J_PROFILE.md)
 - [Phase 6K Social](docs/PHASE6K_SOCIAL.md) · [Phase 6L Tasks/Study tools](docs/PHASE6L_STUDY_TOOLS.md)
+- [Phase 6M Secondary screens](docs/PHASE6M_SECONDARY.md) · [Phase 7 Polish](docs/PHASE7_POLISH.md)
+- [Final frontend handoff](docs/FINAL_HANDOFF.md) · [Compact verification summary](docs/audits/final-summary.json)
 - [Frontend architecture](docs/FRONTEND_ARCHITECTURE.md)
 - [Feature inventory](docs/FEATURE_INVENTORY.md)
 - [Latest tests, screenshots, Lighthouse and remaining work](docs/TEST_REPORT.md)
@@ -121,10 +124,19 @@ AUDIT_BASE_URL=http://127.0.0.1:3001 \
   AUDIT_OUTPUT_DIR=.cache/phase6/events/routes node scripts/design-audit.mjs
 ```
 
-Current verification and exact Lighthouse measurements are recorded in [TEST_REPORT.md](docs/TEST_REPORT.md). **198 native tests** pass across eleven isolated suites. Study tools add **42 clean production captures** and actual timed ICS/download evidence; the planning engine is deterministic, not AI. Social has **46 clean production AA/layout/44px captures** at 360/768/1280 in light/dark with validated private post/reply/thread/photo/read-state workflows, guest gates and denied/corrupt/cross-tab storage. Profile’s 22 captures and earlier domain captures remain milestone evidence, not fresh full-route results. No Social runtime package was added. Historical Home medians remain **82 standard renderer /94 diagnostic /100 accessibility**; fresh performance and route/domain regressions follow final polish. The ≥90 gate is not waived.
+Current verification and exact Lighthouse measurements are in [TEST_REPORT.md](docs/TEST_REPORT.md) and [FINAL_HANDOFF.md](docs/FINAL_HANDOFF.md). The source runners and compact summary are committed; large cached screenshots/traces may not persist. Real backend, official authority and physical-device proofs are not substituted by frontend fixtures.
 
-Snapshots/traces/build output/node_modules/test images stay ignored. The source runners and human-readable reports are committed; cached binary evidence may not persist between workspaces. Run audits again for later phases. Lighthouse targets are Home Performance ≥90 / Accessibility ≥95; only measured production scores are reported.
+```bash
+# All seven detail families/all current canonical IDs, not just one sample:
+AUDIT_BASE_URL=http://127.0.0.1:3001 AUDIT_ALL_ENTITIES=1 node scripts/design-audit.mjs
+node scripts/phase8-source-audit.mjs
+AUDIT_ALL_ENTITIES=1 node scripts/phase8-metadata-audit.mjs
+node scripts/audit/interactions.mjs # Maintained current cross-feature journey
+node scripts/phase6-secondary-audit.mjs
+# Run performance in isolation, sequentially; production only:
+AUDIT_BASE_URL=http://127.0.0.1:3001 node scripts/audit/lighthouse.mjs
+```
 
-## Next in the agreed sequence
+## Handoff / external release work
 
-Phases 1–5 and Phase 6A–L frontend milestones are implemented. Remaining: **SRC/announcements/participation/media/management/advertising/settings → polish → final verification**. Work proceeds without routine approvals. The club-executive approval/persistence panel remains preserved. Authorized SRC artwork, real secure backend/transport and physical-device proof remain external; the performance gate stays open until honestly measured.
+The agreed frontend sequence is complete, including polish and final verification. The club-executive approval/persistence panel remains intact. Supply the authorized SRC artwork and real API/security/upload/transport integrations before an official deployment; complete physical-device, Safari/Firefox, IME and full screen-reader validation. Runtime dependency audit is zero; the full audit retains nine disclosed development-toolchain advisories (5 high/4 moderate). See the final checklist rather than treating demo role selection or fixtures as authorization.

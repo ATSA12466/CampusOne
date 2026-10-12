@@ -29,7 +29,7 @@ Demo records are private to this device/profile. API records belong to the conne
 
 Public posts extend the catalog DTO with optional `{ details: { topic, cover? } }`; bodies, ISO dates, IDs and nonnegative activity counts are validated. Conversation IDs are validated; notification destinations follow the existing student path-only return allowlist. Browser requests stay relative to `/api`, with the server-only proxy targeting port 4000.
 
-These are frontend contracts, **not deployed backend evidence**. A real publisher must enforce identity/ownership/RBAC, CSRF protections, authorization for every read and write, safe uploads, storage retention/deletion, notification ownership, moderation and realtime messaging. Demo desired reactions/replies are not a public broadcast API. API browser integration will be checked with controlled fixtures during final verification; actual deployment remains external.
+These are frontend contracts, **not deployed backend evidence**. A real publisher must enforce identity/ownership/RBAC, CSRF protections, authorization for every read and write, safe uploads, storage retention/deletion, notification ownership, moderation and realtime messaging. Demo desired reactions/replies are not a public broadcast API. Final verification reruns the current demo browser workflows and controlled native API transport/owner contracts; it does not establish a deployed Social API or complete API-mode browser integration. Those remain external integration gates, not a claimed live messaging/moderation service.
 
 ## Executed verification
 

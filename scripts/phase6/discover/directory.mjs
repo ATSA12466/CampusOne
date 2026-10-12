@@ -9,6 +9,9 @@ import {
   trackErrors,
   categories,
   loadedCounts,
+  allUnique,
+  allPages,
+  resourceCourseIds,
   chooseCategory,
 } from "./helpers.mjs";
 export async function directoryChecks(browser, base, output) {
@@ -57,10 +60,12 @@ export async function directoryChecks(browser, base, output) {
           .getByRole("radio", { name: "Browse all", exact: true })
           .click();
         await page
-          .getByText("45 finds · page 1 of 8", { exact: true })
+          .getByText(`${allUnique} finds · page 1 of ${allPages}`, {
+            exact: true,
+          })
           .waitFor();
         const allSeen = new Set(await cardKeys(page));
-        for (let n = 2; n <= 8; n++) {
+        for (let n = 2; n <= allPages; n++) {
           await page
             .getByRole("button", { name: "Next page", exact: true })
             .click();
@@ -70,8 +75,8 @@ export async function directoryChecks(browser, base, output) {
             allSeen.add(id);
           }
         }
-        assert.equal(allSeen.size, 45);
-        assert.equal(await cards(page).count(), 3);
+        assert.equal(allSeen.size, allUnique);
+        assert.equal(await cards(page).count(), allUnique % 6 || 6);
         captures.push(await capture(page, output, `${key}-last-page`));
         for (let n = 0; n < categories.length; n++) {
           await chooseCategory(page, categories[n]);
@@ -99,10 +104,18 @@ export async function directoryChecks(browser, base, output) {
             exact: true,
           })
           .waitFor();
-        assert.equal(await cards(page).count(), 1);
+        assert.equal(await cards(page).count(), resourceCourseIds.length);
+        assert.deepEqual(
+          new Set(await cardKeys(page)),
+          new Set(resourceCourseIds),
+        );
         await page.reload({ waitUntil: "networkidle" });
         assert.equal(await search.inputValue(), "ITT 315");
-        assert.equal(await cards(page).count(), 1);
+        assert.equal(await cards(page).count(), resourceCourseIds.length);
+        assert.deepEqual(
+          new Set(await cardKeys(page)),
+          new Set(resourceCourseIds),
+        );
         captures.push(await capture(page, output, `${key}-deep-link-reload`));
         await search.fill("");
         await chooseCategory(page, "events");
@@ -190,7 +203,7 @@ export async function directoryChecks(browser, base, output) {
   return {
     captures,
     editUnique: 24,
-    allUnique: 45,
+    allUnique,
     eightCategories: true,
     urlReloadBackForward: true,
     composedSearchSort: true,

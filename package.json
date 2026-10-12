@@ -20,7 +20,10 @@
     "test:social": "node scripts/phase6-social-tests.mjs",
     "test:study": "node scripts/phase6-study-tests.mjs",
     "test:secondary": "node scripts/phase6-secondary-tests.mjs",
-    "test:polish": "node scripts/phase7-tests.mjs"
+    "test:polish": "node scripts/phase7-tests.mjs",
+    "audit:source": "node scripts/phase8-source-audit.mjs",
+    "audit:metadata": "node scripts/phase8-metadata-audit.mjs",
+    "audit:journey": "node scripts/audit/interactions.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

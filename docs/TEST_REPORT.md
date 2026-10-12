@@ -1,5 +1,46 @@
 # CampusOne test report
 
+## Current final frontend verification — Phases 7–8
+
+**The requested frontend sequence is complete and verified, not a deployed official campus platform.** Phase 6M (`08822d9`) and Phase 7 (`889f6b9`) are pushed on `arena/aa6b22f8-campusone`; this final milestone versions current verification tooling and reconciled docs. See [final handoff](FINAL_HANDOFF.md), [Phase 7](PHASE7_POLISH.md), [inventory](FEATURE_INVENTORY.md) and [compact evidence](audits/final-summary.json).
+
+| Gate | Current result |
+| --- | --- |
+| Lint / strict typecheck / production build | Passed; Next 16.4.0 / React 19.2.6; 29 generated pages |
+| Native suites | **210 passed / zero failed**: foundation 15, shell 12, Home 18, auth 23, Clubs 24, Events 30, Discover 28, life 21, Profile 5, Social 10, Study 12, secondary 8, polish 4 |
+| All-canonical route regression | **732 views**, 122 routes/detail records × 360/768/1280 × light/dark; **244 mobile AA analyses**, zero violations/root-or-visible-overflow/sub-44px flags |
+| Fresh supplemental workflow captures | **1,439**, zero AA/layout defects; group counts below |
+| Visual review | All **37 screen templates**, 148 mobile/desktop light/dark states in 20 read overview sheets; tablet and all canonical detail variants have automated coverage |
+| Source / artifacts | **507 app TS/TSX files**, zero `any` nodes/UI fixture imports/literal component palettes; no forbidden `.env*`, build, dependency or credential artifacts versioned |
+| Metadata / health | All **122** route titles/descriptions/OG/demo-noindex validate; expected unconfigured DB health 503 `{ok:false}`; production `/design` 404 |
+| Dependencies | Production **0**; full **9 development advisories**, 5 high/4 moderate/0 critical; no forced framework downgrade/new runtime package |
+
+Supplemental current captures (not historical mocked API-browser totals): Shell 31; Home 38; auth/intro 105; Clubs 179; Events 196; Discover 128; Accommodation/Marketplace/Opportunities/resources 104 each; Lost & Found 90; GPA/notes 8; schedule 32; listing/report photo flows 12 each; Profile 22; Social 46; Study 42; secondary 64; cross-feature journey 18. Foundation showcase/theme/touch/dialog/crop/publishing groups also passed, with a different report shape excluded from this summed capture count.
+
+The current journey validates first-visit intro/menu focus, actual task CRUD/planning/ICS, RSVP/cancel/non-entry ticket, preserved executive approval, canonical save/SRC request reload, required prepared report photo, private photo post/nested reply/message/read state and logout clearing six app arrays plus owned workspace. `scripts/audit/interactions.mjs` is a maintained compatibility entry, not the obsolete baseline UI script. Current Discover has **96 loaded demo records**; exact catalogue-derived pagination/category totals and course-search IDs replace the old 45/one-record fixture assumptions.
+
+Private Home now reads/writes through the source-qualified task service; guest/loading/error do not appear as a successful empty list. Undo cannot cross profiles. Native PUT/DELETE regressions reject unrelated mutation failure rather than false visit-only success. Media/announcements/Saved failures are distinct from empty; module/client-boundary regressions and zero-`any` AST checks pass.
+
+### Production Home Lighthouse — local lab target passed
+
+Default **SwiftShader**, Chrome 153, Lighthouse 13.5; isolated sequential returning Home after real tour completion; HTTP cache cleared/profile-tour retained, 360×800 mobile emulation and default simulated throttling:
+
+| Run / recorded UTC time | Performance | Accessibility | FCP | LCP | TBT | CLS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 / 2026-10-12T00:29:36.095Z | **92** | **100** | 0.92s | 3.37s | 37ms | 0 |
+| 2 / 2026-10-12T00:29:50.138Z | **92** | **100** | 0.93s | 3.31s | 45ms | 0 |
+| 3 / 2026-10-12T00:30:05.529Z | **90** | **100** | 0.93s | 3.50s | 106ms | 0 |
+
+**Latest post-milestone median Performance 92, Accessibility 100 throughout**, no audit errors: local lab ≥90/≥95 passes. Exact numeric values, benchmark indices and timestamps are versioned in the summary. This is not a physical-device or renderer-independent guarantee. No alternate software-raster score is substituted.
+
+The preceding isolated set at 2026-10-11T23:57:41–23:58:09Z scored 91/92/91 (median 91), A100, and remains in the compact summary. Historical default median 82/software diagnostic 94 and post-6M default 67 then isolated 91 remain below. The low-run variance's cause is unproven; possible contention is not a proven explanation. No dedicated Home performance optimization is claimed between those diagnostics. A parallel Home media screenshot timed out; the unchanged build's remaining Home groups passed in isolation. Incomplete attempts are not counted as passes. Auth session checks use current save/guest labels and SPA navigation before verifying that reload clears remember-disabled activity.
+
+**External release gates remain unverified:** real backend/auth/permissions/CSRF/database, email/MFA/reset verification, secure uploads/media rights/retention, realtime/moderation/AI/payment/enrollment/entry/institution sync, authorized SRC artwork, physical devices/Safari/Firefox/IME/full screen-reader testing and development advisory resolution. Typed mocks, automated AA and demo roles do not establish those gates.
+
+Binary evidence is ignored under `.cache/final/`; versioned runners and summary preserve reproduction without committing screenshots/traces/dependencies/secrets. README and final handoff list commands. The chronological entries below are **historical milestone evidence**, not current claims that the frontend or local performance gate remains unfinished.
+
+---
+
 ## Phase 6M — secondary campus screens
 
 **206 native tests**, clean lint/typecheck/build and **64 production AA/layout/44px captures** pass. All eight secondary directory/detail layouts run at 360/768/1280 light/dark; source-safe announcement saves/SRC requests reload correctly and actual licensed audio/video playback is deferred until intent. Each mobile/desktop light/dark screen was visually reviewed. No runtime package added. Backend contracts use native mocks, not deployment proof. [Phase 6M](PHASE6M_SECONDARY.md) records scope and boundaries. All scheduled Phase 6 frontend domains are migrated; polish and final verification continue. A fresh default-renderer Home pre-polish diagnostic measured **67 Performance /100 Accessibility**, so the performance gate is explicitly still open.
