@@ -44,7 +44,7 @@ Base commit: `0d590bf` — chore(release): harden dev tooling and add isolated v
 - [x] Phase 1: audit + baseline + this document
 - [x] Phase 2: design + mobile foundation (tokens, bottom nav, Freshers route, shared components)
 - [x] Phase 3: auth + permissions (server auth, sessions, RBAC, guards, seeded roles)
-- [ ] Phase 4: SRC dashboard (overview, clubs approvals, appointments, content, requests, reports)
+- [x] Phase 4: SRC dashboard (overview, clubs approvals, appointments, content, requests, reports)
 - [ ] Phase 5: Super Admin dashboard (users, roles, branding, content, accommodation, moderation, audit)
 - [ ] Phase 6: clubs + events depth (executives, committees, resources, event CRUD, analytics)
 - [ ] Phase 7: QR attendance + badges (sessions, scan, validation, history, badge issuance/verify)
@@ -93,6 +93,24 @@ Base commit: `0d590bf` — chore(release): harden dev tooling and add isolated v
   bad login 401, sign-out invalidates.
 - Verified: `typecheck`, `lint`, `npm test` (15/15), `next build` (35 routes incl. /api/auth/*).
 
+## Phase 4 record (DONE 2026-10-12)
+- `src/server/registry.ts`: validated repositories for club registrations, nominations,
+  appointments, announcements (audience + publish windows), student requests, SRC profiles.
+  Store extended with 6 collections; new `src.clubs.review` permission for src-admin.
+- 13 API routes under `/api/src/*` with per-endpoint rate limits, guards and audit entries.
+  Overview aggregates counts + recent activity.
+- `(src)` route group + `AdminShell` (mobile-first top nav, locked state with metadata for
+  unauthenticated visitors, no data leak). Pages: overview, clubs (approve/reject + intake),
+  appointments (nomination review + direct appointments + revocation), content
+  (announcements CRUD + office profiles), requests (triage), reports (real-data trends + CSV).
+- Header `DashboardLinks` show /src + /admin entries from live session permissions.
+  Auth `?next=` now accepts /src/* and /admin/*.
+- Route-group lesson: dashboard pages live at `(src)/src/*` so URLs are /src/* without
+  colliding with student routes.
+- Verified: `typecheck`, `lint`, `npm test` (15/15, incl. 4 new registry tests),
+  `next build` (42 routes), live curl: locked /src 200 + metadata, student submit OK,
+  student approve/list 403, unauth 401, src-admin approve OK.
+
 ## Next action
-Phase 4: SRC dashboard. Route group `src/app/(src)/`, server guards, overview, club
-approvals, appointments/nominations, SRC content + executive profiles, requests, reports.
+Phase 5: Super Admin dashboard. Route group `(admin)/admin/*`: users, roles/grants,
+branding, content, accommodation review, moderation, audit log, settings, health.

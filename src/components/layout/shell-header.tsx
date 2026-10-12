@@ -3,6 +3,7 @@ import Link from "next/link";
 import { appConfig } from "@/config/app-config";
 import { Bell, Search } from "lucide-react";
 import type { MouseEventHandler } from "react";
+import { DashboardLinks } from "@/components/navigation/dashboard-links";
 import { BrandMark } from "@/components/shared/brand-mark";
 import { Avatar } from "@/components/ui/avatar";
 import { AppearanceTrigger } from "@/components/theme/appearance-trigger";
@@ -97,6 +98,7 @@ export function ShellHeader({
               </span>
             ) : null}
           </Link>
+          <DashboardLinks />
           <Link
             prefetch={false}
             href="/profile"

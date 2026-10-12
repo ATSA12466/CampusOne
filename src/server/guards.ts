@@ -62,6 +62,41 @@ export async function requirePermission(
   return guarded;
 }
 
+/** Passes when the caller holds ANY of the listed global permissions. */
+export async function requireAnyPermission(
+  candidates: readonly Permission[],
+): Promise<Guarded | NextResponse> {
+  const guarded = await requireUser();
+  if (guarded instanceof NextResponse) return guarded;
+  if (!candidates.some((permission) => can(guarded.serverUser, permission)))
+    return NextResponse.json(
+      { error: "You do not have permission to perform this action." },
+      { status: 403 },
+    );
+  return guarded;
+}
+
+export async function readJson(
+  request: Request,
+): Promise<{ ok: true; body: unknown } | { ok: false; response: NextResponse }> {
+  try {
+    return { ok: true, body: await request.json() };
+  } catch {
+    return {
+      ok: false,
+      response: NextResponse.json({ error: "Invalid request body." }, { status: 400 }),
+    };
+  }
+}
+
+export function invalidInput(message = "The submitted details are invalid."): NextResponse {
+  return NextResponse.json({ error: message }, { status: 400 });
+}
+
+export function notFoundResponse(message = "Not found."): NextResponse {
+  return NextResponse.json({ error: message }, { status: 404 });
+}
+
 export function sessionCookie(token: string, maxAgeSec: number): string {
   const secure = process.env.NODE_ENV === "production" ? " Secure;" : "";
   return `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax;${secure} Max-Age=${maxAgeSec}`;

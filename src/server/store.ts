@@ -12,10 +12,26 @@ export interface StoreShape {
   sessions: Record<string, unknown>[];
   grants: Record<string, unknown>[];
   audit: Record<string, unknown>[];
+  clubs: Record<string, unknown>[];
+  nominations: Record<string, unknown>[];
+  appointments: Record<string, unknown>[];
+  announcements: Record<string, unknown>[];
+  requests: Record<string, unknown>[];
+  src_profiles: Record<string, unknown>[];
   [collection: string]: Record<string, unknown>[] | number;
 }
 
-export type CollectionName = "users" | "sessions" | "grants" | "audit";
+export type CollectionName =
+  | "users"
+  | "sessions"
+  | "grants"
+  | "audit"
+  | "clubs"
+  | "nominations"
+  | "appointments"
+  | "announcements"
+  | "requests"
+  | "src_profiles";
 
 function dataDir(): string {
   return process.env.CAMPUSONE_DATA_DIR?.trim() || join(process.cwd(), ".data");
@@ -25,24 +41,47 @@ export function storePath(): string {
   return join(dataDir(), "campusone.json");
 }
 
+const KNOWN_COLLECTIONS: CollectionName[] = [
+  "users",
+  "sessions",
+  "grants",
+  "audit",
+  "clubs",
+  "nominations",
+  "appointments",
+  "announcements",
+  "requests",
+  "src_profiles",
+];
+
 function blank(): StoreShape {
-  return { version: STORE_VERSION, users: [], sessions: [], grants: [], audit: [] };
+  const shape: StoreShape = {
+    version: STORE_VERSION,
+    users: [],
+    sessions: [],
+    grants: [],
+    audit: [],
+    clubs: [],
+    nominations: [],
+    appointments: [],
+    announcements: [],
+    requests: [],
+    src_profiles: [],
+  };
+  return shape;
 }
 
 function readStore(path: string): StoreShape {
-  if (!existsSync(path)) return blank();
+  const shape = blank();
+  if (!existsSync(path)) return shape;
   try {
     const parsed = JSON.parse(readFileSync(path, "utf8")) as Partial<StoreShape>;
-    if (typeof parsed !== "object" || parsed === null) return blank();
-    return {
-      version: STORE_VERSION,
-      users: Array.isArray(parsed.users) ? parsed.users : [],
-      sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
-      grants: Array.isArray(parsed.grants) ? parsed.grants : [],
-      audit: Array.isArray(parsed.audit) ? parsed.audit : [],
-    };
+    if (typeof parsed !== "object" || parsed === null) return shape;
+    for (const name of KNOWN_COLLECTIONS)
+      shape[name] = Array.isArray(parsed[name]) ? parsed[name] : [];
+    return shape;
   } catch {
-    return blank();
+    return shape;
   }
 }
 

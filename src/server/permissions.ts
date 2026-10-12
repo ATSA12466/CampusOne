@@ -12,6 +12,7 @@ export const permissions = [
   "club.badges.manage",
   "club.resources.manage",
   "src.appointments.review",
+  "src.clubs.review",
   "src.content.publish",
   "src.requests.manage",
   "academic.materials.manage",
@@ -59,6 +60,17 @@ export const grantSchema = z.object({
   revokedAt: z.string().datetime().nullable(),
 });
 
+/** Any of these opens the SRC dashboard shell (each API still checks its own scope). */
+export const srcDashboardPermissions: readonly Permission[] = [
+  "src.requests.manage",
+  "src.content.publish",
+  "src.appointments.review",
+  "src.clubs.review",
+  "announcements.publish",
+  "events.manage",
+  "platform.users.manage",
+];
+
 /** Baseline permissions each role carries globally (scoped club rights come from grants). */
 export const rolePermissions: Record<PlatformRole, readonly Permission[]> = {
   student: [],
@@ -80,6 +92,7 @@ export const rolePermissions: Record<PlatformRole, readonly Permission[]> = {
     "src.requests.manage",
     "src.content.publish",
     "src.appointments.review",
+    "src.clubs.review",
     "announcements.publish",
     "events.manage",
   ],
