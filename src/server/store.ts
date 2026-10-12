@@ -18,6 +18,12 @@ export interface StoreShape {
   announcements: Record<string, unknown>[];
   requests: Record<string, unknown>[];
   src_profiles: Record<string, unknown>[];
+  branding: Record<string, unknown>[];
+  brand_versions: Record<string, unknown>[];
+  listings: Record<string, unknown>[];
+  reports: Record<string, unknown>[];
+  materials: Record<string, unknown>[];
+  settings: Record<string, unknown>[];
   [collection: string]: Record<string, unknown>[] | number;
 }
 
@@ -31,7 +37,13 @@ export type CollectionName =
   | "appointments"
   | "announcements"
   | "requests"
-  | "src_profiles";
+  | "src_profiles"
+  | "branding"
+  | "brand_versions"
+  | "listings"
+  | "reports"
+  | "materials"
+  | "settings";
 
 function dataDir(): string {
   return process.env.CAMPUSONE_DATA_DIR?.trim() || join(process.cwd(), ".data");
@@ -52,6 +64,12 @@ const KNOWN_COLLECTIONS: CollectionName[] = [
   "announcements",
   "requests",
   "src_profiles",
+  "branding",
+  "brand_versions",
+  "listings",
+  "reports",
+  "materials",
+  "settings",
 ];
 
 function blank(): StoreShape {
@@ -67,6 +85,12 @@ function blank(): StoreShape {
     announcements: [],
     requests: [],
     src_profiles: [],
+    branding: [],
+    brand_versions: [],
+    listings: [],
+    reports: [],
+    materials: [],
+    settings: [],
   };
   return shape;
 }

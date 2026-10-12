@@ -45,7 +45,7 @@ Base commit: `0d590bf` — chore(release): harden dev tooling and add isolated v
 - [x] Phase 2: design + mobile foundation (tokens, bottom nav, Freshers route, shared components)
 - [x] Phase 3: auth + permissions (server auth, sessions, RBAC, guards, seeded roles)
 - [x] Phase 4: SRC dashboard (overview, clubs approvals, appointments, content, requests, reports)
-- [ ] Phase 5: Super Admin dashboard (users, roles, branding, content, accommodation, moderation, audit)
+- [x] Phase 5: Super Admin dashboard (users, roles, branding, content, accommodation, moderation, audit)
 - [ ] Phase 6: clubs + events depth (executives, committees, resources, event CRUD, analytics)
 - [ ] Phase 7: QR attendance + badges (sessions, scan, validation, history, badge issuance/verify)
 - [ ] Phase 8: Freshers Hub (discovery, connections, groups, posts, privacy, moderation)
@@ -111,6 +111,26 @@ Base commit: `0d590bf` — chore(release): harden dev tooling and add isolated v
   `next build` (42 routes), live curl: locked /src 200 + metadata, student submit OK,
   student approve/list 403, unauth 401, src-admin approve OK.
 
+## Phase 5 record (DONE 2026-10-12)
+- `src/server/admin.ts`: branding (draft/publish/version/rollback + validated asset store
+  in `.data/brand`, magic-byte + SVG-script checks), accommodation listings
+  (pending-until-approved), moderation reports, course materials, settings kv,
+  user administration.
+- 20 API routes: `/api/admin/*` (overview, users, grants, audit, branding, assets,
+  listings, reports, materials, settings) + public `/api/branding/public`,
+  `/api/brand/[key]` (immutable cache, image-only CSP), `/api/listings` (approved +
+  submit), `/api/reports` (submit), `/api/materials` (published).
+- `(admin)/admin/*`: 9 pages — overview (counts + health), users (search, verify,
+  suspend, roles), roles (scoped grants + revoke), branding (studio with preview,
+  publish, history), content (materials), accommodation (verification), moderation,
+  audit (search + pagination), settings.
+- `BrandMark` now enhances from published branding (name/tagline/logo) with built-in
+  fallback; published branding verified live on `/api/branding/public`.
+- Verified: `typecheck`, `lint`, `npm test` (15/15, 20 server tests), `next build`
+  (56 routes), live curl: super-admin flows OK, src-admin→admin 403, student→admin 403,
+  listing pending-hidden then approved-public.
+
 ## Next action
-Phase 5: Super Admin dashboard. Route group `(admin)/admin/*`: users, roles/grants,
-branding, content, accommodation review, moderation, audit log, settings, health.
+Phase 6: clubs + events depth. Server event/membership repos, executive/committee
+management, club event CRUD, resources, analytics; student club registration intake,
+event creation for executives, directory merge of approved registry clubs.

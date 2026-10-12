@@ -60,6 +60,18 @@ export const grantSchema = z.object({
   revokedAt: z.string().datetime().nullable(),
 });
 
+/** Any of these opens the Super Admin shell (each API still checks its own scope). */
+export const adminDashboardPermissions: readonly Permission[] = [
+  "platform.users.manage",
+  "platform.roles.manage",
+  "platform.branding.manage",
+  "platform.settings.manage",
+  "platform.audit.view",
+  "accommodation.listings.review",
+  "academic.materials.manage",
+  "community.moderate",
+];
+
 /** Any of these opens the SRC dashboard shell (each API still checks its own scope). */
 export const srcDashboardPermissions: readonly Permission[] = [
   "src.requests.manage",
