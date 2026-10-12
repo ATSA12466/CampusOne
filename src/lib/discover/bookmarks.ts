@@ -1,9 +1,13 @@
 import { discoverBookmarkTypes, discoverCategories } from "@/config/discover";
+import type { DiscoverReference } from "@/types/discover";
 import type { Bookmark } from "@/types/common";
-export function discoverSavedFromBookmarks(bookmarks: readonly Bookmark[]) {
+export function discoverSavedFromBookmarks(
+  bookmarks: readonly Bookmark[],
+): DiscoverReference[] {
   if (!Array.isArray(bookmarks)) return [];
+  const records: readonly Bookmark[] = bookmarks;
   return discoverCategories.flatMap((category) =>
-    bookmarks
+    records
       .filter(
         (bookmark) =>
           bookmark?.entityType === discoverBookmarkTypes[category] &&

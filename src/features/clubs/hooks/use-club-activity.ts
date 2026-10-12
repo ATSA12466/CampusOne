@@ -25,14 +25,20 @@ export function useClubActivity() {
       if (controller.signal.aborted) return;
       setRemote({ owner, activity: empty, error: "", loading: true });
       try {
-        const activity = await clubActionService.activity({ signal: controller.signal });
-        if (!controller.signal.aborted) setRemote({ owner, activity, error: "", loading: false });
+        const activity = await clubActionService.activity({
+          signal: controller.signal,
+        });
+        if (!controller.signal.aborted)
+          setRemote({ owner, activity, error: "", loading: false });
       } catch (error) {
         if (!controller.signal.aborted)
           setRemote({
             owner,
             activity: empty,
-            error: error instanceof Error ? error.message : "Your club activity could not load.",
+            error:
+              error instanceof Error
+                ? error.message
+                : "Your club activity could not load.",
             loading: false,
           });
       }
@@ -41,8 +47,8 @@ export function useClubActivity() {
   }, [owner, nonce, hydrated, user]);
   return clubActionService.source === "demo"
     ? {
-        memberships,
-        savedIds: bookmarks
+        memberships: user && hydrated ? memberships : [],
+        savedIds: (user && hydrated ? bookmarks : [])
           .filter((item) => item.entityType === "club")
           .map((item) => item.entityId),
         error: "",

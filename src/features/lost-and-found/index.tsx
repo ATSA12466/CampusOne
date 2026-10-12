@@ -1,9 +1,10 @@
 "use client";
+import { ReportFilters } from "./components/report-filters";
 import { useState } from "react";
 import { MagazineHeader } from "@/components/shared/magazine-header";
 import { ErrorState } from "@/components/shared/error-state";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Input, Select, Button } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { Pagination } from "@/components/ui/pagination";
 import { images } from "@/config/images";
 import { useAuthStore } from "@/stores/auth-store";
@@ -82,47 +83,15 @@ export function LostAndFoundFeature({
       </p>
       <PhotoRecordBoard collection="reports" />
       <section aria-label="Campus reports" className="space-y-5">
-        <div className="grid gap-3 sm:grid-cols-3">
-          <label className="text-xs font-medium">
-            Search reports
-            <Input
-              type="search"
-              value={query}
-              maxLength={120}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setPage(1);
-              }}
-            />
-          </label>
-          <label className="text-xs font-medium">
-            Report type
-            <Select
-              value={kind}
-              onChange={(e) => {
-                setKind(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="all">Lost and found</option>
-              <option value="lost">Lost</option>
-              <option value="found">Found</option>
-            </Select>
-          </label>
-          <label className="text-xs font-medium">
-            Report view
-            <Select
-              value={view}
-              onChange={(e) => {
-                setView(e.target.value === "saved" ? "saved" : "all");
-                setPage(1);
-              }}
-            >
-              <option value="all">All loaded reports</option>
-              <option value="saved">Saved</option>
-            </Select>
-          </label>
-        </div>
+        <ReportFilters
+          query={query}
+          setQuery={setQuery}
+          kind={kind}
+          setKind={setKind}
+          view={view}
+          setView={setView}
+          setPage={setPage}
+        />
         <DiscoverSources catalog={catalog} filter={filter} />
         <h2 className="font-display text-2xl font-semibold">Campus reports.</h2>
         <p role="status" className="text-xs text-muted-foreground">
@@ -147,6 +116,8 @@ export function LostAndFoundFeature({
             description={activity.error}
             onRetry={activity.refresh}
           />
+        ) : view === "saved" && activity.loading ? (
+          <p role="status">Loading saved reports…</p>
         ) : !result.total ? (
           <EmptyState
             title="No matching reports"

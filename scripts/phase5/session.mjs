@@ -18,8 +18,13 @@ export async function checkSession(browser, base) {
     errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   try {
-    await visit(page, base, "/academics");
-    await page.getByRole("button", { name: "Bookmark", exact: true }).first().click();
+    await visit(page, base, "/academics/resources/r1");
+    await page
+      .getByRole("button", { name: "Save for later", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: "Remove from saved", exact: true })
+      .waitFor();
     assert.equal((await stored(page, "campusone-app")).bookmarks.length, 1);
     await visit(page, base, "/clubs");
     const request = (await stored(page, "campusone-app")).memberships.find(
@@ -27,24 +32,38 @@ export async function checkSession(browser, base) {
     );
     assert.equal(request.status, "pending");
     await visit(page, base, "/sign-in?next=/clubs");
-    await page.getByLabel("Role (demo switch)", { exact: true }).selectOption("club-executive");
-    await page.getByRole("button", { name: "Sign in (demo)", exact: true }).click();
+    await page
+      .getByLabel("Role (demo switch)", { exact: true })
+      .selectOption("club-executive");
+    await page
+      .getByRole("button", { name: "Sign in (demo)", exact: true })
+      .click();
     await page.waitForURL((url) => url.pathname === "/clubs");
     const panel = page.locator("#executive-reviews");
-    await panel.getByRole("heading", { name: "Club executive demo panel", exact: true }).waitFor();
-    await panel.getByRole("button", { name: "Approve", exact: true }).last().click();
     await panel
-      .getByRole("group", { name: "Membership request for Debate Assembly", exact: true })
+      .getByRole("heading", { name: "Club executive demo panel", exact: true })
+      .waitFor();
+    await panel
+      .getByRole("button", { name: "Approve", exact: true })
+      .last()
+      .click();
+    await panel
+      .getByRole("group", {
+        name: "Membership request for Debate Assembly",
+        exact: true,
+      })
       .waitFor({ state: "hidden" });
     assert.equal(
-      (await stored(page, "campusone-app")).memberships.find((item) => item.id === request.id)
-        .status,
+      (await stored(page, "campusone-app")).memberships.find(
+        (item) => item.id === request.id,
+      ).status,
       "approved",
     );
     await page.reload({ waitUntil: "networkidle" });
     assert.equal(
-      (await stored(page, "campusone-app")).memberships.find((item) => item.id === request.id)
-        .status,
+      (await stored(page, "campusone-app")).memberships.find(
+        (item) => item.id === request.id,
+      ).status,
       "approved",
     );
     const second = await context.newPage();
@@ -53,43 +72,89 @@ export async function checkSession(browser, base) {
     await visit(page, base, "/settings");
     await page.getByRole("button", { name: "Sign out", exact: true }).click();
     await page.waitForURL((url) => url.pathname === "/sign-in");
-    await second.getByText("Personal dashboard", { exact: true }).waitFor();
-    assert.equal(await second.getByText("Membership reviews", { exact: true }).count(), 0);
+    await second
+      .getByRole("heading", {
+        name: "Sign in to see your workspace",
+        exact: true,
+      })
+      .waitFor();
+    assert.equal(
+      await second.getByText("Membership reviews", { exact: true }).count(),
+      0,
+    );
     let state = await stored(page);
     assert.equal(state.user, null);
     assert.equal(state.role, "student");
     await activityEmpty(page);
-    assert.equal((await stored(page, "campusone-onboarding")).preferences.name, "");
+    assert.equal(
+      (await stored(page, "campusone-onboarding")).preferences.name,
+      "",
+    );
     await visit(page, base, "/home");
-    await page.getByRole("link", { name: "Open guest profile", exact: true }).waitFor();
+    await page
+      .getByRole("link", { name: "Open guest profile", exact: true })
+      .waitFor();
     await page.reload({ waitUntil: "networkidle" });
-    await page.getByRole("link", { name: "Open guest profile", exact: true }).waitFor();
+    await page
+      .getByRole("link", { name: "Open guest profile", exact: true })
+      .waitFor();
     await activityEmpty(page);
     await visit(page, base, "/sign-in");
     await page
-      .getByRole("checkbox", { name: "Remember this demo profile on this device" })
+      .getByRole("checkbox", {
+        name: "Remember this demo profile on this device",
+      })
       .uncheck();
-    await page.getByLabel("Role (demo switch)", { exact: true }).selectOption("club-executive");
-    await page.getByRole("button", { name: "Sign in (demo)", exact: true }).click();
+    await page
+      .getByLabel("Role (demo switch)", { exact: true })
+      .selectOption("club-executive");
+    await page
+      .getByRole("button", { name: "Sign in (demo)", exact: true })
+      .click();
     await page.waitForURL((url) => url.pathname === "/home");
     state = await stored(page);
     assert.equal(state.user, null);
     assert.equal(state.role, "student");
     assert.equal(state.remember, false);
-    await visit(page, base, "/academics");
-    await page.getByRole("button", { name: "Bookmark", exact: true }).first().click();
+    // Visit-only sessions survive SPA navigation, not a new document.
+    // A page.goto here correctly becomes guest and must not allow a save.
+    await page.locator('a[href="/academics"]').first().click();
+    await page.waitForURL((url) => url.pathname === "/academics");
+    await page.locator('a[href="/academics/resources/r1"]').first().click();
+    await page.waitForURL((url) => url.pathname === "/academics/resources/r1");
+    await page
+      .getByRole("button", { name: "Save for later", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: "Remove from saved", exact: true })
+      .waitFor();
     assert.equal((await stored(page, "campusone-app")).bookmarks.length, 1);
     await page.reload({ waitUntil: "networkidle" });
-    await page.getByRole("link", { name: "Open guest profile", exact: true }).waitFor();
+    await page
+      .getByRole("link", { name: "Open guest profile", exact: true })
+      .waitFor();
     await activityEmpty(page);
     await visit(page, base, "/sign-in?next=/management");
-    await page.getByRole("checkbox", { name: "Remember this demo profile on this device" }).check();
-    await page.getByLabel("Role (demo switch)", { exact: true }).selectOption("club-executive");
-    await page.getByRole("button", { name: "Sign in (demo)", exact: true }).click();
+    await page
+      .getByRole("checkbox", {
+        name: "Remember this demo profile on this device",
+      })
+      .check();
+    await page
+      .getByLabel("Role (demo switch)", { exact: true })
+      .selectOption("club-executive");
+    await page
+      .getByRole("button", { name: "Sign in (demo)", exact: true })
+      .click();
     await page.waitForURL((url) => url.pathname === "/management");
     await second.getByText("Membership reviews", { exact: true }).waitFor();
     await page.evaluate(() => localStorage.clear());
-    await second.getByText("Personal dashboard", { exact: true }).waitFor();
+    await second
+      .getByRole("heading", {
+        name: "Sign in to see your workspace",
+        exact: true,
+      })
+      .waitFor();
     await activityEmpty(second);
     assert.equal((await stored(second)).user, null);
     await noSecrets(page, ["campusone-demo", "blob:"]);

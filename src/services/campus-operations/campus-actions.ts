@@ -1,3 +1,4 @@
+import { verifyLocalChange as local } from "./local-change";
 import { z } from "zod";
 import { appConfig } from "@/config/app-config";
 import { useAuthStore } from "@/stores/auth-store";
@@ -32,29 +33,6 @@ export function createCampusActions(
       throw new Error(
         "The account changed. Refresh publisher state; stopping a request cannot undo an accepted write.",
       );
-  };
-  const local = (change: () => void, verify: () => boolean) => {
-    try {
-      change();
-    } catch {
-      if (!verify()) throw new Error("The local change failed. Please retry.");
-      return { persisted: false };
-    }
-    if (!verify()) throw new Error("The local change could not be verified.");
-    try {
-      const raw = localStorage.getItem("campusone-app");
-      if (!raw) return { persisted: false };
-      const saved = JSON.parse(raw).state;
-      return {
-        persisted:
-          JSON.stringify(saved.bookmarks) ===
-            JSON.stringify(useAppStore.getState().bookmarks) &&
-          JSON.stringify(saved.srcRequests) ===
-            JSON.stringify(useAppStore.getState().srcRequests),
-      };
-    } catch {
-      return { persisted: false };
-    }
   };
   return {
     source,
@@ -101,16 +79,14 @@ export function createCampusActions(
         throw new Error("This announcement is no longer available.");
       return local(
         () =>
-          useAppStore
-            .getState()
-            .setBookmark(
-              {
-                id: crypto.randomUUID(),
-                entityId: id,
-                entityType: "announcement",
-              },
-              saved,
-            ),
+          useAppStore.getState().setBookmark(
+            {
+              id: crypto.randomUUID(),
+              entityId: id,
+              entityType: "announcement",
+            },
+            saved,
+          ),
         () =>
           useAppStore
             .getState()

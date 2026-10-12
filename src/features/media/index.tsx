@@ -1,4 +1,5 @@
 "use client";
+import { ErrorState } from "@/components/shared/error-state";
 import { useState } from "react";
 import { useAuthStore } from "@/stores/auth-store";
 import { MagazineHeader } from "@/components/shared/magazine-header";
@@ -84,7 +85,13 @@ export function MediaFeature({ initial }: { initial: CampusFeed<"media"> }) {
           {action.error}
         </p>
       ) : null}
-      {items.length ? (
+      {feed.error && !feed.items.length ? (
+        <ErrorState
+          title="The media source needs another moment"
+          description={feed.error}
+          onRetry={() => void feed.retry()}
+        />
+      ) : items.length ? (
         <div className="grid gap-5 sm:grid-cols-2">
           {items.slice((current - 1) * 6, current * 6).map((i) => (
             <MediaCard

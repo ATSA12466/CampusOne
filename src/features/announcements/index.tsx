@@ -1,4 +1,5 @@
 "use client";
+import { ErrorState } from "@/components/shared/error-state";
 import { useState } from "react";
 import { MagazineHeader } from "@/components/shared/magazine-header";
 import { SearchInput } from "@/components/shared/search-input";
@@ -106,7 +107,19 @@ export function AnnouncementsFeature({
           {activity.notice}
         </p>
       ) : null}
-      {view === "saved" && activity.loading ? (
+      {view === "saved" && activity.error ? (
+        <ErrorState
+          title="Saved updates need another moment"
+          description={activity.error}
+          onRetry={activity.refresh}
+        />
+      ) : feed.error && !feed.items.length ? (
+        <ErrorState
+          title="Updates are unavailable"
+          description={feed.error}
+          onRetry={() => void feed.retry()}
+        />
+      ) : view === "saved" && activity.loading ? (
         <p role="status">Loading your saved updates…</p>
       ) : items.length ? (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">

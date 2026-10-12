@@ -19,7 +19,8 @@
     "test:profile": "node scripts/phase6-profile-tests.mjs",
     "test:social": "node scripts/phase6-social-tests.mjs",
     "test:study": "node scripts/phase6-study-tests.mjs",
-    "test:secondary": "node scripts/phase6-secondary-tests.mjs"
+    "test:secondary": "node scripts/phase6-secondary-tests.mjs",
+    "test:polish": "node scripts/phase7-tests.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

@@ -79,7 +79,11 @@ export const taskActions = {
       persisted = false;
     }
     confirm(expected, o);
-    if (!useAppStore.getState().tasks.some((t) => t.id === item.id))
+    if (
+      JSON.stringify(
+        useAppStore.getState().tasks.find((t) => t.id === item.id),
+      ) !== JSON.stringify(item)
+    )
       throw new Error("The task could not be confirmed.");
     return { persisted: persisted && durable(item.id, item) };
   },
@@ -108,6 +112,8 @@ export const taskActions = {
       persisted = false;
     }
     confirm(expected, o);
+    if (useAppStore.getState().tasks.some((t) => t.id === id))
+      throw new Error("The task deletion could not be confirmed.");
     return { persisted: persisted && durable(id) };
   },
 };
