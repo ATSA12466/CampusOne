@@ -457,7 +457,7 @@ test("deep links are declared on both platforms and route to details", () => {
   assert.ok(plist.includes("CFBundleURLSchemes"), "iOS must declare URL schemes");
   assert.ok(plist.includes("<string>campusone</string>"), "iOS must declare the campusone:// scheme");
   const handler = readFileSync(join(lib, "src/app/deep_links.dart"), "utf8");
-  for (const token of ["uriLinkStream", "getInitialLink", "EventDetailScreen", "ClubDetailScreen"]) {
+  for (const token of ["uriLinkStream", "getInitialLink", "EventDetailScreen", "ClubDetailScreen", "ListingDetailScreen", "marketplace", "opportunities", "accommodation", "announcements", "resources"]) {
     assert.ok(handler.includes(token), `deep link handler must use ${token}`);
   }
   const main = readFileSync(join(lib, "main.dart"), "utf8");
@@ -492,4 +492,74 @@ test("appearance can be changed from More", () => {
   const more = readFileSync(join(lib, "src/features/more/more_screen.dart"), "utf8");
   assert.ok(more.includes("ThemeScope.of(context)"), "More must read the theme prefs");
   assert.ok(more.includes("setMode("), "More must offer a theme switcher");
+});
+
+test("API client fails closed with a request timeout", () => {
+  const client = readFileSync(join(lib, "src/core/api/api_client.dart"), "utf8");
+  assert.ok(client.includes("static const Duration timeout"), "ApiClient must define a timeout");
+  const bounded = (client.match(/\.timeout\(timeout\)/g) ?? []).length;
+  assert.ok(bounded >= 5, `all five HTTP verbs must apply the timeout (found ${bounded})`);
+});
+
+test("freshers guide exists with checklist, groups and next steps", () => {
+  const freshers = readFileSync(join(lib, "src/features/freshers/freshers_screen.dart"), "utf8");
+  for (const token of ["Complete your profile", "Join one community", "Attend a welcome event", "Plan your first week", "FilterChip", "ClubDetailScreen", "CommunityScreen", "AccommodationScreen"]) {
+    assert.ok(freshers.includes(token), `freshers screen must include ${token}`);
+  }
+  const more = readFileSync(join(lib, "src/features/more/more_screen.dart"), "utf8");
+  assert.ok(more.includes("FreshersScreen"), "More must link the freshers guide");
+});
+
+test("profile can be edited against the account and store APIs", () => {
+  const editor = readFileSync(join(lib, "src/features/profile/edit_profile_screen.dart"), "utf8");
+  for (const token of ["updateProfile", "PersonalStoreRepository", "'profile'", "visibility", "showProgramme"]) {
+    assert.ok(editor.includes(token), `profile editor must use ${token}`);
+  }
+  const profile = readFileSync(join(lib, "src/features/profile/profile_screen.dart"), "utf8");
+  assert.ok(profile.includes("EditProfileScreen"), "Profile must link the editor");
+});
+
+test("study assistant plans weeks and searches materials honestly", () => {
+  const study = readFileSync(join(lib, "src/features/study/study_assistant_screen.dart"), "utf8");
+  for (const token of ["buildStudySessions", "studyPlans", "sessions", "duration", "breakMinutes", "No AI service"]) {
+    assert.ok(study.includes(token), `study assistant must include ${token}`);
+  }
+  assert.ok(!study.includes("Quiz me"), "study assistant must not imply AI answers");
+});
+
+test("directories expose web-parity filters", () => {
+  const events = readFileSync(join(lib, "src/features/events/events_screen.dart"), "utf8");
+  for (const token of ["FilterChip", "Upcoming", "This week", "Past", "Soon", "Newest"]) {
+    assert.ok(events.includes(token), `events directory must include ${token}`);
+  }
+  const clubs = readFileSync(join(lib, "src/features/clubs/clubs_screen.dart"), "utf8");
+  assert.ok(clubs.includes("FilterChip"), "clubs directory must include category chips");
+  const announcements = readFileSync(join(lib, "src/features/catalog/announcements_screen.dart"), "utf8");
+  assert.ok(announcements.includes("SearchBar"), "announcements must be searchable");
+  assert.ok(announcements.includes("Saved only"), "announcements must offer a saved view");
+  const detail = readFileSync(join(lib, "src/features/listings/listing_detail_screen.dart"), "utf8");
+  assert.ok(detail.includes("'announcement'"), "listing detail must save announcements under the announcement kind");
+});
+
+test("notifications offer mark-all-read and settings replay the tour", () => {
+  const notifications = readFileSync(join(lib, "src/features/notifications/notifications_screen.dart"), "utf8");
+  assert.ok(notifications.includes("markAllRead"), "notifications must offer mark-all-read");
+  const more = readFileSync(join(lib, "src/features/more/more_screen.dart"), "utf8");
+  assert.ok(more.includes("WelcomePrefs.reset"), "More must offer replaying the welcome tour");
+});
+
+test("event detail offers add-to-calendar", () => {
+  const pubspec = readFileSync(join(mobile, "pubspec.yaml"), "utf8");
+  assert.ok(pubspec.includes("add_2_calendar:"), "pubspec must depend on add_2_calendar");
+  const detail = readFileSync(join(lib, "src/features/events/event_detail_screen.dart"), "utf8");
+  assert.ok(detail.includes("Add2Calendar.addEvent2Cal"), "event detail must open the device calendar");
+  assert.ok(detail.includes("endsAt"), "event detail must prefer the server end time");
+});
+
+test("app shell adapts to tablets with a navigation rail", () => {
+  const shell = readFileSync(join(lib, "src/app/app_shell.dart"), "utf8");
+  assert.ok(shell.includes("LayoutBuilder"), "shell must branch on width");
+  assert.ok(shell.includes("NavigationRail"), "wide screens must use a side rail");
+  assert.ok(shell.includes("NavigationBar"), "phones must keep the bottom bar");
+  assert.ok(shell.includes("maxWidth"), "wide content must be width-capped");
 });

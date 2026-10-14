@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/auth/auth_session.dart';
 import '../../core/theme/theme_prefs.dart';
 import '../academics/gpa_screen.dart';
+import '../onboarding/welcome_prefs.dart';
+import '../onboarding/welcome_screen.dart';
 import '../academics/study_notes_screen.dart';
 import '../admin/admin_reports_screen.dart';
 import '../attendance/attendance_history_screen.dart';
@@ -16,6 +18,7 @@ import '../community/community_screen.dart';
 import '../discover/discover_screen.dart';
 import '../enquiries/enquiries_screen.dart';
 import '../executives/executives_screen.dart';
+import '../freshers/freshers_screen.dart';
 import '../impact/my_impact_screen.dart';
 import '../listings/campaigns_screen.dart';
 import '../listings/courses_screen.dart';
@@ -138,6 +141,12 @@ class MoreScreen extends StatelessWidget {
             onTap: () => _go(context, const ClubsScreen()),
           ),
           _Row(
+            icon: Icons.school_outlined,
+            title: 'Freshers',
+            subtitle: 'First-week checklist and groups',
+            onTap: () => _go(context, const FreshersScreen()),
+          ),
+          _Row(
             icon: Icons.forum_outlined,
             title: 'Community',
             onTap: () => _go(context, const CommunityScreen()),
@@ -208,6 +217,14 @@ class MoreScreen extends StatelessWidget {
             title: 'Appearance',
             subtitle: _themeLabel(themePrefs.mode),
             onTap: () => themePrefs.setMode(_nextTheme(themePrefs.mode)),
+          ),
+          _Row(
+            icon: Icons.replay_outlined,
+            title: 'Replay welcome tour',
+            onTap: () async {
+              await WelcomePrefs.reset();
+              if (context.mounted) _go(context, const WelcomeScreen());
+            },
           ),
           _Row(
             icon: Icons.dns_outlined,

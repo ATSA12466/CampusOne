@@ -5,6 +5,7 @@ import '../../core/widgets/states.dart';
 import '../attendance/attendance_history_screen.dart';
 import '../auth/sign_in_screen.dart';
 import '../badges/badges_screen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -50,6 +51,14 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 12),
+          if (session.signedIn)
+            _Row(
+              icon: Icons.edit_outlined,
+              title: 'Edit profile',
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+              ),
+            ),
           _Row(
             icon: Icons.how_to_reg_outlined,
             title: 'My attendance',

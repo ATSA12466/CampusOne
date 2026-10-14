@@ -35,10 +35,10 @@ class CatalogRepository {
     return EventItem.fromJson(asMap(json));
   }
 
-  Future<Paged<Announcement>> announcements() async {
+  Future<Paged<Announcement>> announcements({String search = ''}) async {
     final json = await _api.get(
       ApiPaths.catalog('announcements'),
-      query: {'sort': 'newest', 'pageSize': '30'},
+      query: {'search': search, 'sort': 'newest', 'pageSize': '30'},
     );
     return Paged.fromJson(json, Announcement.fromJson);
   }
@@ -124,6 +124,7 @@ class EventItem {
     required this.tagline,
     required this.organizer,
     required this.startsAt,
+    required this.endsAt,
   });
 
   final String id;
@@ -136,6 +137,7 @@ class EventItem {
   final String tagline;
   final String organizer;
   final String startsAt;
+  final String endsAt;
 
   bool get full => seats > 0 && registered >= seats;
 
@@ -152,6 +154,7 @@ class EventItem {
       tagline: asString(details['tagline']),
       organizer: asString(details['organizer']),
       startsAt: asString(details['startsAt']),
+      endsAt: asString(details['endsAt']),
     );
   }
 }

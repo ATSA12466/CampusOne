@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 
 import '../features/clubs/club_detail_screen.dart';
 import '../features/events/event_detail_screen.dart';
+import '../features/listings/listing_detail_screen.dart';
 
-/// Opens `campusone://` links: `campusone://events/<id>` and
-/// `campusone://clubs/<id>`. Paths mirror the web routes (`/events/<id>`,
-/// `/clubs/<id>`) so https universal links can reuse this parser later.
-/// Unknown links are ignored; the user just stays where they are.
+/// Opens `campusone://` links for every web detail route:
+/// `events/<id>`, `clubs/<id>`, `marketplace/<id>`, `opportunities/<id>`,
+/// `accommodation/<id>`, `announcements/<id>`, `resources/<id>`.
+/// Paths mirror the web routes so https universal links can reuse this
+/// parser later. Unknown links are ignored; the user just stays where they are.
 class DeepLinkHandler extends StatefulWidget {
   const DeepLinkHandler({super.key, required this.child});
 
@@ -54,6 +56,12 @@ class _DeepLinkHandlerState extends State<DeepLinkHandler> {
     final Widget? screen = switch (parts[0]) {
       'events' => EventDetailScreen(eventId: parts[1]),
       'clubs' => ClubDetailScreen(clubId: parts[1]),
+      'marketplace' ||
+      'opportunities' ||
+      'accommodation' ||
+      'announcements' ||
+      'resources' ||
+      'media' => ListingDetailScreen(domain: parts[0], id: parts[1]),
       _ => null,
     };
     if (screen == null) return;

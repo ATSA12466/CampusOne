@@ -91,4 +91,6 @@ exists. Do not claim otherwise.
 - Universal links (`https://<host>/events/...`): path parsing is ready in
       `DeepLinkHandler`; needs `assetlinks.json` + `apple-app-site-association`
       on the production host (owner domain required).
-- Tablet-optimized Flutter layouts; Wear/watch; offline-first data entry.
+- Wear/watch; offline-first data entry. (Tablets: shell uses a side rail +
+  capped content on ≥600dp; pushed detail screens still stretch — verify on a
+  real tablet before claiming tablet support in listings.)

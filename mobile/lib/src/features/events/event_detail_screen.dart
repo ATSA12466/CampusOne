@@ -1,3 +1,4 @@
+import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
@@ -76,6 +77,41 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       if (mounted) showAppMessage(context, error.message, error: true);
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _addToCalendar(EventItem event) async {
+    final start =
+        DateTime.tryParse(event.startsAt) ?? DateTime.tryParse(event.date);
+    if (start == null) {
+      if (mounted) {
+        showAppMessage(context, 'This event has no usable start time.', error: true);
+      }
+      return;
+    }
+    final end =
+        DateTime.tryParse(event.endsAt) ?? start.add(const Duration(hours: 2));
+    try {
+      final added = await Add2Calendar.addEvent2Cal(
+        Event(
+          title: event.title,
+          description: event.tagline,
+          location: event.venue,
+          startDate: start,
+          endDate: end.isAfter(start) ? end : start.add(const Duration(hours: 2)),
+        ),
+      );
+      if (mounted) {
+        showAppMessage(
+          context,
+          added ? 'Opening your calendar…' : 'Could not open the calendar app.',
+          error: !added,
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        showAppMessage(context, 'Could not open the calendar app.', error: true);
+      }
     }
   }
 
@@ -179,6 +215,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   _TicketCard(ticket: data.ticket!),
                 ],
                 const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: () => _addToCalendar(event),
+                  icon: const Icon(Icons.calendar_add_on_outlined),
+                  label: const Text('Add to calendar'),
+                ),
+                const SizedBox(height: 8),
                 if (data.ticket == null)
                   FilledButton.icon(
                     onPressed: _busy || event.full

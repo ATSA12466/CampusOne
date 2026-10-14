@@ -47,10 +47,30 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  Future<void> _markAllRead() async {
+    try {
+      await NotificationsRepository(
+        SessionScope.apiOf(context),
+      ).markAllRead();
+      _reload();
+    } on ApiException catch (error) {
+      if (mounted) showAppMessage(context, error.message, error: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Notifications')),
+      appBar: AppBar(
+        title: const Text('Notifications'),
+        actions: [
+          IconButton(
+            tooltip: 'Mark all as read',
+            icon: const Icon(Icons.done_all_outlined),
+            onPressed: _markAllRead,
+          ),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: _reload,
         child: FutureBuilder<List<AppNotification>>(

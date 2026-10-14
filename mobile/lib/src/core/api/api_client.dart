@@ -36,6 +36,10 @@ class ApiClient {
   final http.Client _http;
   String? _token;
 
+  /// Every request fails closed after this long so an unreachable-but-
+  /// unrefusing server cannot hang the UI forever.
+  static const Duration timeout = Duration(seconds: 20);
+
   void setToken(String? token) => _token = token;
 
   /// Points the client at another backend (staging/prod switch).
@@ -95,15 +99,18 @@ class ApiClient {
       final encoded = body == null ? null : jsonEncode(body);
       switch (method) {
         case 'GET':
-          response = await _http.get(uri, headers: _headers);
+          response = await _http.get(uri, headers: _headers).timeout(timeout);
         case 'POST':
-          response = await _http.post(uri, headers: _headers, body: encoded);
+          response =
+              await _http.post(uri, headers: _headers, body: encoded).timeout(timeout);
         case 'PUT':
-          response = await _http.put(uri, headers: _headers, body: encoded);
+          response =
+              await _http.put(uri, headers: _headers, body: encoded).timeout(timeout);
         case 'PATCH':
-          response = await _http.patch(uri, headers: _headers, body: encoded);
+          response =
+              await _http.patch(uri, headers: _headers, body: encoded).timeout(timeout);
         case 'DELETE':
-          response = await _http.delete(uri, headers: _headers);
+          response = await _http.delete(uri, headers: _headers).timeout(timeout);
         default:
           throw ApiException('Unsupported request.');
       }

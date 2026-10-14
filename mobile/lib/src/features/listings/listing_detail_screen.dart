@@ -40,9 +40,7 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
     var saved = false;
     if (SessionScope.sessionOf(context).signedIn) {
       try {
-        saved = await SavesRepository(
-          api,
-        ).isSaved(_saveKind, SavesRepository.listingRef(widget.domain, widget.id));
+        saved = await SavesRepository(api).isSaved(_saveKind, _entityId);
       } on ApiException {
         saved = false;
       }
@@ -50,7 +48,17 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
     return _Detail(item: item, saved: saved);
   }
 
-  String get _saveKind => widget.domain == 'media' ? 'media' : 'listing';
+  String get _saveKind => switch (widget.domain) {
+    'media' => 'media',
+    'announcements' => 'announcement',
+    _ => 'listing',
+  };
+
+  /// Composite refs only for the generic `listing` kind; dedicated kinds
+  /// use the plain item id (matches `SavedItem.ref`).
+  String get _entityId => _saveKind == 'listing'
+      ? SavesRepository.listingRef(widget.domain, widget.id)
+      : widget.id;
 
   Future<void> _reload() async {
     final future = _load();
@@ -65,11 +73,9 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
 
   Future<void> _toggleSaved(bool value) async {
     try {
-      await SavesRepository(SessionScope.apiOf(context)).setSaved(
-        _saveKind,
-        SavesRepository.listingRef(widget.domain, widget.id),
-        value,
-      );
+      await SavesRepository(
+        SessionScope.apiOf(context),
+      ).setSaved(_saveKind, _entityId, value);
       _reload();
     } on ApiException catch (error) {
       if (mounted) showAppMessage(context, error.message, error: true);

@@ -16,6 +16,7 @@ class _ClubsScreenState extends State<ClubsScreen> {
   final _search = TextEditingController();
   Future<List<Club>>? _future;
   String _query = '';
+  String _category = 'all';
 
   @override
   void didChangeDependencies() {
@@ -90,39 +91,79 @@ class _ClubsScreenState extends State<ClubsScreen> {
                       ? 'Approved clubs will appear here.'
                       : 'Try a different search.',
                   emptyIcon: Icons.groups_outlined,
-                  builder: (context, clubs) => ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: clubs.length,
-                    itemBuilder: (context, index) {
-                      final club = clubs[index];
-                      return Card(
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          title: Text(club.name),
-                          subtitle: Text(
-                            '${club.category} · ${club.memberCount} members',
-                          ),
-                          trailing: club.accepting
-                              ? null
-                              : const StatusChip(
-                                  label: 'Closed',
-                                  tone: ChipTone.warning,
+                  builder: (context, clubs) {
+                    final categories = <String>{
+                      for (final club in clubs)
+                        if (club.category.isNotEmpty) club.category,
+                    }.toList()..sort();
+                    final visible = [
+                      for (final club in clubs)
+                        if (_category == 'all' || club.category == _category)
+                          club,
+                    ];
+                    return ListView(
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        if (categories.isNotEmpty) ...[
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              FilterChip(
+                                label: const Text('All'),
+                                selected: _category == 'all',
+                                onSelected: (_) =>
+                                    setState(() => _category = 'all'),
+                              ),
+                              for (final category in categories)
+                                FilterChip(
+                                  label: Text(category),
+                                  selected: _category == category,
+                                  onSelected: (_) =>
+                                      setState(() => _category = category),
                                 ),
-                          onTap: () => Navigator.of(context)
-                              .push(
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      ClubDetailScreen(clubId: club.id),
-                                ),
-                              )
-                              .then((_) => _reload()),
-                        ),
-                      );
-                    },
-                  ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                        if (visible.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            child: Text(
+                              'No clubs match these filters.',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        for (final club in visible)
+                          Card(
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              title: Text(club.name),
+                              subtitle: Text(
+                                '${club.category} · ${club.memberCount} members',
+                              ),
+                              trailing: club.accepting
+                                  ? null
+                                  : const StatusChip(
+                                      label: 'Closed',
+                                      tone: ChipTone.warning,
+                                    ),
+                              onTap: () => Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          ClubDetailScreen(clubId: club.id),
+                                    ),
+                                  )
+                                  .then((_) => _reload()),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),

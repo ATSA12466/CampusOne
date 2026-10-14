@@ -92,22 +92,62 @@ class _AppShellState extends State<AppShell> {
             ),
           ];
     final safeIndex = _index.clamp(0, tabs.length - 1);
-    return Scaffold(
-      body: IndexedStack(index: safeIndex, children: [
-        for (final tab in tabs) tab.screen,
-      ]),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: safeIndex,
-        onDestinationSelected: (value) => setState(() => _index = value),
-        destinations: [
-          for (final tab in tabs)
-            NavigationDestination(
-              icon: Icon(tab.icon),
-              selectedIcon: Icon(tab.activeIcon),
-              label: tab.label,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Tablets and landscape phones get a side rail instead of a
+        // stretched bottom bar; same tabs, same order, same screens.
+        if (constraints.maxWidth >= 600) {
+          return Scaffold(
+            body: Row(
+              children: [
+                NavigationRail(
+                  selectedIndex: safeIndex,
+                  onDestinationSelected: (value) =>
+                      setState(() => _index = value),
+                  labelType: NavigationRailLabelType.all,
+                  destinations: [
+                    for (final tab in tabs)
+                      NavigationRailDestination(
+                        icon: Icon(tab.icon),
+                        selectedIcon: Icon(tab.activeIcon),
+                        label: Text(tab.label),
+                      ),
+                  ],
+                ),
+                const VerticalDivider(thickness: 1, width: 1),
+                Expanded(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 840),
+                      child: IndexedStack(
+                        index: safeIndex,
+                        children: [for (final tab in tabs) tab.screen],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-        ],
-      ),
+          );
+        }
+        return Scaffold(
+          body: IndexedStack(index: safeIndex, children: [
+            for (final tab in tabs) tab.screen,
+          ]),
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: safeIndex,
+            onDestinationSelected: (value) => setState(() => _index = value),
+            destinations: [
+              for (final tab in tabs)
+                NavigationDestination(
+                  icon: Icon(tab.icon),
+                  selectedIcon: Icon(tab.activeIcon),
+                  label: tab.label,
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
