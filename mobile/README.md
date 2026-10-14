@@ -44,6 +44,22 @@ Useful accounts on a seeded dev backend (`npm run db:seed` in the repo root):
   profile, settings (server), more.
 - `lib/src/app/app_shell.dart` — bottom-tab shell.
 
+## Test deep links
+
+```sh
+# Android (emulator or device):
+adb shell am start -a android.intent.action.VIEW -d "campusone://events/<id>"
+adb shell am start -a android.intent.action.VIEW -d "campusone://clubs/<id>"
+adb shell am start -a android.intent.action.VIEW -d "campusone://marketplace/<id>"
+
+# iOS simulator:
+xcrun simctl openurl booted "campusone://events/<id>"
+```
+
+Routed detail pages: `events`, `clubs`, `marketplace`, `opportunities`,
+`accommodation`, `announcements`, `resources`, `media`. Unknown links are
+ignored. Tablets (≥600dp) use a side navigation rail instead of bottom tabs.
+
 ## Notes
 
 - Push notifications degrade gracefully: without Firebase config files the
