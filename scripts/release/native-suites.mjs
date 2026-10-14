@@ -1,4 +1,5 @@
 export const nativeSuites = Object.freeze({
+  server: "server-tests.mjs",
   foundation: "foundation-tests.mjs",
   shell: "phase3-tests.mjs",
   home: "phase4-tests.mjs",
@@ -13,6 +14,7 @@ export const nativeSuites = Object.freeze({
   secondary: "phase6-secondary-tests.mjs",
   polish: "phase7-tests.mjs",
   release: "release-tests.mjs",
+  mobile: "mobile-tests.mjs",
 });
 export function selectedNativeSuites(requested) {
   const keys = requested.length ? requested : Object.keys(nativeSuites);

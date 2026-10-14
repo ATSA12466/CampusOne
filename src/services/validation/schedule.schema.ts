@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { isCampusDate } from "@/lib/home/schedule";
+import { isCampusDate } from "../../lib/home/schedule";
 export const weekDays = [
   "Monday",
   "Tuesday",

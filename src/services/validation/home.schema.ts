@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { isAllowedImageSrc } from "@/config/image-policy";
+import { isAllowedImageSrc } from "../../config/image-policy";
 const route = z.string().regex(/^\/(?!\/)[\w/\-#]*$/);
 const media = z
   .string()

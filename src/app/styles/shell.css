@@ -49,3 +49,22 @@
     padding-top: 1rem;
   }
 }
+/* Touch-device polish: comfortable targets, no tap flash, stable scroll. */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+      [type="color"]
+    ),
+  select,
+  textarea {
+    min-height: 44px;
+  }
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+  html {
+    overscroll-behavior-y: contain;
+  }
+}

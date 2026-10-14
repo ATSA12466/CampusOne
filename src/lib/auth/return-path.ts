@@ -1,6 +1,7 @@
 const studentRoots = new Set([
   "home",
   "discover",
+  "freshers",
   "academics",
   "calendar",
   "timetable",
@@ -23,6 +24,8 @@ const studentRoots = new Set([
   "profile",
   "settings",
   "advertising",
+  "src",
+  "admin",
 ]);
 const details = new Set([
   "clubs",
@@ -32,6 +35,8 @@ const details = new Set([
   "opportunities",
   "accommodation",
   "marketplace",
+  "src",
+  "admin",
 ]);
 export function studentReturnPath(value: unknown): string {
   if (

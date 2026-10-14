@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { MagazineHeader } from "@/components/shared/magazine-header";
+import { appConfig } from "@/config/app-config";
 import { images } from "@/config/images";
 import Link from "next/link";
 import { Button, Card } from "@/components/ui";
@@ -42,6 +43,25 @@ export function SettingsFeature() {
         <p className="mt-3 text-xs text-muted-foreground">
           Animations respect your device’s reduced-motion setting. Theme
           preferences are device-wide; private records are owner-qualified.
+        </p>
+      </Card>
+      <Card>
+        <h2 className="font-semibold">Data & backend</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {appConfig.dataSource === "demo" ? (
+            <>
+              This build runs in <strong>demo mode</strong>: activity stays on
+              this device and does not sync between browsers or devices. API
+              mode needs a connected backend.
+            </>
+          ) : (
+            <>
+              This build runs in <strong>API mode</strong> against{" "}
+              <code>{appConfig.apiBaseUrl}</code>. If the backend is
+              unreachable, actions fail with a retry — nothing is silently
+              stored locally as server data.
+            </>
+          )}
         </p>
       </Card>
       <Card>

@@ -1,6 +1,7 @@
 import {
   House,
   Compass,
+  GraduationCap,
   Users,
   CalendarDays,
   MessagesSquare,
@@ -29,6 +30,7 @@ import type { NavIcon } from "@/types/navigation";
 export const navIcons: Readonly<Record<NavIcon, LucideIcon>> = {
   home: House,
   compass: Compass,
+  freshers: GraduationCap,
   clubs: Users,
   events: CalendarDays,
   community: MessagesSquare,

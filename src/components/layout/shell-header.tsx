@@ -3,6 +3,7 @@ import Link from "next/link";
 import { appConfig } from "@/config/app-config";
 import { Bell, Search } from "lucide-react";
 import type { MouseEventHandler } from "react";
+import { DashboardLinks } from "@/components/navigation/dashboard-links";
 import { BrandMark } from "@/components/shared/brand-mark";
 import { Avatar } from "@/components/ui/avatar";
 import { AppearanceTrigger } from "@/components/theme/appearance-trigger";
@@ -29,7 +30,7 @@ export function ShellHeader({
   );
   const unread = user && appConfig.dataSource === "demo" ? localUnread : 0;
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-surface">
+    <header className="sticky top-0 z-20 border-b border-border bg-surface pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-2 px-4 md:px-6 lg:px-8">
         <Link
           prefetch={false}
@@ -97,6 +98,7 @@ export function ShellHeader({
               </span>
             ) : null}
           </Link>
+          <DashboardLinks />
           <Link
             prefetch={false}
             href="/profile"

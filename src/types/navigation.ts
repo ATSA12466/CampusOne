@@ -1,6 +1,7 @@
 export type NavIcon =
   | "home"
   | "compass"
+  | "freshers"
   | "clubs"
   | "events"
   | "community"

@@ -39,11 +39,14 @@ export const metadata: Metadata = {
   description,
   applicationName: "CampusOne",
   robots: { index: false, follow: false }, // Student/demo content is not an indexable public directory.
+  appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "CampusOne" },
 };
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   colorScheme: "light dark",
+  themeColor: "#0B2545",
 };
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
