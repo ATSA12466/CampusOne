@@ -6,7 +6,7 @@ It is built around one core idea:
 
 One account. One platform. A connected student experience.
 
-The platform combines academic resources, institutional communication, club and committee management, class representative workflows, productivity tools, health and campus services, social networking, hostel discovery, marketplace activity, and advertising operations into one system.
+CampusOne brings together academic resources, institutional communication, club and committee management, class representative workflows, productivity tools, campus services, social networking, hostel discovery, marketplace activity, and advertising operations into one system.
 
 ## Product vision
 
@@ -30,7 +30,7 @@ SRC administration should be able to:
 - run analytics and student engagement dashboards
 - manage admission, verification, media, and community operations
 
-## Platform objectives
+## Core objectives
 
 The platform is designed to achieve six major goals:
 
@@ -113,9 +113,11 @@ We are building a platform that is:
 - Lucide React
 
 ### Backend
-- PHP API layer
-- JSON REST endpoints
-- MySQL-ready invitations schema
+- Laravel PHP backend
+- PostgreSQL database
+- JWT authentication
+- JSON REST API
+- seeders for demo and admin data
 - backend-ready API boundary for future expansion
 
 ### Data and platform baseline
@@ -125,13 +127,16 @@ We are building a platform that is:
 
 ## Current status
 
-The frontend prototype is in place and is organized with a backend-ready service boundary. The app currently uses demo data in the service layer while the backend architecture is being prepared.
+The frontend prototype is in place and organized with a backend-ready service boundary. The app currently uses demo data in the service layer while the backend architecture is being prepared.
 
 This repository now contains:
-- PHP API starter files
+- Laravel-ready backend scaffolding
+- JWT auth setup
+- PostgreScript/Postgres migration scaffolding
 - invitation API and migration
 - JSON endpoint fixtures for early backend integration
-- TypeScript API service adapters that align with the frontend service boundary
+- TypeScript API adapters aligned with the frontend boundary
+- demo and admin seeders
 
 ## Backend integration model
 
@@ -141,7 +146,7 @@ The frontend is designed to call backend endpoints through the following boundar
 - `src/services/api/*.service.ts`
 - `NEXT_PUBLIC_API_BASE_URL`
 
-The base URL should point at the PHP API root, for example:
+The base URL should point at the PHP/Laravel API root, for example:
 
 ```bash
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
@@ -151,47 +156,64 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
 
 ```text
 api/
-  index.php                 PHP API router
-  invitations.php          invitation API
-  data/                    lightweight JSON-backed backend fixtures
+  app/
+  bootstrap/
+  config/
+  database/
+  public/
+  routes/
+  storage/
+  tests/
+  .env.example
+  composer.json
+
 src/
-  app/                     route-level app screens
-  components/              shared UI components
-  features/                domain feature modules
+  app/
+  components/
+  features/
   services/
-    api/                   backend-ready API service layer
-    demo/                  demo adapters for frontend-only prototype
-    auth/                  auth abstraction layer
-  stores/                  persisted app state
-  types/                  shared domain types
-  data/demo/               synthetic demo datasets
-  config/                 app config
+    api/
+    demo/
+    auth/
+  stores/
+  types/
+  data/demo/
+  config/
+
 public/
   static assets and images
 
 docs/
   architecture and project planning docs
+
+scripts/
+  convert_to_laravel.sh
 ```
 
-## PHP backend entrypoints
+## Laravel backend entrypoints
 
-The repository includes the following backend files:
+The repository includes the following backend files and structure:
 
-- `api/index.php` — main PHP router
-- `api/invitations.php` — invitation API endpoints
-- `db/create_invitations_table.sql` — DB migration for invitations
+- `api/routes/api.php` — API route definitions
+- `api/app/Http/Controllers/` — auth, users, announcements, clubs, events
+- `api/database/migrations/` — schema definitions
+- `api/database/seeders/` — demo and admin seeders
+- `api/.env.example` — environment template
 
 Example routes:
-
 - `GET /api/health`
-- `GET /api/engagement/clubs.json`
-- `GET /api/engagement/events.json`
-- `GET /api/engagement/announcements.json`
-- `GET /api/home/featured.json`
-- `GET /api/life/marketplace.json`
-- `GET /api/productivity/timetable.json`
-- `GET /api/community/conversations.json`
-- `POST /api/invitations` with action values like `send`, `accept`, `revoke`
+- `GET /api/clubs`
+- `GET /api/clubs/{id}`
+- `POST /api/clubs/{id}/join`
+- `GET /api/events`
+- `GET /api/events/{id}`
+- `POST /api/events/{id}/register`
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+- `POST /api/auth/logout`
+- `POST /api/invitations`
+- `GET /api/announcements`
 
 ## API contract conventions
 
@@ -355,14 +377,18 @@ npm install
 npm run dev
 ```
 
-### PHP API
-You can run the PHP API locally using the built-in PHP server:
-
+### Laravel backend
 ```bash
-php -S 0.0.0.0:8000 -t .
+cd api
+cp .env.example .env
+composer install
+php artisan key:generate
+php artisan jwt:secret
+php artisan migrate --seed
+php artisan serve --host=0.0.0.0 --port=8000
 ```
 
-Then set the frontend base URL:
+Then point the frontend at the backend:
 
 ```bash
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
@@ -373,11 +399,26 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
 ### Frontend
 - `NEXT_PUBLIC_API_BASE_URL`
 
-### PHP backend / database
+### Laravel backend
+- `DB_CONNECTION`
 - `DB_HOST`
-- `DB_NAME`
-- `DB_USER`
-- `DB_PASS`
+- `DB_PORT`
+- `DB_DATABASE`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `JWT_SECRET`
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
+- SMTP / SMS placeholders for provider configuration
+
+## Default admin account
+
+The seeded admin account for local testing is:
+
+- Email: `godword29@gmail.com`
+- Password: `Godwordsolomon`
+
+Change this immediately in production or after first login.
 
 ## Notes
 
