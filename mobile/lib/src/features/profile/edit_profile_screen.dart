@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
+import '../../core/photos/app_photos.dart';
 import '../../core/store/personal_store.dart';
 import '../../core/widgets/states.dart';
 
@@ -30,6 +32,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _bio = TextEditingController();
   final _interests = TextEditingController();
   String? _level;
+  String? _photo;
   String _visibility = 'private';
   bool _showProgramme = true;
   bool _busy = false;
@@ -64,6 +67,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final matches = rows.where((r) => r['id'] == 'profile');
       final row = matches.isEmpty ? null : matches.first;
       if (row != null && mounted) {
+        final photo = asString(row['photo']);
+        _photo = photo.isEmpty ? null : photo;
         _bio.text = asString(row['bio']);
         _interests.text = asString(row['interests']);
         final visibility = asString(row['visibility']);
@@ -78,8 +83,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (mounted) setState(() => _loading = false);
   }
 
+  Future<void> _pickPhoto() async {
+    try {
+      final photo = await AppPhotos.chooseDataUrl(context);
+      if (photo != null && mounted) setState(() => _photo = photo);
+    } on PhotoTooLarge catch (error) {
+      if (mounted) showAppMessage(context, error.toString(), error: true);
+    } catch (_) {
+      if (mounted) showAppMessage(context, 'That photo could not be read.', error: true);
+    }
+  }
+
   Future<void> _save() async {
     if (!_form.currentState!.validate() || _busy) return;
+    if (_photo != null &&
+        (_programme.text.trim().length < 2 || _level == null)) {
+      showAppMessage(
+        context,
+        'Choose a programme and level before saving a profile photo.',
+        error: true,
+      );
+      return;
+    }
     setState(() => _busy = true);
     try {
       final session = SessionScope.sessionOf(context);
@@ -102,6 +127,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             'interests': _interests.text.trim(),
             'visibility': _visibility,
             'showProgramme': _showProgramme ? 'yes' : 'no',
+            if (_photo != null) 'photo': _photo,
           },
         );
       }
@@ -155,6 +181,59 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         DropdownMenuItem(value: level, child: Text(level)),
                     ],
                     onChanged: (value) => setState(() => _level = value),
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Profile photo',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              CampusAvatar(
+                                name: _name.text.trim().isEmpty
+                                    ? 'You'
+                                    : _name.text.trim(),
+                                image: CampusMedia.tryParse(
+                                  _photo,
+                                  alt: 'Your profile photo',
+                                ),
+                                size: 56,
+                              ),
+                              const SizedBox(width: 12),
+                              OutlinedButton.icon(
+                                onPressed: _busy ? null : _pickPhoto,
+                                icon: const Icon(Icons.photo_library_outlined),
+                                label: Text(
+                                  _photo == null ? 'Choose photo' : 'Change photo',
+                                ),
+                              ),
+                              if (_photo != null)
+                                TextButton(
+                                  onPressed: _busy
+                                      ? null
+                                      : () => setState(() => _photo = null),
+                                  child: const Text('Remove'),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Stored with your account profile. Use only a photo '
+                            'you are comfortable sharing with this service.',
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(

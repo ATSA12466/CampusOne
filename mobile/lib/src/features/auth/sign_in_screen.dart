@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
-import '../../core/push/push_service.dart';
 import '../../core/brand/brand_mark.dart';
+import '../../core/push/push_service.dart';
+import '../../core/theme/appearance_button.dart';
 import '../../core/widgets/notice.dart';
 import '../../core/widgets/states.dart';
+import 'auth_validation.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 import 'widgets/auth_story.dart';
@@ -83,26 +85,31 @@ class _SignInScreenState extends State<SignInScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: CampusBrandMark(size: BrandMarkSize.sm),
+                        ),
+                        const AppearanceButton(),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
                     // The web puts this photo story beside the form; on a phone
                     // it opens the screen, same picture and copy.
                     const AuthStoryPanel(story: AuthStory.signIn),
-                    const SizedBox(height: 28),
-                    const Center(
-                      child: CampusBrandMark(size: BrandMarkSize.lg, center: true),
-                    ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
+                    // Web `/sign-in` copy, verbatim.
                     Text(
-                      'Welcome to CampusOne',
+                      'Good to see you.',
                       style: theme.textTheme.headlineSmall,
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Clubs, events, attendance and campus life in one place.',
+                      'Your people and your plans, in one place. Open your '
+                      'student-life workspace.',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 32),
                     if (restoreError != null) ...[
@@ -131,28 +138,25 @@ class _SignInScreenState extends State<SignInScreen> {
                       controller: _email,
                       keyboardType: TextInputType.emailAddress,
                       autocorrect: false,
+                      maxLength: 254,
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         labelText: 'Email',
                         prefixIcon: Icon(Icons.alternate_email),
+                        counterText: '',
                       ),
-                      validator: (value) {
-                        if (value == null ||
-                            !value.contains('@') ||
-                            value.trim().length < 5) {
-                          return 'Enter your email address.';
-                        }
-                        return null;
-                      },
+                      validator: AuthValidation.email,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _password,
                       obscureText: _obscured,
+                      maxLength: 128,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _submit(),
                       decoration: InputDecoration(
                         labelText: 'Password',
+                        counterText: '',
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           tooltip: _obscured ? 'Show password' : 'Hide password',

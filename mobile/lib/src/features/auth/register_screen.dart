@@ -2,10 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/brand/brand_mark.dart';
+import '../../core/push/push_service.dart';
+import '../../core/theme/appearance_button.dart';
 import '../../core/widgets/notice.dart';
 import '../../core/widgets/states.dart';
+import '../onboarding/welcome_screen.dart';
+import 'auth_validation.dart';
 import 'widgets/auth_story.dart';
 
+/// Registration. Name/email/password limits match the server contract in
+/// `src/server/auth.ts`; confirmation, preview consent, copy and fields mirror
+/// the web form (`register-form.tsx`). After the real API account is created,
+/// the app continues to the five-step welcome/profile setup just like the web.
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -18,8 +27,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
-  final _programme = TextEditingController();
-  final _level = TextEditingController();
+  final _confirm = TextEditingController();
+  bool _obscured = true;
+  bool _consent = false;
   bool _busy = false;
 
   @override
@@ -27,23 +37,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _name.dispose();
     _email.dispose();
     _password.dispose();
-    _programme.dispose();
-    _level.dispose();
+    _confirm.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
     if (!_form.currentState!.validate() || _busy) return;
+    if (!_consent) {
+      showAppMessage(context, 'Confirm the preview notice first.', error: true);
+      return;
+    }
     setState(() => _busy = true);
     try {
       await SessionScope.sessionOf(context).register(
         name: _name.text.trim(),
         email: _email.text.trim(),
         password: _password.text,
-        programme: _programme.text.trim(),
-        level: _level.text.trim(),
       );
-      if (mounted) Navigator.of(context).pop();
+      await PushService.refreshToken(SessionScope.apiOf(context));
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+          (_) => false,
+        );
+      }
     } on ApiException catch (error) {
       if (mounted) showAppMessage(context, error.message, error: true);
     } finally {
@@ -53,8 +70,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Create account')),
+      appBar: AppBar(
+        title: const CampusBrandMark(size: BrandMarkSize.sm),
+        actions: const [AppearanceButton()],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -64,7 +85,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const AuthStoryPanel(story: AuthStory.register),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
+                // Web `/register` copy, verbatim.
+                Text('Start your next chapter.', style: theme.textTheme.headlineSmall),
+                const SizedBox(height: 6),
+                Text(
+                  'A name, a little curiosity, and a campus full of possibilities.',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 TextFormField(
                   controller: _name,
                   textCapitalization: TextCapitalization.words,
@@ -87,20 +118,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     labelText: 'Email',
                     counterText: '',
                   ),
-                  validator: (value) =>
-                      (value ?? '').trim().contains('@') &&
-                          (value ?? '').trim().length <= 254
-                      ? null
-                      : 'Enter a valid email address.',
+                  validator: AuthValidation.email,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _password,
-                  obscureText: true,
+                  obscureText: _obscured,
                   maxLength: 128,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Password (8+ characters)',
                     counterText: '',
+                    helperText:
+                        'Use 8–128 characters and choose a unique password. '
+                        'Never reuse your LMS or SIP password.',
+                    helperMaxLines: 2,
+                    suffixIcon: IconButton(
+                      tooltip: _obscured ? 'Show password' : 'Hide password',
+                      onPressed: () => setState(() => _obscured = !_obscured),
+                      icon: Icon(
+                        _obscured
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                    ),
                   ),
                   validator: (value) => (value ?? '').length >= 8
                       ? null
@@ -108,22 +148,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
-                  controller: _programme,
-                  textCapitalization: TextCapitalization.words,
-                  maxLength: 120,
+                  controller: _confirm,
+                  obscureText: _obscured,
+                  maxLength: 128,
                   decoration: const InputDecoration(
-                    labelText: 'Programme (optional)',
+                    labelText: 'Confirm password',
                     counterText: '',
                   ),
+                  validator: (value) => (value ?? '') == _password.text
+                      ? null
+                      : 'Passwords must match.',
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _level,
-                  maxLength: 40,
-                  decoration: const InputDecoration(
-                    labelText: 'Level (optional, e.g. 200)',
-                    counterText: '',
-                  ),
+                const SizedBox(height: 4),
+                CheckboxListTile(
+                  value: _consent,
+                  onChanged: _busy
+                      ? null
+                      : (value) => setState(() => _consent = value ?? false),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('I understand the preview notice'),
                 ),
                 const SizedBox(height: 20),
                 FilledButton(
@@ -136,7 +180,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         )
                       : const Text('Create account'),
                 ),
-                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: _busy ? null : () => Navigator.of(context).pop(),
+                  child: const Text('Already have a profile? Sign in'),
+                ),
+                const SizedBox(height: 8),
                 const IndependenceNotice(),
               ],
             ),

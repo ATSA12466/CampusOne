@@ -619,6 +619,8 @@ test("every brand surface renders the supplied crest, never a redraw", () => {
   );
   for (const [file, token] of [
     ["src/features/auth/sign_in_screen.dart", "CampusBrandMark"],
+    ["src/features/auth/register_screen.dart", "CampusBrandMark"],
+    ["src/features/auth/forgot_password_screen.dart", "CampusBrandMark"],
     ["src/features/onboarding/welcome_screen.dart", "CampusBrandMark"],
     ["src/features/more/more_screen.dart", "CampusBrandMark"],
     ["src/features/catalog/src_office_screen.dart", "CrestMark"],
@@ -667,21 +669,82 @@ test("auth screens tell the same photo story as the web", () => {
   }
 });
 
-test("the welcome tour is photo-led and labels its demo scenes", () => {
+test("the welcome tour walks the web's five steps", () => {
+  const steps = readFileSync(join(lib, "src/features/onboarding/onboarding_steps.dart"), "utf8")
+    .replace(/^\s*\/\/.*$/gm, "") // comments quote the web wording on purpose
+    .replace(/["']/g, "")
+    .replace(/\s+/g, " ");
+  // Titles and descriptions come from src/config/onboarding.ts; the two clauses
+  // that would be untrue in the app (browser-only storage) are amended and
+  // documented instead of copied.
+  for (const token of [
+    "01 / A PLACE TO BEGIN",
+    "Your campus starts with you.",
+    "02 / MAKE ROOM FOR FOCUS",
+    "A little plan. A good day.",
+    "03 / FIND YOUR PEOPLE",
+    "Good company changes everything.",
+    "04 / STAY IN THE LOOP",
+    "Your voice has a place here.",
+    "05 / MAKE IT YOURS",
+    "A familiar face. A fresh start.",
+    "A campus worth exploring",
+    "Make a little room for focus",
+    "Good people. Shared interests.",
+    "Your next chapter",
+    "BSc Information Technology",
+    "Postgraduate",
+    "Student representation",
+  ]) {
+    assert.ok(steps.includes(token), `onboarding must carry ${token}`);
+  }
+  assert.ok(
+    !steps.includes("stays on this device, not in the university timetable"),
+    "the app must not repeat the web's browser-only storage claim",
+  );
+  assert.ok(
+    !steps.includes("Choose your local demo profile"),
+    "the app must not imply that an account-backed profile is browser-local",
+  );
+
   const welcome = readFileSync(join(lib, "src/features/onboarding/welcome_screen.dart"), "utf8");
   for (const token of [
-    "CampusImage(",
-    "DemoImages.campusLife",
-    "DemoImages.eventSocial",
-    "DemoImages.studyCorner",
-    "Generated demo scene · fictional people, not GCTU photography.",
-    "CampusAspect.video",
+    "Skip introduction",
+    "onboardingSteps",
+    "Step $current of $total",
+    "FIVE SMALL STEPS · YOUR CAMPUS",
+    "Welcome to CampusOne.",
+    "Skip introduction",
+    "CampusBrandMark",
+    "'Back'",
+    "'Continue'",
+    "Finish and continue",
+    "Your name",
+    "Demo programme",
+    "Profile photo (optional)",
+    "Choose a photo",
+    "PersonalStoreRepository",
+    "updateProfile",
+    "AuthStoryPanel",
+    "IndependenceNotice",
   ]) {
     assert.ok(welcome.includes(token), `welcome tour must include ${token}`);
   }
-  const slides = welcome.match(/_Slide\(/g) ?? [];
-  const images = welcome.match(/image: DemoImages\./g) ?? [];
-  assert.ok(images.length >= 3, `all three tour slides need artwork, found ${images.length} (slides: ${slides.length - 1})`);
+  assert.ok(
+    !welcome.includes("Progress stays on this device"),
+    "do not promise that an in-progress tour is persisted",
+  );
+  const profile = readFileSync(join(lib, "src/features/profile/profile_screen.dart"), "utf8");
+  const editor = readFileSync(join(lib, "src/features/profile/edit_profile_screen.dart"), "utf8");
+  for (const [source, token, name] of [
+    [profile, "list('profile')", "the profile screen loads the saved profile row"],
+    [profile, "snapshot.data", "the account photo is rendered in the profile avatar"],
+    [editor, "AppPhotos.chooseDataUrl", "the profile editor can replace a photo"],
+    [editor, "if (_photo != null) 'photo': _photo", "the editor preserves the saved photo"],
+    [editor, "child: const Text('Remove')", "the editor can remove the saved photo"],
+  ]) {
+    assert.ok(source.includes(token), name);
+  }
 });
 
 test("no Dart file imports the same library twice", () => {
@@ -722,14 +785,77 @@ test("auth and onboarding screens carry the independence notice", () => {
   }
 });
 
-test("registration fields match the server contract", () => {
+test("registration fields match the web form and server limits", () => {
   const register = readFileSync(join(lib, "src/features/auth/register_screen.dart"), "utf8");
-  // Mirrors src/server/auth.ts registerSchema: name 2-80, email <=254,
-  // password 8-128, programme <=120, level <=40.
-  for (const token of ["maxLength: 80", "maxLength: 254", "maxLength: 128", "maxLength: 120", "maxLength: 40"]) {
-    assert.ok(register.includes(token), `register must bound its input with ${token}`);
+  // Web asks for name/email/password/confirmation/consent; programme and level
+  // belong in the following onboarding step, not duplicated registration fields.
+  for (const token of ["maxLength: 80", "maxLength: 254", "maxLength: 128", "Confirm password", "I understand the preview notice"]) {
+    assert.ok(register.includes(token), `register must include ${token}`);
   }
+  assert.ok(!register.includes("Programme (optional)"), "registration should leave programme for onboarding");
+  assert.ok(!register.includes("Level (optional"), "registration should leave level for onboarding");
+  assert.ok(register.includes("const WelcomeScreen()"), "successful registration must continue into onboarding");
   const server = readFileSync(join(root, "src/server/auth.ts"), "utf8");
   assert.ok(server.includes("min(2).max(80)"), "server name bounds changed — update the app too");
   assert.ok(server.includes("min(8).max(128)"), "server password bounds changed — update the app too");
+  const validators = readFileSync(join(lib, "src/features/auth/auth_validation.dart"), "utf8");
+  assert.ok(validators.includes("254"), "email validation must keep the server length limit");
+  assert.ok(validators.includes("Enter a valid email address."), "email validation message missing");
+});
+
+test("auth and onboarding expose the shared appearance control", () => {
+  const appearance = readFileSync(join(lib, "src/core/theme/appearance_button.dart"), "utf8");
+  for (const token of ["ThemeScope.of(context)", "ThemeMode.system", "ThemeMode.light", "ThemeMode.dark", "prefs.setMode"]) {
+    assert.ok(appearance.includes(token), `appearance control must include ${token}`);
+  }
+  for (const file of [
+    "src/features/auth/sign_in_screen.dart",
+    "src/features/auth/register_screen.dart",
+    "src/features/auth/forgot_password_screen.dart",
+    "src/features/onboarding/welcome_screen.dart",
+  ]) {
+    assert.ok(readFileSync(join(lib, file), "utf8").includes("AppearanceButton"), `${file} must expose appearance`);
+  }
+});
+
+test("auth screens use the web's own headings and field set", () => {
+  const signIn = readFileSync(join(lib, "src/features/auth/sign_in_screen.dart"), "utf8")
+    .replace(/["']/g, "")
+    .replace(/\s+/g, " ");
+  for (const token of [
+    "Good to see you.",
+    "Your people and your plans, in one place. Open your student-life workspace.",
+    "New here? Create an account",
+    "Forgot your password?",
+    "Retry saved session",
+    "AppearanceButton",
+  ]) {
+    assert.ok(signIn.includes(token), `sign-in must carry ${token}`);
+  }
+  const register = readFileSync(join(lib, "src/features/auth/register_screen.dart"), "utf8")
+    .replace(/["']/g, "")
+    .replace(/\s+/g, " ");
+  for (const token of [
+    "Start your next chapter.",
+    "A name, a little curiosity, and a campus full of possibilities.",
+    "Confirm password",
+    "I understand the preview notice",
+    "Passwords must match",
+    "Never reuse your LMS or SIP password.",
+    "Already have a profile? Sign in",
+    "AppearanceButton",
+  ]) {
+    assert.ok(register.includes(token), `register must carry ${token}`);
+  }
+  const recovery = readFileSync(join(lib, "src/features/auth/forgot_password_screen.dart"), "utf8");
+  for (const token of [
+    "Let’s get you back.",
+    "A small step back toward your workspace.",
+    "Request reset link",
+    "Email delivery is not configured yet",
+    "Back to sign in",
+    "AppearanceButton",
+  ]) {
+    assert.ok(recovery.includes(token), `reset must carry ${token}`);
+  }
 });

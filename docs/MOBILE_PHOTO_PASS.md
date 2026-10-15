@@ -50,7 +50,7 @@ and use the web dark-mode brand tint.
 ## 3. Verification actually run
 
 ```bash
-node scripts/mobile-tests.mjs      # 28 structural + 15 media assertions, all pass
+node scripts/mobile-tests.mjs      # 37 structural + 15 media assertions, all pass
 node scripts/run-native-tests.mjs  # all 16 isolated native suites pass
 ```
 
@@ -63,8 +63,8 @@ node scripts/run-native-tests.mjs  # all 16 isolated native suites pass
 5. `data:` photos are decoded, not fetched;
 6. the stand-in frame, skeleton, placeholder chip and reduced-motion paths exist,
    and generated hero imagery stays labelled;
-7. image loading is centralised (only the media layer, onboarding and the photo
-   editor may build raw image widgets);
+7. image loading is centralised (media layer, onboarding, brand-mark asset
+   wrapper and photo editor are the only permitted raw-image call sites);
 8. every record-bearing screen has a photo surface;
 9. models parse the cover/gallery fields the API sends;
 10. home keeps the web composition order, shortcut copy and artwork;
@@ -107,15 +107,21 @@ screens, a feature directory hero on clubs/events/discover, and the
 * The auth and welcome screens are photo-led too, but with the web's own
   pictures rather than the band: `AuthStoryPanel` carries `src/config/auth.ts`
   (story image, eyebrow, title, description, "Generated demo scene" caption) on
-  sign-in, register and reset, and each welcome-tour slide shows a labelled demo
-  scene.
+  sign-in, register and reset. `onboarding_steps.dart` mirrors all five entries in
+  `src/config/onboarding.ts`; the welcome view renders their story, matching
+  highlights, a progress meter, back/continue/skip controls, and the account-backed
+  profile step. The two app-specific storage claims are intentionally rewritten
+  rather than copied (see [`CROSS_PLATFORM_PARITY.md`](CROSS_PLATFORM_PARITY.md)
+  rows 28–29).
 * The brand mark is the council's crest (see the brand-icons note below), with
   no tile or frame drawn around it on either client.
 
 ## 4. Not verified here (honest limits)
 
 * **No Flutter SDK in this sandbox** — `flutter analyze`, `flutter test` and any
-  build were **not** run; the audits above are source-level, not compilation.
+  build were **not** run; the audits above are source-level, not compilation. The
+  auth/onboarding changes still need the same SDK/device verification gate as the
+  rest of the Dart code.
   Run `flutter pub get && flutter analyze && flutter test` on a machine with the
   SDK before trusting the pass.
 * No device/emulator run, so scrolling, tablet breakpoints and photo loading over

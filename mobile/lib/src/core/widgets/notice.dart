@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// The independence and demo-data line the web carries in its shell footer and
-/// on every auth page. The app talks to the shared CampusOne server, so the
-/// wording is explicit about where demo data lives instead of repeating the
-/// web's browser-storage sentence verbatim.
+/// The independence and data notice the web carries in its shell footer and
+/// on every auth page. The app sends sign-in/profile requests to the API base
+/// configured by the user, so the copy avoids the web's browser-storage claim.
 class IndependenceNotice extends StatelessWidget {
   const IndependenceNotice({super.key, this.compact = false});
 
@@ -28,8 +27,8 @@ class IndependenceNotice extends StatelessWidget {
         if (!compact) ...[
           const SizedBox(height: 4),
           Text(
-            'Demo accounts, requests and messages are stored on the connected '
-            'CampusOne server. Never reuse your LMS or SIP password here.',
+            'Sign-in and profile updates use the API server configured for this app. '
+            'Never reuse your LMS or SIP password here.',
             style: style,
           ),
         ],

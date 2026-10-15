@@ -1,15 +1,59 @@
 import 'package:flutter/material.dart';
 
+import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
 import '../../core/media/media.dart';
+import '../../core/store/personal_store.dart';
 import '../../core/widgets/states.dart';
 import '../attendance/attendance_history_screen.dart';
 import '../auth/sign_in_screen.dart';
 import '../badges/badges_screen.dart';
 import 'edit_profile_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String? _userId;
+  Future<String?>? _profilePhoto;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final user = SessionScope.sessionOf(context).user;
+    if (user?.id != _userId) {
+      _userId = user?.id;
+      _profilePhoto = user == null ? null : _loadProfilePhoto();
+    }
+  }
+
+  Future<String?> _loadProfilePhoto() async {
+    try {
+      final rows = await PersonalStoreRepository(
+        SessionScope.apiOf(context),
+      ).list('profile');
+      for (final row in rows) {
+        if (row['id'] == 'profile') {
+          final photo = row['photo'];
+          return photo is String && photo.isNotEmpty ? photo : null;
+        }
+      }
+    } on ApiException {
+      // Use the account avatar/initials if the profile row is unavailable.
+    }
+    return null;
+  }
+
+  Future<void> _editProfile() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+    );
+    if (mounted) setState(() => _profilePhoto = _loadProfilePhoto());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +88,17 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    CampusAvatar(
-                      name: user.name,
-                      image: CampusMedia.tryParse(user.avatar, alt: user.name),
-                      size: 64,
+                    FutureBuilder<String?>(
+                      future: _profilePhoto,
+                      builder: (context, snapshot) => CampusAvatar(
+                        name: user.name,
+                        image: CampusMedia.tryParse(
+                              snapshot.data,
+                              alt: user.name,
+                            ) ??
+                            CampusMedia.tryParse(user.avatar, alt: user.name),
+                        size: 64,
+                      ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -83,9 +134,7 @@ class ProfileScreen extends StatelessWidget {
             _Row(
               icon: Icons.edit_outlined,
               title: 'Edit profile',
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-              ),
+              onTap: _editProfile,
             ),
           _Row(
             icon: Icons.how_to_reg_outlined,

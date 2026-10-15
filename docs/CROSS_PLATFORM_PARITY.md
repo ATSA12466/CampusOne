@@ -2,7 +2,8 @@
 
 Source of truth: `src/app/(student)/` (web). Target: `mobile/` (Android + iOS).
 Audited 2026-10-14 against the actual route files, feature components, API
-routes, and Flutter screens — not names alone.
+routes, and Flutter screens — not names alone. Auth/onboarding rechecked
+2026-10-15 against the actual responsive pages and five-step screen flows.
 
 Legend: ✅ full · ◐ partial · ❌ missing · 🖥️ web-only by design · 📱 mobile-only
 
@@ -22,10 +23,11 @@ in-memory).
 
 Every student screen now opens on a picture: 28 screens use the shared
 `PhotoScaffold` band (web eyebrow, title and description, unchanged wording),
-and the sign-in, register and reset screens carry the web's own photo stories
+and sign-in, register and reset carry the web's own photo stories
 (`src/config/auth.ts` → `AuthStoryPanel`, same images, copy and generated-scene
-caption). The welcome tour is picture-led too, with each slide's demo scene
-labelled.
+caption). The welcome tour now has the web's five stories, progress indicator,
+highlight cards and profile-setup step. Auth/onboarding differences are listed
+at rows 28–29 rather than hidden by the visual parity.
 
 **Photo-opening pass (2026-10-15, second part).** Every student screen now opens
 with the same picture band the web opens routes with: `PhotoScaffold` /
@@ -47,6 +49,17 @@ Data-path note: web defaults to **demo fixtures** (`NEXT_PUBLIC_DATA_SOURCE=demo
 web API mode targets a separate port-4000 platform API (unverified). Flutter
 talks to this repo's same-origin Bearer-token API (`/api/*`, `docs/MOBILE_API.md`).
 Local/demo state is **never** presented as cross-client sync.
+
+**Auth/onboarding audit (2026-10-15).** Web defaults to a browser-local demo
+profile (no real account); Flutter requires the configured API server and uses
+its Bearer-token session. The Flutter welcome tour now mirrors all five web
+stories and the profile setup. It does not claim tour-step persistence: only
+completion is stored locally. Profile fields and an optional picked photo are
+sent to the account API after sign-in; a guest may browse/skip but cannot save a
+pretend local profile. The browser preview instead keeps its onboarding progress
+and profile preferences in browser storage. Password-reset acceptance is
+honestly qualified in both clients: the repository's endpoint currently has no
+mail delivery configured.
 
 ## Route-by-route matrix
 
@@ -79,8 +92,8 @@ Local/demo state is **never** presented as cross-client sync.
 | 25 | `/management` | **Role-based link hub only** (links to tasks/participation/clubs/events/…). No budget console. | `executives/*`, `manage_hub_screen.dart`, `admin/admin_reports_screen.dart` | ✅ | Meets/exceeds: role-gated exec tools, manage hub, membership review, reports. (Earlier "budget" note was wrong — web has none.) |
 | 26 | `/participation` | Membership decisions + RSVP plans (explicitly not official attendance) | `attendance/*`, `badges/*`, `impact/my_impact_screen.dart` | ✅ | Memberships (manage hub), RSVPs (ticket = plan), history, badges, impact. |
 | 27 | `/freshers` | Checklist (4 steps, local), club-group browser, 3 next-step cards (community/events/accommodation) | `freshers/freshers_screen.dart` | ✅ | Checklist persisted in prefs (web keeps it in state); interest filter + clubs + next steps mirror web. |
-| 28 | `/onboarding` (public) | First-run tour | `onboarding/welcome_screen.dart` | ✅ | Shown once; replay coming via settings row. |
-| 29 | `/sign-in`, `/register`, `/forgot-password` | Auth forms (+ demo role picker, web-only) | `auth/*` | ✅ | Real API auth + saved-session retry, and the web's photo stories (`src/config/auth.ts`) now open each form — same images, eyebrow, title, description and generated-scene caption. |
+| 28 | `/onboarding` (public) | Five-step photo tour; progress; highlights; step 5 profile (name, programme, level, portrait, interests); local preferences | `onboarding/welcome_screen.dart`, `onboarding_steps.dart` | ◐ | Same five stories, step copy, progress UI, highlights and profile controls; the app also exposes the shared appearance toggle in its auth/onboarding header. Intentional data-path differences: web persists current step/preferences in browser storage and allows a guest demo profile; Flutter stores only tour completion and requires sign-in before saving profile fields. After registration the app now enters step 1, and signed-in users save profile preferences/photo to the account API. The app uses camera/gallery with a compressed account photo (no crop tool); web has initials + two fictional preview portraits and a cropped photo that lasts only until reload/sign-out. |
+| 29 | `/sign-in`, `/register`, `/forgot-password` | Sign in, create account + consent, reset request; web demo role/remember controls | `auth/*` | ✅ | Same story images and copy, page headings, core form fields and register confirmation/consent, plus theme toggle. Default web mode pre-fills a demo identity, stores the demo profile in browser storage and offers demo-role/remember controls; Flutter fields start blank and authenticate against the configured API with a secure saved token/retry. Mobile registers a real account then continues to onboarding. Password reset endpoint currently records acceptance but sends no email; mobile states this explicitly. |
 | 30 | `/src/*` student slices | Request workspace links → src-office | via src-office screens | ✅ | Covered by #22. |
 
 ## Deliberately web-only
@@ -88,7 +101,7 @@ Local/demo state is **never** presented as cross-client sync.
 | Surface | Reason |
 |---|---|
 | `/admin/*` (users, roles, content, moderation, audit, branding, settings, accommodation) + `/src/*` dashboards | Desktop moderation consoles; bulk tables, rich editors, audit exports. Mobile keeps role-gated `Reports & admin` summary. |
-| Demo role picker on web auth | Web demo artifact; mobile uses real accounts only. |
+| Demo role picker + remember-demo toggle on web auth | Default web demo artifacts; mobile uses real API accounts and secure token persistence, not local role simulation. |
 | Demo-local conversation starter | Explicitly fake on web ("not a real contact"); mobile omits rather than fakes. Real start needs a user-lookup API (blocker). |
 
 ## Native-only capabilities (no web equivalent)

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/brand/brand_mark.dart';
+import '../../core/theme/appearance_button.dart';
 import '../../core/widgets/notice.dart';
 import '../../core/widgets/states.dart';
+import 'auth_validation.dart';
 import 'widgets/auth_story.dart';
 
 /// Password-reset request. No mail delivery is configured yet: the server
@@ -47,7 +50,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reset password')),
+      appBar: AppBar(
+        title: const CampusBrandMark(size: BrandMarkSize.sm),
+        actions: const [AppearanceButton()],
+      ),
       body: Form(
         key: _form,
         child: ListView(
@@ -55,6 +61,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           children: [
             // Web `authStories.recovery`, kept verbatim.
             const AuthStoryPanel(story: AuthStory.recovery),
+            const SizedBox(height: 20),
+            Text(
+              'Let’s get you back.',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'A small step back toward your workspace. Email delivery requires a connected service.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
             const SizedBox(height: 16),
             if (_accepted) ...[
               const Card(
@@ -79,18 +97,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ],
             TextFormField(
               controller: _email,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                counterText: '',
+              ),
               keyboardType: TextInputType.emailAddress,
-              validator: (value) =>
-                  (value ?? '').trim().contains('@') &&
-                      (value ?? '').trim().length <= 254
-                  ? null
-                  : 'Enter a valid email address.',
+              autocorrect: false,
+              maxLength: 254,
+              validator: AuthValidation.email,
             ),
             const SizedBox(height: 16),
             FilledButton(
               onPressed: _busy ? null : _submit,
-              child: const Text('Request reset link'),
+              child: _busy
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Request reset link'),
+            ),
+            TextButton.icon(
+              onPressed: _busy ? null : () => Navigator.of(context).pop(),
+              icon: const Icon(Icons.arrow_back),
+              label: const Text('Back to sign in'),
             ),
             const SizedBox(height: 20),
             const IndependenceNotice(),
