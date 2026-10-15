@@ -1,0 +1,10 @@
+{
+  "timetableSessions": [
+    { "id": "ts1", "day": "Monday", "course": "Algorithms", "start": "09:00", "end": "10:30", "venue": "Room 101" },
+    { "id": "ts2", "day": "Wednesday", "course": "Databases", "start": "11:00", "end": "12:30", "venue": "Room 203" }
+  ],
+  "initialTasks": [
+    { "id": "task-1", "title": "Finish assignment", "completed": false },
+    { "id": "task-2", "title": "Read chapter 4", "completed": false }
+  ]
+}

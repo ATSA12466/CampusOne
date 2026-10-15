@@ -1,0 +1,22 @@
+{
+  "events": [
+    {
+      "id": "e1",
+      "title": "Innovation Night",
+      "venue": "Main Auditorium",
+      "date": "2026-10-16",
+      "category": "Showcase",
+      "seats": 300,
+      "registered": 120
+    },
+    {
+      "id": "e2",
+      "title": "Data Science Career Talk",
+      "venue": "Seminar Hall A",
+      "date": "2026-10-20",
+      "category": "Career",
+      "seats": 180,
+      "registered": 86
+    }
+  ]
+}

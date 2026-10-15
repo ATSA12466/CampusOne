@@ -1,0 +1,6 @@
+{
+  "featured": [
+    { "id": "f1", "title": "Welcome Week", "active": true, "image": "/images/placeholders/feature-welcome.svg" },
+    { "id": "f2", "title": "Campus Career Fair", "active": true, "image": "/images/placeholders/feature-career.svg" }
+  ]
+}

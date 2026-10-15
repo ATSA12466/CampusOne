@@ -1,0 +1,10 @@
+{
+  "conversations": [
+    { "id": "c1", "name": "Project Group", "lastMessage": "Don't forget the demo tomorrow." },
+    { "id": "c2", "name": "Roommates", "lastMessage": "Who's taking the trash out?" }
+  ],
+  "posts": [],
+  "notifications": [
+    { "id": "n1", "title": "Event reminder", "read": false }
+  ]
+}

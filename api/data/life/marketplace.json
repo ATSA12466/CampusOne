@@ -1,0 +1,28 @@
+{
+  "marketplaceListings": [
+    {
+      "id": "mkt-1",
+      "title": "Used Laptop - MacBook Pro 2015",
+      "category": "Electronics",
+      "priceLabel": "GHS 2,500",
+      "description": "Good condition, minor scratches, 8GB RAM, 256GB SSD."
+    },
+    {
+      "id": "mkt-2",
+      "title": "Calculus Textbook",
+      "category": "Books",
+      "priceLabel": "GHS 120",
+      "description": "Second edition, like-new."
+    }
+  ],
+  "accommodations": [
+    {
+      "id": "acc-1",
+      "title": "Maple Hall - Single Room",
+      "location": "Campus North",
+      "price": "GHS 800/month",
+      "facilities": ["WiFi", "Secure entry", "Laundry on site"]
+    }
+  ],
+  "reports": []
+}

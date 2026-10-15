@@ -1,0 +1,20 @@
+{
+  "announcements": [
+    {
+      "id": "a1",
+      "title": "SRC study space extension approved",
+      "content": "Study commons now open till 10pm during exams.",
+      "category": "src",
+      "pinned": true,
+      "publishedAt": "2026-10-08"
+    },
+    {
+      "id": "a2",
+      "title": "Club fair this Friday",
+      "content": "Discover 30+ clubs at the innovation square.",
+      "category": "campus",
+      "pinned": false,
+      "publishedAt": "2026-10-07"
+    }
+  ]
+}

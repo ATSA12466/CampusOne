@@ -1,0 +1,20 @@
+{
+  "opportunities": [
+    {
+      "id": "o1",
+      "title": "MTN Summer Internship",
+      "provider": "MTN Ghana",
+      "category": "Internship",
+      "deadline": "2026-11-01",
+      "summary": "Hands-on telecom software operations internship."
+    },
+    {
+      "id": "o2",
+      "title": "Women in Tech Scholarship",
+      "provider": "TechBridge Africa",
+      "category": "Scholarship",
+      "deadline": "2026-10-28",
+      "summary": "Tuition support for outstanding women in STEM."
+    }
+  ]
+}
