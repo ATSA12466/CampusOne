@@ -31,7 +31,8 @@ export function BrandMark({
   wordmark = true,
 }: VariantProps<typeof variants> & { className?: string; wordmark?: boolean }) {
   const [branding, setBranding] = useState<PublicBranding | null>(null);
-  const [logoFailed, setLogoFailed] = useState(false);
+  // Artwork that fails to load is skipped rather than replaced by a drawn box.
+  const [failed, setFailed] = useState<Record<string, boolean>>({});
   useEffect(() => {
     let cancelled = false;
     fetch("/api/branding/public", { headers: { Accept: "application/json" } })
@@ -49,23 +50,23 @@ export function BrandMark({
   const customLogo = branding?.logoLight?.trim() || "";
   // Published upload wins, then the council-supplied crest. A broken logo just
   // leaves the wordmark; no placeholder box is drawn in its place.
-  const logoSrc = logoFailed ? "" : customLogo || srcLogo?.src || "";
-  const logoAlt = customLogo ? `${name} logo` : (srcLogo?.alt ?? `${name} logo`);
+  const logo = [customLogo, srcLogo?.src ?? ""].find((src) => src && !failed[src]) ?? "";
+  const logoAlt = logo === customLogo && customLogo ? `${name} logo` : (srcLogo?.alt ?? `${name} logo`);
   return (
     <span className={cn(variants({ tone, size }), className)}>
-      {logoSrc ? (
+      {logo ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={logoSrc}
+          src={logo}
           alt={logoAlt}
           width={44}
           height={44}
-          onError={() => setLogoFailed(true)}
+          onError={() => setFailed((previous) => ({ ...previous, [logo]: true }))}
           className="size-11 shrink-0 object-contain"
         />
       ) : null}
       {wordmark ? (
-        <span className="font-semibold tracking-tight">
+        <span className="font-semibold tracking-tight whitespace-nowrap">
           {name}
           <span className="block text-[10px] font-medium tracking-[0.13em] opacity-70">
             {tagline.toUpperCase()}

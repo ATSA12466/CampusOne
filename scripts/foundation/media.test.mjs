@@ -86,6 +86,13 @@ function pngSize(file) {
   assert.equal(header.subarray(1, 4).toString("ascii"), "PNG", `${file} must be a PNG`);
   return { width: header.readUInt32BE(16), height: header.readUInt32BE(20) };
 }
+test("the header brand renders supplied artwork without a drawn frame", () => {
+  const mark = readFileSync("src/components/shared/brand-mark.tsx", "utf8");
+  assert.ok(mark.includes("srcLogo?.src"), "the mark must use the supplied crest");
+  assert.ok(!mark.includes("logo slot"), "the empty placeholder slot must be gone");
+  assert.ok(!mark.includes("border-current"), "no square frame may be drawn around the logo");
+  assert.ok(mark.includes("onError"), "a broken logo must degrade instead of showing a frame");
+});
 test("owner-supplied SRC crest and app icon are wired into the web", () => {
   // Supplied by the council, so the branded logo slot is no longer empty.
   assert.ok(srcLogo, "srcLogo must carry the supplied crest");
