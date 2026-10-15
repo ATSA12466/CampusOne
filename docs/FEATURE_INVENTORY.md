@@ -6,7 +6,7 @@
 
 | Area | Current frontend capability | Authority / source boundary |
 | --- | --- | --- |
-| Foundation | Fraunces display + Manrope text through local `next/font`; semantic light/dark/system; reduced motion; media/gallery/crop kit; accessible controls, focus, loading/empty/error/retry | Authorized SRC logo slot remains empty; generated scenes and CC0 samples are labelled |
+| Foundation | Fraunces display + Manrope text through local `next/font`; semantic light/dark/system; reduced motion; media/gallery/crop kit; accessible controls, focus, loading/empty/error/retry | SRC crest supplied by the council and wired into web + mobile brand surfaces; generated scenes and CC0 samples are labelled |
 | Shell/search | Five navigation groups, 24 preserved destinations, collapsed desktop rail, four mobile tabs + More; Cmd/Ctrl+K, scoped search, cancellation/partial errors | Typed catalog, loaded-record scopes; client role selection is not authorization |
 | Home | Conditional sponsor/video-first placement, Clubs photo hero, six photo shortcuts, official HTTPS LMS/SIP links, Accra class preview, owned tasks/Undo/progress, dated recommendations | Bounded server sources, no API demo fallback; private task service; no official sync or personalization claim |
 | Auth/onboarding | Photo forms, Zod/RHF validation, reveal/hide, submitted local identity, safe return, five-step progress/resume/skip/replay, optional visit portrait, logout/cross-tab clearing | Demo does not verify credentials or send reset email; proposed cookie API is unverified |

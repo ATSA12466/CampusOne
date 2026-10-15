@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
 import '../../core/widgets/states.dart';
+import 'widgets/auth_story.dart';
+import 'widgets/auth_story.dart';
 
 /// Password-reset request. No mail delivery is configured yet: the server
 /// records the request and returns accepted — the app never claims an
@@ -51,6 +53,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // Web `authStories.recovery`, kept verbatim.
+            const AuthStoryPanel(story: AuthStory.recovery),
+            const SizedBox(height: 16),
             if (_accepted) ...[
               const Card(
                 child: Padding(

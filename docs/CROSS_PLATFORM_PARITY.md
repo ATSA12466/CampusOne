@@ -20,6 +20,13 @@ existence, provenance labels and the source policy (relative paths only, no
 traversal, https + allow-list for absolute URLs, `data:` photos decoded
 in-memory).
 
+Every student screen now opens on a picture: 28 screens use the shared
+`PhotoScaffold` band (web eyebrow, title and description, unchanged wording),
+and the sign-in, register and reset screens carry the web's own photo stories
+(`src/config/auth.ts` → `AuthStoryPanel`, same images, copy and generated-scene
+caption). The welcome tour is picture-led too, with each slide's demo scene
+labelled.
+
 **Photo-opening pass (2026-10-15, second part).** Every student screen now opens
 with the same picture band the web opens routes with: `PhotoScaffold` /
 `PhotoPageHeader` in the media layer render a 232px photo band, eyebrow, display
@@ -45,17 +52,17 @@ Local/demo state is **never** presented as cross-client sync.
 
 | # | Web route | Web interactions (verified) | Flutter screen(s) | Status | Gap / blocker |
 |---|---|---|---|---|---|
-| 1 | `/home` | Magazine home: welcome, photo shortcuts, today overview, next class, task panel, featured carousel, recommendations | `home/home_screen.dart` | ◐ | Flutter has check-in banner, stats, events/announcements previews, explore chips. Missing: next-class card, task preview. (Composition differs by design; entry-point function covered.) |
+| 1 | `/home` | Magazine home: welcome, photo shortcuts, today overview, next class, task panel, featured carousel, recommendations | `home/home_screen.dart` | ✅ | Same order as the web (welcome → featured carousel → clubs hero → today overview with the next class + open tasks → photo shortcuts → recommendations), plus mobile-first check-in and stats cards. Web-only: the dev `?home-preview=` fixture modes that fake empty/offline states. |
 | 2 | `/discover` | Global search over 8 sources, category filter, saved view, per-item save | `discover/discover_screen.dart` | ✅ | Search + saved filter + detail navigation + save (via detail screens). |
-| 3 | `/clubs` | Directory + search; membership review panel for execs | `clubs/clubs_screen.dart` | ◐ | Search ✓. Missing: category filter chips. Exec review lives in club detail → Manage ✓. |
+| 3 | `/clubs` | Directory + search; membership review panel for execs | `clubs/clubs_screen.dart` | ✅ | Search + category chips ✓ (asserted in `scripts/mobile/mobile-structure.test.mjs`); exec review lives in club detail → Manage. |
 | 4 | `/clubs/[id]` | Request membership (+note), withdraw, save, exec review panel | `clubs/club_detail_screen.dart`, `club_manage_screen.dart` | ✅ | Request/withdraw/save/Manage (roster + approve/reject) all wired. |
-| 5 | `/events` | Directory + search, category chips, time filter (upcoming/week/month/past/all), sort, saved toggle | `events/events_screen.dart` | ◐ | Search ✓. Missing: category chips, time filter, sort. |
+| 5 | `/events` | Directory + search, category chips, time filter (upcoming/week/month/past/all), sort, saved toggle | `events/events_screen.dart` | ✅ | Search, category chips, time window (Upcoming/This week/Past/All) and sort (Soon/Newest/Title) ✓; saving happens on the detail screens. |
 | 6 | `/events/[id]` | RSVP / cancel, save, ticket view, add-to-calendar (ICS) | `events/event_detail_screen.dart` | ✅ | RSVP/cancel/save/ticket + device-calendar handoff (`add_2_calendar`, no permission needed). Needs on-device verification (no devices in sandbox). |
 | 7 | `/calendar` | Month agenda: classes + public events + personal plans | `schedule/calendar_screen.dart` | ✅ | Same three sources merged. |
 | 8 | `/timetable` | Class sessions, add/edit/remove (workspace) | `schedule/timetable_screen.dart` | ✅ | Full CRUD to `sessions` collection. |
 | 9 | `/tasks` | Task CRUD, done toggle | `tasks/tasks_screen.dart` | ✅ | Full CRUD + toggle. |
 | 10 | `/messages` | Inbox, thread, composer; **start-conversation is demo-local only** ("not a real contact") | `messages/conversations_screen.dart`, `thread_screen.dart` | ◐ | Inbox/thread/composer + polling ✓. No start-new UI: **blocked, no user-lookup API** (`POST /api/conversations` needs a `userId` the client cannot resolve). Web has no real equivalent either. |
-| 11 | `/notifications` | Feed, per-item read, mark-all-read, unread filter | `notifications/notifications_screen.dart` | ◐ | Feed + tap-to-read ✓. Missing: mark-all-read button (repo method exists). |
+| 11 | `/notifications` | Feed, per-item read, mark-all-read, unread filter | `notifications/notifications_screen.dart` | ✅ | Feed + tap-to-read + mark-all-read ✓. Unread is shown per row and in the badge count. |
 | 12 | `/profile` | Profile card + editor: name, programme, level, bio, interests, visibility | `profile/profile_screen.dart`, `edit_profile_screen.dart` | ✅ | Editor saves account record + `profile` store row, mirroring web fields. |
 | 13 | `/settings` | Appearance, onboarding replay, session/sign-out, data-backend card | More → Appearance + Server + Replay tour; Profile → sign-out | ✅ | Appearance, server URL, replay-welcome, sign-out all present. |
 | 14 | `/marketplace`, `/marketplace/[id]` | Browse, photo-record posting, detail + save + enquiry | `listings/marketplace_screen.dart` + `listing_detail_screen.dart` | ✅ | Post (photo record), save, enquiry all wired. |
@@ -73,7 +80,7 @@ Local/demo state is **never** presented as cross-client sync.
 | 26 | `/participation` | Membership decisions + RSVP plans (explicitly not official attendance) | `attendance/*`, `badges/*`, `impact/my_impact_screen.dart` | ✅ | Memberships (manage hub), RSVPs (ticket = plan), history, badges, impact. |
 | 27 | `/freshers` | Checklist (4 steps, local), club-group browser, 3 next-step cards (community/events/accommodation) | `freshers/freshers_screen.dart` | ✅ | Checklist persisted in prefs (web keeps it in state); interest filter + clubs + next steps mirror web. |
 | 28 | `/onboarding` (public) | First-run tour | `onboarding/welcome_screen.dart` | ✅ | Shown once; replay coming via settings row. |
-| 29 | `/sign-in`, `/register`, `/forgot-password` | Auth forms (+ demo role picker, web-only) | `auth/*` | ✅ | Real API auth + saved-session retry. |
+| 29 | `/sign-in`, `/register`, `/forgot-password` | Auth forms (+ demo role picker, web-only) | `auth/*` | ✅ | Real API auth + saved-session retry, and the web's photo stories (`src/config/auth.ts`) now open each form — same images, eyebrow, title, description and generated-scene caption. |
 | 30 | `/src/*` student slices | Request workspace links → src-office | via src-office screens | ✅ | Covered by #22. |
 
 ## Deliberately web-only

@@ -111,7 +111,8 @@ test("photo frames keep loading, failure and provenance behaviour", () => {
 test("image loading is centralised in the media layer", () => {
   const allowed = new Set([
     "lib/src/core/media/campus_image.dart",
-    "lib/src/features/onboarding/welcome_screen.dart",
+    // The brand mark loads the bundled crest/app icon; onboarding now uses it.
+    "lib/src/core/brand/brand_mark.dart",
     "lib/src/features/listings/photo_record_editor.dart",
   ]);
   const offenders = [];

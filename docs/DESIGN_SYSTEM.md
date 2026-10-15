@@ -31,15 +31,13 @@ Read the existing file before extending it. Keep feature UI in `features/<name>/
 
 The existing navy, royal, gold and teal palette is the starting point. Royal and status roles were adjusted for readable text and controls; this is **not a claim that an official GCTU/SRC brand manual has been verified**.
 
-`BrandMark` is a typography-led wordmark and an explicitly labelled empty SRC artwork slot. It is not a fabricated council emblem. `srcLogo` is currently `null`.
+`BrandMark` pairs the typography-led wordmark with the **official GCTU SRC crest**, supplied by the council and now wired up:
 
-When the official SRC file is supplied:
-
-- place the authorized asset under `public/` or on an approved HTTPS host;
-- set `srcLogo` in `src/config/images.ts` to a `CampusMedia` object;
-- include meaningful alt, dimensions, provenance and the permission/source note;
-- preserve its proportions with `fit="contain"` — never redraw, recolour or substitute an invented logo;
-- recheck light, dark and inverse/nav usage at small and large sizes.
+- masters live at the repository root (`SRCLogo.png`, transparent; `campusone_app_icon.png`, crest on the brand gradient) and are never edited in place;
+- `node scripts/brand-icons.mjs` only *scales* them into every surface it needs: Android legacy + adaptive icons, the iOS icon set, `mobile/assets/{icon-1024,src-crest}.png`, and `public/brand/` (favicon, apple-touch-icon, app icon, crest);
+- `srcLogo` in `src/config/images.ts` points at `/brand/src-crest-512.png` with `provenance: "upload"` and a source note;
+- proportions are preserved with `fit="contain"`; the crest is never redrawn, recoloured or substituted, and the mobile brand mark (`mobile/lib/src/core/brand/brand_mark.dart`) is the only place that loads the artwork;
+- light, dark and inverse/nav usage is checked at small and large sizes (44px mark in headers, 512/1024px masters).
 
 ## 3. Semantic tokens
 
@@ -362,7 +360,7 @@ See [Phase 4 Home](PHASE4_HOME.md) and the [test report](TEST_REPORT.md) for sel
 
 ## Phase 5 photo-led forms and introduction
 
-`AuthLayout`/`PhotoStory` reuse Manrope/Fraunces, semantic surfaces, brand actions, a dark media scrim and the real pending-logo slot. Existing generated `campusLife`, `studyCorner`, `clubsHero` and `innovationNight` registry stories are explicitly illustrative, never institutional evidence. No palette copy, component hex, new font/animation/image dependency or fabricated SRC mark was introduced.
+`AuthLayout`/`PhotoStory` reuse Manrope/Fraunces, semantic surfaces, brand actions, a dark media scrim and the supplied SRC crest. Existing generated `campusLife`, `studyCorner`, `clubsHero` and `innovationNight` registry stories are explicitly illustrative, never institutional evidence. No palette copy, component hex, new font/animation/image dependency or fabricated SRC mark was introduced.
 
 At desktop the reserved photo frame sits beside readable fields; at narrow widths it precedes the form. Absolute full-size/aspect-auto image utilities and inherited content minimum height keep the photo and editorial copy together; native geometry assertions accompany screenshot review because overflow checks alone missed an early stacking defect. Five intro steps expose textual/visual progress, sensible Back/Continue/Skip actions and optional profile setup without pretending to verify enrollment.
 

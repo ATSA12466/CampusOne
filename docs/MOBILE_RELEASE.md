@@ -14,7 +14,8 @@ App Store.
   server switch.
 - Backend contract frozen in `docs/MOBILE_API.md`, including
   `GET /api/users/me/clubs` (manage hub).
-- Android platform folder, iOS platform folder, launcher icons on both,
+- Android platform folder, iOS platform folder, launcher + adaptive icons on
+  both (scaled from the council's crest by `node scripts/brand-icons.mjs`),
   camera permission declarations, guarded push wiring.
 - Structural suite: `npm run test:mobile` (20 checks, no SDK needed).
   Requires Flutter ≥3.24 / Dart ≥3.5 for `flutter` commands (`app_links`).

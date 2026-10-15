@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../app/app_shell.dart';
+import '../../core/brand/brand_mark.dart';
+import '../../core/media/media.dart';
 import '../auth/sign_in_screen.dart';
 import 'welcome_prefs.dart';
 
@@ -19,18 +21,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   static const _slides = [
     _Slide(
       icon: Icons.school_outlined,
+      image: DemoImages.campusLife,
       title: 'Your campus in one app',
       body:
           'Clubs, events, announcements, housing, study tools and the SRC office — the same CampusOne backend as the web.',
     ),
     _Slide(
       icon: Icons.qr_code_scanner,
+      image: DemoImages.eventSocial,
       title: 'RSVP, scan, collect',
       body:
           'Grab a ticket, scan the session QR to check in, and earn badges for showing up.',
     ),
     _Slide(
       icon: Icons.lock_outline,
+      image: DemoImages.studyCorner,
       title: 'Yours stays yours',
       body:
           'Tasks, notes, grades and plans sync to your account. Photos you attach stay with your records.',
@@ -76,21 +81,29 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(24),
-                          child: Image.asset(
-                            'assets/icon-1024.png',
-                            width: 96,
-                            height: 96,
-                          ),
+                        const CampusBrandMark(size: BrandMarkSize.lg, center: true),
+                        const SizedBox(height: 28),
+                        CampusImage(
+                          image: slide.image,
+                          alt: slide.image.alt,
+                          aspect: CampusAspect.video,
+                          borderRadius: BorderRadius.circular(CampusRadii.media),
                         ),
-                        const SizedBox(height: 32),
-                        Icon(
-                          slide.icon,
-                          size: 48,
-                          color: theme.colorScheme.primary,
+                        const SizedBox(height: 10),
+                        Text(
+                          'Generated demo scene · fictional people, not GCTU photography.',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 16),
+                        Icon(
+                          slide.icon,
+                          size: 32,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(height: 12),
                         Text(
                           slide.title,
                           style: theme.textTheme.headlineSmall,
@@ -156,9 +169,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 }
 
 class _Slide {
-  const _Slide({required this.icon, required this.title, required this.body});
+  const _Slide({
+    required this.icon,
+    required this.image,
+    required this.title,
+    required this.body,
+  });
 
   final IconData icon;
+  final CampusMedia image;
   final String title;
   final String body;
 }

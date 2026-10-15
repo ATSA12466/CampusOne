@@ -61,6 +61,7 @@ class HeroBanner extends StatelessWidget {
     this.compact = false,
     this.priority = false,
     this.onTap,
+    this.provenanceNote,
   });
 
   final CampusMedia? image;
@@ -71,6 +72,10 @@ class HeroBanner extends StatelessWidget {
   final bool compact;
   final bool priority;
   final VoidCallback? onTap;
+
+  /// Overrides the default generated-imagery caption where a screen has the
+  /// web's own wording for the same picture.
+  final String? provenanceNote;
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +136,8 @@ class HeroBanner extends StatelessWidget {
                 if (image?.isGenerated ?? false) ...[
                   const SizedBox(height: 20),
                   Text(
-                    'Generated demo imagery · not an actual campus photograph',
+                    provenanceNote ??
+                        'Generated demo imagery · not an actual campus photograph',
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: const Color(0xCCFFFFFF),
                     ),

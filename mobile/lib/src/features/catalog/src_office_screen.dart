@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/brand/brand_mark.dart';
 import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../src_forms/src_request_screen.dart';
@@ -61,9 +62,26 @@ class _SrcOfficeScreenState extends State<SrcOfficeScreen> {
             builder: (context, office) => ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text(
-                  'Representatives',
-                  style: Theme.of(context).textTheme.titleMedium,
+                Row(
+                  children: [
+                    const CrestMark(size: 44),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Representatives',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          Text(
+                            'GCTU SRC — official crest supplied by the council',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 ...office.representatives.map(

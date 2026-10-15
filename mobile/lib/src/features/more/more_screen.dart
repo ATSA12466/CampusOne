@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/brand/brand_mark.dart';
 import '../../core/media/media.dart';
 import '../../core/theme/theme_prefs.dart';
 import '../academics/gpa_screen.dart';
@@ -52,6 +53,8 @@ class MoreScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const CampusBrandMark(size: BrandMarkSize.sm),
+          const SizedBox(height: 16),
           HeroBanner(
             image: DemoImages.campusLife,
             compact: true,

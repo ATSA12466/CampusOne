@@ -1,7 +1,6 @@
 "use client";
 import { cva, type VariantProps } from "class-variance-authority";
 import { useEffect, useState } from "react";
-import { CampusImage } from "@/components/media/campus-image";
 import { srcLogo } from "@/config/images";
 import { cn } from "@/lib/utils/cn";
 
@@ -20,7 +19,11 @@ interface PublicBranding {
   logoDark: string;
 }
 
-/** Header brand: built-in defaults first, enhanced by published Super Admin branding. */
+/**
+ * Header brand: the supplied SRC crest (or a Super Admin upload) beside the
+ * wordmark. The artwork carries no tile, frame or background of its own — it
+ * sits directly on the surface, so nothing square is drawn around the logo.
+ */
 export function BrandMark({
   tone,
   size,
@@ -28,6 +31,7 @@ export function BrandMark({
   wordmark = true,
 }: VariantProps<typeof variants> & { className?: string; wordmark?: boolean }) {
   const [branding, setBranding] = useState<PublicBranding | null>(null);
+  const [logoFailed, setLogoFailed] = useState(false);
   useEffect(() => {
     let cancelled = false;
     fetch("/api/branding/public", { headers: { Accept: "application/json" } })
@@ -43,37 +47,23 @@ export function BrandMark({
   const name = branding?.displayName?.trim() || "CampusOne";
   const tagline = branding?.tagline?.trim() || "YOUR CAMPUS, CONNECTED";
   const customLogo = branding?.logoLight?.trim() || "";
+  // Published upload wins, then the council-supplied crest. A broken logo just
+  // leaves the wordmark; no placeholder box is drawn in its place.
+  const logoSrc = logoFailed ? "" : customLogo || srcLogo?.src || "";
+  const logoAlt = customLogo ? `${name} logo` : (srcLogo?.alt ?? `${name} logo`);
   return (
     <span className={cn(variants({ tone, size }), className)}>
-      {customLogo ? (
+      {logoSrc ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={customLogo}
-          alt={`${name} logo`}
-          className="size-11 shrink-0 rounded-control object-contain"
+          src={logoSrc}
+          alt={logoAlt}
+          width={44}
+          height={44}
+          onError={() => setLogoFailed(true)}
+          className="size-11 shrink-0 object-contain"
         />
-      ) : srcLogo ? (
-        <CampusImage
-          image={srcLogo}
-          aspect="square"
-          fit="contain"
-          sizes="44px"
-          className="size-11 bg-transparent"
-          showProvenance={false}
-        />
-      ) : (
-        <span
-          className="grid size-11 shrink-0 place-items-center rounded-control border border-current/25 text-[9px] leading-tight opacity-80"
-          role="img"
-          aria-label="Official SRC logo slot — artwork pending"
-        >
-          <span aria-hidden="true" className="text-center font-medium">
-            SRC
-            <br />
-            logo slot
-          </span>
-        </span>
-      )}
+      ) : null}
       {wordmark ? (
         <span className="font-semibold tracking-tight">
           {name}

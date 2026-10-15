@@ -38,6 +38,16 @@ export const metadata: Metadata = {
   title: { default: "CampusOne — Your campus, connected", template: "%s | CampusOne" },
   description,
   applicationName: "CampusOne",
+  // Owner-supplied SRC crest renderings — see scripts/brand-icons.mjs.
+  icons: {
+    icon: [
+      { url: "/brand/favicon-32.png", rel: "icon", sizes: "32x32", type: "image/png" },
+      { url: "/brand/app-icon-512.png", rel: "icon", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/brand/apple-touch-icon-180.png", rel: "apple-touch-icon", sizes: "180x180", type: "image/png" },
+    ],
+  },
   robots: { index: false, follow: false }, // Student/demo content is not an indexable public directory.
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "CampusOne" },
 };

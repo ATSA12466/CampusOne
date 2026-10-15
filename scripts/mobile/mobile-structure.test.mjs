@@ -563,3 +563,123 @@ test("app shell adapts to tablets with a navigation rail", () => {
   assert.ok(shell.includes("NavigationBar"), "phones must keep the bottom bar");
   assert.ok(shell.includes("maxWidth"), "wide content must be width-capped");
 });
+
+function pngDimensions(file) {
+  const header = readFileSync(file).subarray(0, 24);
+  assert.equal(header.subarray(1, 4).toString("ascii"), "PNG", `${file} must be a PNG`);
+  return `${header.readUInt32BE(16)}x${header.readUInt32BE(20)}`;
+}
+
+test("brand artwork is the supplied crest and is bundled at build sizes", () => {
+  // Masters: the council's 1024px uploads, kept byte-identical at the repo root.
+  for (const master of ["SRCLogo.png", "campusone_app_icon.png"])
+    assert.equal(pngDimensions(join(root, master)), "1024x1024", master);
+
+  assert.equal(pngDimensions(join(mobile, "assets/icon-1024.png")), "1024x1024");
+  assert.equal(pngDimensions(join(mobile, "assets/src-crest.png")), "512x512");
+  const pubspec = readFileSync(join(mobile, "pubspec.yaml"), "utf8");
+  for (const asset of ["assets/icon-1024.png", "assets/src-crest.png"])
+    assert.ok(pubspec.includes(asset), `pubspec must bundle ${asset}`);
+
+  // Android: 48/72/96/144/192 legacy icons and 108/162/216/324/432 adaptive foregrounds.
+  const android = join(mobile, "android/app/src/main/res");
+  for (const [density, legacy, adaptive] of [
+    ["mdpi", 48, 108],
+    ["hdpi", 72, 162],
+    ["xhdpi", 96, 216],
+    ["xxhdpi", 144, 324],
+    ["xxxhdpi", 192, 432],
+  ]) {
+    assert.equal(pngDimensions(join(android, `mipmap-${density}/ic_launcher.png`)), `${legacy}x${legacy}`);
+    assert.equal(
+      pngDimensions(join(android, `mipmap-${density}/ic_launcher_foreground.png`)),
+      `${adaptive}x${adaptive}`,
+    );
+  }
+
+  // iOS names files by points x points @ scale; pixels must be points * scale.
+  const ios = join(mobile, "ios/Runner/Assets.xcassets/AppIcon.appiconset");
+  for (const file of readdirSync(ios)) {
+    const match = /^Icon-App-(\d+(?:\.\d+)?)x\d+(?:\.\d+)?@(\d+)x\.png$/.exec(file);
+    if (!match) continue;
+    const pixels = Math.round(Number(match[1]) * Number(match[2]));
+    assert.equal(pngDimensions(join(ios, file)), `${pixels}x${pixels}`, file);
+  }
+});
+
+test("every brand surface renders the supplied crest, never a redraw", () => {
+  const brand = readFileSync(join(lib, "src/core/brand/brand_mark.dart"), "utf8");
+  assert.ok(brand.includes("assets/src-crest.png"), "brand mark must bundle the crest");
+  assert.ok(brand.includes("assets/icon-1024.png"), "brand mark must fall back to the app icon");
+  assert.ok(brand.includes("class CampusBrandMark"), "the shared brand mark widget must exist");
+  assert.ok(brand.includes("class CrestMark"), "the bare crest widget must exist");
+  assert.ok(
+    brand.includes("Ghana Communication Technology University"),
+    "the crest must keep its descriptive label for screen readers",
+  );
+  for (const [file, token] of [
+    ["src/features/auth/sign_in_screen.dart", "CampusBrandMark"],
+    ["src/features/onboarding/welcome_screen.dart", "CampusBrandMark"],
+    ["src/features/more/more_screen.dart", "CampusBrandMark"],
+    ["src/features/catalog/src_office_screen.dart", "CrestMark"],
+  ]) {
+    const source = readFileSync(join(lib, file), "utf8");
+    assert.ok(source.includes("core/brand/brand_mark.dart"), `${file} must import the brand mark`);
+    assert.ok(source.includes(token), `${file} must render ${token}`);
+  }
+  // Artwork paths stay in one place so a missing asset cannot silently vanish.
+  for (const file of files) {
+    if (file.endsWith("core/brand/brand_mark.dart")) continue;
+    const source = sources.get(file);
+    for (const asset of ["assets/icon-1024.png", "assets/src-crest.png"])
+      assert.ok(!source.includes(asset), `${file.replace(root, "")} must use the brand mark, not ${asset}`);
+  }
+});
+
+test("auth screens tell the same photo story as the web", () => {
+  const story = readFileSync(join(lib, "src/features/auth/widgets/auth_story.dart"), "utf8");
+  // Copy is taken verbatim from src/config/auth.ts (authStories).
+  for (const token of [
+    "YOUR CAMPUS, CONNECTED",
+    "Good people. Big possibilities.",
+    "Find your people, make a little plan, and build a campus life that feels like yours.",
+    "YOUR NEXT CHAPTER",
+    "Make this place yours.",
+    "The next idea, the next friendship, the next opportunity. It all starts with showing up.",
+    "A LITTLE HELP",
+    "A pause, not a full stop.",
+    "GCTU · STUDENT LIFE",
+    "Generated demo scene · fictional people, not GCTU photography.",
+    "DemoImages.clubsHero",
+    "DemoImages.innovationNight",
+    "DemoImages.studyCorner",
+  ]) {
+    assert.ok(story.includes(token), `auth story must include ${token}`);
+  }
+  for (const [file, storyName] of [
+    ["src/features/auth/sign_in_screen.dart", "AuthStory.signIn"],
+    ["src/features/auth/register_screen.dart", "AuthStory.register"],
+    ["src/features/auth/forgot_password_screen.dart", "AuthStory.recovery"],
+  ]) {
+    const source = readFileSync(join(lib, file), "utf8");
+    assert.ok(source.includes(`AuthStoryPanel(story: ${storyName})`), `${file} must render its story panel`);
+    assert.ok(source.includes("widgets/auth_story.dart"), `${file} must import the story`);
+  }
+});
+
+test("the welcome tour is photo-led and labels its demo scenes", () => {
+  const welcome = readFileSync(join(lib, "src/features/onboarding/welcome_screen.dart"), "utf8");
+  for (const token of [
+    "CampusImage(",
+    "DemoImages.campusLife",
+    "DemoImages.eventSocial",
+    "DemoImages.studyCorner",
+    "Generated demo scene · fictional people, not GCTU photography.",
+    "CampusAspect.video",
+  ]) {
+    assert.ok(welcome.includes(token), `welcome tour must include ${token}`);
+  }
+  const slides = welcome.match(/_Slide\(/g) ?? [];
+  const images = welcome.match(/image: DemoImages\./g) ?? [];
+  assert.ok(images.length >= 3, `all three tour slides need artwork, found ${images.length} (slides: ${slides.length - 1})`);
+});

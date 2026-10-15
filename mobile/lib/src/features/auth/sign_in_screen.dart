@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
 import '../../core/push/push_service.dart';
+import '../../core/brand/brand_mark.dart';
 import '../../core/widgets/states.dart';
+import 'widgets/auth_story.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
 
@@ -80,10 +82,12 @@ class _SignInScreenState extends State<SignInScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(
-                      Icons.school_outlined,
-                      size: 64,
-                      color: theme.colorScheme.primary,
+                    // The web puts this photo story beside the form; on a phone
+                    // it opens the screen, same picture and copy.
+                    const AuthStoryPanel(story: AuthStory.signIn),
+                    const SizedBox(height: 28),
+                    const Center(
+                      child: CampusBrandMark(size: BrandMarkSize.lg, center: true),
                     ),
                     const SizedBox(height: 16),
                     Text(

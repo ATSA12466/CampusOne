@@ -14,8 +14,9 @@ exists. Do not claim otherwise.
 - [ ] Apple Developer + Google Play accounts, app names, bundle ownership.
 - [ ] Privacy policy URL + terms URL (required by both stores).
 - [ ] Support contact email/URL for listings.
-- [ ] Crest/artwork files (none are in the repo; placeholders must not ship as
-      the launcher icon — see below).
+- [x] Crest/artwork files: the council's `SRCLogo.png` +
+      `campusone_app_icon.png` masters ship in the repo and are scaled by
+      `node scripts/brand-icons.mjs`. Re-run it after any artwork update.
 
 ## 1. Backend before apps
 
@@ -38,8 +39,9 @@ exists. Do not claim otherwise.
       commit), verify `applicationId com.campusone.app`, `flutter build appbundle`.
 - [ ] iOS: signing team, `flutter build ipa`, verify `campusone://` scheme and
       camera/photo-library usage strings in `Info.plist`.
-- [ ] Replace `assets/icon-1024.png` + launcher icons with final artwork; keep
-      supplied crest art intact (no recoloring).
+- [x] `assets/icon-1024.png`, Android legacy/adaptive icons and the iOS icon
+      set are generated from the supplied crest art (no recolouring). Re-run
+      `node scripts/brand-icons.mjs` before a release build.
 - [ ] Run on a physical Android phone + iPhone over LTE (no dev machine, no
       LAN): cold start → gate (if no baked URL) → sign in → Events → Scan →
       Messages → offline airplane-mode relaunch → saved-session retry.

@@ -244,7 +244,19 @@ export const images = {
   },
 } as const satisfies Record<string, CampusMedia>;
 
-export const srcLogo: CampusMedia | null = null; // Supply the official SRC artwork here; do not fabricate a logo.
+/**
+ * Official GCTU SRC crest, supplied by the council. The master file lives at the
+ * repository root (`SRCLogo.png`) and is only ever scaled — never recoloured,
+ * redrawn or cropped. Regenerate the scaled copies with `node scripts/brand-icons.mjs`.
+ */
+export const srcLogo: CampusMedia | null = {
+  src: "/brand/src-crest-512.png",
+  alt: "Ghana Communication Technology University Students' Representative Council crest.",
+  width: 512,
+  height: 512,
+  provenance: "upload",
+  sourceNote: "Official SRC crest supplied by the council.",
+};
 export function imageForSrc(src: string): CampusMedia | undefined {
   return Object.values(images).find((image) => image.src === src);
 }

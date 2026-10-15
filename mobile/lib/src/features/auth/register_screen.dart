@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
 import '../../core/widgets/states.dart';
+import 'widgets/auth_story.dart';
+import 'widgets/auth_story.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -61,6 +63,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const AuthStoryPanel(story: AuthStory.register),
+                const SizedBox(height: 24),
                 TextFormField(
                   controller: _name,
                   textCapitalization: TextCapitalization.words,

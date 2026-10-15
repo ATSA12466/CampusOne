@@ -363,6 +363,21 @@ console.log("\nBranding (/admin/branding)");
     check("the uploaded asset is served back", served.status() === 200, `got ${served.status()}`);
   }
   check("Publish is offered but not taken automatically", await page.getByRole("button", { name: "Publish", exact: true }).isVisible());
+
+  // Leave the store exactly as we found it: the check uploads a test asset, and
+  // a leftover 1x1 logo would replace the real mark in every header.
+  await admin.request.put(`${base}/api/admin/branding`, { data: { ...before.draft, logoLight: previousLogo } });
+  const restoredBranding = (await json(admin, "/api/admin/branding")).body;
+  check(
+    "the audit restores the draft logo it replaced",
+    (restoredBranding.draft.logoLight ?? "") === previousLogo,
+    `draft logoLight=\"${restoredBranding.draft.logoLight}\"`,
+  );
+  check(
+    "the audit leaves published branding untouched",
+    (restoredBranding.published.logoLight ?? "") === (before.published.logoLight ?? ""),
+    `published logoLight=\"${restoredBranding.published.logoLight}\"`,
+  );
 }
 
 console.log("\nStudent boundary");

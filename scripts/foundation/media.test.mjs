@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 const { cropRectangle } = await import("../../src/lib/media/crop.ts");
 const { imageFileSchema } = await import("../../src/components/media/validation/image.schema.ts");
-const { images, isAllowedImageSrc, imageForSrc } = await import("../../src/config/images.ts");
+const { images, isAllowedImageSrc, imageForSrc, srcLogo } = await import("../../src/config/images.ts");
 const crop = { x: 50, y: 50, zoom: 1, aspect: 1 };
 test("crop geometry centers, zooms and clamps a square", () => {
   assert.deepEqual(cropRectangle(1600, 900, crop), { x: 350, y: 0, width: 900, height: 900 });
@@ -78,5 +78,40 @@ test("registry assets have meaningful alt, provenance and real local files", () 
     assert.equal(isAllowedImageSrc(source), false, source);
   assert.ok(
     readFileSync("src/app/fonts/Manrope-OFL.txt", "utf8").includes("SIL OPEN FONT LICENSE"),
+  );
+});
+
+function pngSize(file) {
+  const header = readFileSync(file).subarray(0, 24);
+  assert.equal(header.subarray(1, 4).toString("ascii"), "PNG", `${file} must be a PNG`);
+  return { width: header.readUInt32BE(16), height: header.readUInt32BE(20) };
+}
+test("owner-supplied SRC crest and app icon are wired into the web", () => {
+  // Supplied by the council, so the branded logo slot is no longer empty.
+  assert.ok(srcLogo, "srcLogo must carry the supplied crest");
+  assert.equal(srcLogo.provenance, "upload");
+  assert.ok(srcLogo.alt.length > 12);
+  assert.ok(existsSync(`public${srcLogo.src}`), srcLogo.src);
+  assert.equal(isAllowedImageSrc(srcLogo.src), true);
+  // Masters stay untouched at the repository root; only scaled copies are generated.
+  for (const master of ["SRCLogo.png", "campusone_app_icon.png"]) {
+    const size = pngSize(master);
+    assert.deepEqual(size, { width: 1024, height: 1024 }, master);
+  }
+  for (const file of [
+    "app-icon-512.png",
+    "apple-touch-icon-180.png",
+    "favicon-32.png",
+    "src-crest-512.png",
+  ]) {
+    assert.ok(existsSync(`public/brand/${file}`), file);
+  }
+  assert.deepEqual(pngSize("public/brand/app-icon-512.png"), { width: 512, height: 512 });
+  assert.deepEqual(pngSize("public/brand/src-crest-512.png"), { width: 512, height: 512 });
+  const layout = readFileSync("src/app/layout.tsx", "utf8");
+  assert.ok(layout.includes("/brand/favicon-32.png"), "root layout must serve the favicon");
+  assert.ok(
+    layout.includes("/brand/apple-touch-icon-180.png"),
+    "root layout must serve the apple touch icon",
   );
 });
