@@ -149,3 +149,18 @@ full iOS icon set, `mobile/assets/{icon-1024,src-crest}.png` and
 artwork, and neither draws a tile, border or background behind it. Sizes are
 asserted on every platform, so a bad regeneration fails the suite rather than
 shipping a wrong icon.
+
+`AUDIT_BASE_URL=http://localhost:3000 npm run audit:brand`
+(`scripts/brand-check.mjs`) closes the loop against a running server: it checks
+the served PNGs, the favicon/apple-touch links in the document, the crest in the
+signed-out header and on signed-in routes, the alt text, the absence of the old
+placeholder slot, and that no console/hydration error appears on those surfaces
+(21 checks).
+
+**Regenerating after an artwork update:**
+
+```bash
+node scripts/brand-icons.mjs                     # masters at the repo root → every icon
+npm run test:mobile                              # asserts the sizes on all three platforms
+AUDIT_BASE_URL=http://localhost:3000 npm run audit:brand
+```

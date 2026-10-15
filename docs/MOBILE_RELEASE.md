@@ -17,7 +17,7 @@ App Store.
 - Android platform folder, iOS platform folder, launcher + adaptive icons on
   both (scaled from the council's crest by `node scripts/brand-icons.mjs`),
   camera permission declarations, guarded push wiring.
-- Structural suite: `npm run test:mobile` (31 structural + 15 media checks, no
+- Structural suite: `npm run test:mobile` (35 structural + 15 media checks, no
   SDK needed); it also holds the icon sizes on all three platforms and the
   brand-mark centralisation to the supplied crest.
   Requires Flutter ≥3.24 / Dart ≥3.5 for `flutter` commands (`app_links`).

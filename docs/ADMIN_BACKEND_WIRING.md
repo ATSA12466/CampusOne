@@ -43,6 +43,7 @@ npm run db:seed                                   # creates .data/campusone.json
 npm run dev                                       # or: npm run build && npm run start
 npm run audit:admin                               # API-level contract + RBAC check
 AUDIT_BASE_URL=http://localhost:3000 npm run audit:admin-ui   # browser-level check
+AUDIT_BASE_URL=http://localhost:3000 npm run audit:brand      # crest on every brand surface
 ```
 
 `npm run audit:admin` (`scripts/admin-live-check.mjs`) needs nothing but Node: it
@@ -68,9 +69,14 @@ grants are revoked. Re-running against the same store is safe.
 | Check | Result |
 | --- | --- |
 | `npm run audit:admin` | **87 passed, 0 failed** |
-| `npm run audit:admin-ui` | **51 passed, 0 failed** |
+| `npm run audit:admin-ui` | **55 passed, 0 failed** (self-seeds its fixtures) |
+| `npm run audit:brand` | **21 passed, 0 failed** (see `docs/MOBILE_PHOTO_PASS.md` §5) |
 | `npm run lint` / `npm run typecheck` | clean |
 | `npm test` (native suites) | all 16 isolated suites pass |
+
+The moderation section seeds its own report through `POST /api/reports` when a
+freshly seeded store has nothing to triage, so the check is reproducible from a
+clean clone instead of depending on leftover data.
 
 What the browser run proves, per dashboard (reads back from the API after each
 UI action):

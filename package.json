@@ -33,7 +33,8 @@
     "audit:admin": "node scripts/admin-live-check.mjs",
     "audit:admin-ui": "node scripts/admin-ui-check.mjs",
     "audit:dependencies": "node scripts/release-dependency-audit.mjs",
-    "audit:toolchain": "node scripts/release-toolchain-audit.mjs"
+    "audit:toolchain": "node scripts/release-toolchain-audit.mjs",
+    "audit:brand": "node scripts/brand-check.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

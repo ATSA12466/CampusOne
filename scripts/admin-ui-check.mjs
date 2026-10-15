@@ -245,8 +245,24 @@ console.log("\nContent / materials (/admin/content)");
 
 console.log("\nModeration (/admin/moderation)");
 {
-  const reports = (await json(admin, "/api/admin/reports")).body.items;
+  let reports = (await json(admin, "/api/admin/reports")).body.items ?? [];
+  if (!reports.length) {
+    // A freshly seeded store has nothing to moderate. Create the report as a
+    // student through the real endpoint so the dashboard still triages live data.
+    const seeded = await json(student, "/api/reports", {
+      method: "POST",
+      data: {
+        targetType: "other",
+        targetId: "admin-ui-check",
+        reason: "Queue seeded by scripts/admin-ui-check.mjs.",
+        detail: "Created so the moderation dashboard always has a live report to review.",
+      },
+    });
+    check("a student can seed a report for the moderation queue", seeded.status === 201, `got ${seeded.status}`);
+    reports = (await json(admin, "/api/admin/reports")).body.items ?? [];
+  }
   const target = reports.find((r) => r.status === "open") ?? reports[0];
+  check("the moderation queue returns a report to triage", Boolean(target), `${reports.length} reports`);
   await visit("/admin/moderation");
   check("the moderation queue renders live reports", (await page.locator("main").innerText()).includes(target.reason.slice(0, 24)));
 
@@ -264,7 +280,7 @@ console.log("\nModeration (/admin/moderation)");
   check("UI triage persists the owner + resolution", after?.assignee === "UI check owner" && after?.resolution.includes("admin-ui-check"), `assignee=${after?.assignee}`);
   check("the triaged report moves to the decided section", await page.locator("section[aria-labelledby='mod-done']").getByText(target.reason.slice(0, 20), { exact: false }).first().isVisible().catch(() => false));
 
-  // Restore the seeded report so repeat runs start from the same place.
+  // Restore the report so repeat runs start from the same place.
   await json(admin, `/api/admin/reports/${target.id}`, {
     method: "PATCH",
     data: { status: target.status, assignee: target.assignee, resolution: target.resolution },
