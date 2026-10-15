@@ -4,10 +4,11 @@ import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
 import '../../core/push/push_service.dart';
 import '../../core/brand/brand_mark.dart';
+import '../../core/widgets/notice.dart';
 import '../../core/widgets/states.dart';
-import 'widgets/auth_story.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
+import 'widgets/auth_story.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -204,6 +205,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                       child: const Text('Forgot your password?'),
                     ),
+                    const SizedBox(height: 20),
+                    const IndependenceNotice(),
                   ],
                 ),
               ),

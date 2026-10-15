@@ -683,3 +683,53 @@ test("the welcome tour is photo-led and labels its demo scenes", () => {
   const images = welcome.match(/image: DemoImages\./g) ?? [];
   assert.ok(images.length >= 3, `all three tour slides need artwork, found ${images.length} (slides: ${slides.length - 1})`);
 });
+
+test("no Dart file imports the same library twice", () => {
+  // Compilers tolerate duplicate imports; this audit can run without the SDK,
+  // and a repeated import is always a mistake left behind by a patch.
+  const offenders = [];
+  for (const file of files) {
+    const imports = sources.get(file).match(/^\s*import\s+[^;]+;/gm) ?? [];
+    const seen = new Map();
+    for (const statement of imports) {
+      const key = statement.replace(/\s+/g, " ").trim();
+      if (seen.has(key)) offenders.push(`${file.replace(root, "")}: ${key}`);
+      seen.set(key, true);
+    }
+  }
+  assert.deepEqual(offenders, [], `duplicate imports: ${offenders.join(" | ")}`);
+});
+
+test("auth and onboarding screens carry the independence notice", () => {
+  // Dart splits long copy across adjacent literals; join them before matching.
+  const notice = readFileSync(join(lib, "src/core/widgets/notice.dart"), "utf8")
+    .replace(/["']/g, "")
+    .replace(/\s+/g, " ");
+  assert.ok(
+    notice.includes("not an official GCTU or SRC service"),
+    "the notice must say CampusOne is not an official GCTU or SRC service",
+  );
+  assert.ok(notice.includes("Never reuse your LMS or SIP password"), "the notice must warn about reusing campus passwords");
+  for (const file of [
+    "src/features/auth/sign_in_screen.dart",
+    "src/features/auth/register_screen.dart",
+    "src/features/auth/forgot_password_screen.dart",
+    "src/features/onboarding/welcome_screen.dart",
+  ]) {
+    const source = readFileSync(join(lib, file), "utf8");
+    assert.ok(source.includes("IndependenceNotice"), `${file} must show the independence notice`);
+    assert.ok(source.includes("core/widgets/notice.dart"), `${file} must import the notice`);
+  }
+});
+
+test("registration fields match the server contract", () => {
+  const register = readFileSync(join(lib, "src/features/auth/register_screen.dart"), "utf8");
+  // Mirrors src/server/auth.ts registerSchema: name 2-80, email <=254,
+  // password 8-128, programme <=120, level <=40.
+  for (const token of ["maxLength: 80", "maxLength: 254", "maxLength: 128", "maxLength: 120", "maxLength: 40"]) {
+    assert.ok(register.includes(token), `register must bound its input with ${token}`);
+  }
+  const server = readFileSync(join(root, "src/server/auth.ts"), "utf8");
+  assert.ok(server.includes("min(2).max(80)"), "server name bounds changed — update the app too");
+  assert.ok(server.includes("min(8).max(128)"), "server password bounds changed — update the app too");
+});

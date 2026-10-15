@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/widgets/notice.dart';
 import '../../core/widgets/states.dart';
-import 'widgets/auth_story.dart';
 import 'widgets/auth_story.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -68,9 +68,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _name,
                   textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(labelText: 'Full name'),
-                  validator: (value) =>
-                      value != null && value.trim().length >= 2
+                  maxLength: 80,
+                  decoration: const InputDecoration(
+                    labelText: 'Full name',
+                    counterText: '',
+                  ),
+                  validator: (value) => (value ?? '').trim().length >= 2
                       ? null
                       : 'Enter your full name.',
                 ),
@@ -79,9 +82,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   autocorrect: false,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  maxLength: 254,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    counterText: '',
+                  ),
                   validator: (value) =>
-                      value != null && value.contains('@')
+                      (value ?? '').trim().contains('@') &&
+                          (value ?? '').trim().length <= 254
                       ? null
                       : 'Enter a valid email address.',
                 ),
@@ -89,11 +97,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _password,
                   obscureText: true,
+                  maxLength: 128,
                   decoration: const InputDecoration(
                     labelText: 'Password (8+ characters)',
+                    counterText: '',
                   ),
-                  validator: (value) =>
-                      value != null && value.length >= 8
+                  validator: (value) => (value ?? '').length >= 8
                       ? null
                       : 'Use at least 8 characters.',
                 ),
@@ -101,15 +110,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _programme,
                   textCapitalization: TextCapitalization.words,
+                  maxLength: 120,
                   decoration: const InputDecoration(
                     labelText: 'Programme (optional)',
+                    counterText: '',
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _level,
+                  maxLength: 40,
                   decoration: const InputDecoration(
                     labelText: 'Level (optional, e.g. 200)',
+                    counterText: '',
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -123,6 +136,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         )
                       : const Text('Create account'),
                 ),
+                const SizedBox(height: 20),
+                const IndependenceNotice(),
               ],
             ),
           ),

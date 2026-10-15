@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app/app_shell.dart';
 import '../../core/brand/brand_mark.dart';
 import '../../core/media/media.dart';
+import '../../core/widgets/notice.dart';
 import '../auth/sign_in_screen.dart';
 import 'welcome_prefs.dart';
 
@@ -158,6 +159,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     onPressed: () => _finish(),
                     child: const Text('Browse as guest'),
                   ),
+                  const SizedBox(height: 12),
+                  const IndependenceNotice(compact: true),
                 ],
               ),
             ),

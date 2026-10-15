@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/widgets/notice.dart';
 import '../../core/widgets/states.dart';
-import 'widgets/auth_story.dart';
 import 'widgets/auth_story.dart';
 
 /// Password-reset request. No mail delivery is configured yet: the server
@@ -92,6 +92,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               onPressed: _busy ? null : _submit,
               child: const Text('Request reset link'),
             ),
+            const SizedBox(height: 20),
+            const IndependenceNotice(),
           ],
         ),
       ),
