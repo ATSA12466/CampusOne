@@ -2,7 +2,10 @@
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-const files = ["./mobile/mobile-structure.test.mjs"];
+const files = [
+  "./mobile/mobile-structure.test.mjs",
+  "./mobile/mobile-media.test.mjs",
+];
 const cwd = fileURLToPath(new URL("./", import.meta.url));
 let failed = 0;
 for (const file of files) {

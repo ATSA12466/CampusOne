@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../attendance/attendance_history_screen.dart';
 import '../auth/sign_in_screen.dart';
@@ -35,19 +36,42 @@ class ProfileScreen extends StatelessWidget {
             )
           else
             Card(
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.primaryContainer,
-                  child: Icon(
-                    Icons.person,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    CampusAvatar(
+                      name: user.name,
+                      image: CampusMedia.tryParse(user.avatar, alt: user.name),
+                      size: 64,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            user.name,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            user.email,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                          const SizedBox(height: 6),
+                          StatusChip(label: user.roleLabel()),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                title: Text(user.name),
-                subtitle: Text('${user.email}\n${user.roleLabel()}'),
-                isThreeLine: true,
               ),
             ),
           const SizedBox(height: 12),

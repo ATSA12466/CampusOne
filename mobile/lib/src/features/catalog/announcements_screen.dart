@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/store/saves_repository.dart';
 import '../../core/widgets/states.dart';
 import '../listings/listing_detail_screen.dart';
@@ -133,18 +134,17 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
                       itemCount: items.length,
                       itemBuilder: (context, index) {
                         final item = items[index];
-                        return Card(
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            title: Text(item.title),
-                            subtitle: Text(
-                              '${item.content}\n${item.category} · ${prettyDate(item.publishedAt)}',
-                            ),
-                            isThreeLine: true,
-                            trailing: const Icon(Icons.chevron_right),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: MediaCard(
+                            image: item.cover ?? DemoImages.campusLife,
+                            eyebrow:
+                                '${item.category}${item.pinned ? ' · Pinned' : ''}',
+                            title: item.title,
+                            description: item.content,
+                            facts: [
+                              MediaFact('Published', prettyDate(item.publishedAt)),
+                            ],
                             onTap: () => Navigator.of(context)
                                 .push(
                                   MaterialPageRoute(

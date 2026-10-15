@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../attendance/exec_sessions_screen.dart';
 import '../catalog/catalog_repository.dart';
@@ -156,6 +157,15 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                CampusImage(
+                  image:
+                      event.cover ??
+                      DemoImages.forCategory(event.category) ??
+                      DemoImages.innovationNight,
+                  alt: event.cover?.alt,
+                  aspect: CampusAspect.panorama,
+                ),
+                const SizedBox(height: 16),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -210,6 +220,121 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       StatusChip(label: event.organizer),
                   ],
                 ),
+                if (event.highlights.isNotEmpty ||
+                    event.agenda.isNotEmpty ||
+                    event.speakers.isNotEmpty ||
+                    event.description.isNotEmpty ||
+                    event.gallery.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  if ((event.tagline.isEmpty) && event.description.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(event.description.first),
+                    ),
+                  if (event.highlights.isNotEmpty) ...[
+                    Text(
+                      'Highlights',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 6),
+                    for (final highlight in event.highlights)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.star_border,
+                              size: 18,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(child: Text(highlight)),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 14),
+                  ],
+                  if (event.agenda.isNotEmpty) ...[
+                    Text(
+                      'Programme',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 6),
+                    for (final item in event.agenda)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: 56,
+                              child: Text(
+                                item.startsAt.length >= 16
+                                    ? item.startsAt.substring(11, 16)
+                                    : '',
+                                style: Theme.of(context).textTheme.labelMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item.title,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                  if (item.description.isNotEmpty)
+                                    Text(
+                                      item.description,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodySmall,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 14),
+                  ],
+                  if (event.speakers.isNotEmpty) ...[
+                    Text(
+                      'Hosts & speakers',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 4),
+                    for (final speaker in event.speakers)
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: CampusAvatar(
+                          name: speaker.name,
+                          image: speaker.avatar,
+                        ),
+                        title: Text(speaker.name),
+                        subtitle: Text(speaker.role),
+                      ),
+                    const SizedBox(height: 10),
+                  ],
+                  if (event.gallery.isNotEmpty)
+                    GalleryStrip(
+                      images: event.gallery,
+                      caption:
+                          'Demo event imagery — not an actual GCTU event.',
+                    ),
+                ],
                 if (data.ticket != null) ...[
                   const SizedBox(height: 16),
                   _TicketCard(ticket: data.ticket!),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../catalog/catalog_repository.dart';
 import 'club_manage_screen.dart';
@@ -123,6 +124,15 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                CampusImage(
+                  image:
+                      club.cover ??
+                      DemoImages.forCategory(club.category) ??
+                      DemoImages.clubsHero,
+                  alt: club.cover?.alt,
+                  aspect: CampusAspect.panorama,
+                ),
+                const SizedBox(height: 16),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -160,8 +170,80 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
                     ),
                   ],
                 ),
+                if (club.tagline.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    club.tagline,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 12),
                 Text(club.description),
+                if (club.highlights.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    'What members do',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  for (final highlight in club.highlights)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.check_circle_outline,
+                            size: 18,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(child: Text(highlight)),
+                        ],
+                      ),
+                    ),
+                ],
+                if (club.story.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  for (final paragraph in club.story)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Text(paragraph),
+                    ),
+                ],
+                if (club.leaders.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    'Leads',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  for (final leader in club.leaders)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: CampusAvatar(
+                        name: leader.name,
+                        image: leader.avatar,
+                      ),
+                      title: Text(leader.name),
+                      subtitle: Text(leader.role),
+                    ),
+                ],
+                if (club.gallery.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    'Photos',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  GalleryStrip(
+                    images: club.gallery,
+                    caption: 'Demo club imagery — not an actual GCTU club.',
+                  ),
+                ],
                 const SizedBox(height: 16),
                 Card(
                   child: Padding(

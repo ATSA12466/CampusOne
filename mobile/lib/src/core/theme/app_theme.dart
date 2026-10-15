@@ -8,6 +8,18 @@ class CampusColors {
   static const success = Color(0xFF1E7E46);
   static const warning = Color(0xFFB7791F);
   static const danger = Color(0xFFB3261E);
+
+  /// Dark-theme brand tint (web `--brand: #8fb0ff` in dark mode).
+  static const primaryDarkMode = Color(0xFF8FB0FF);
+}
+
+/// Radii copied from the web design tokens so both clients round things the
+/// same way: controls 14, cards 20, media 24, pills fully round.
+class CampusRadii {
+  static const control = 14.0;
+  static const card = 20.0;
+  static const media = 24.0;
+  static const pill = 999.0;
 }
 
 ThemeData buildLightTheme() {
@@ -23,7 +35,7 @@ ThemeData buildDarkTheme() {
   final scheme = ColorScheme.fromSeed(
     seedColor: CampusColors.primary,
     brightness: Brightness.dark,
-    primary: const Color(0xFF8FB0FF),
+    primary: CampusColors.primaryDarkMode,
     secondary: CampusColors.accent,
   );
   return _theme(scheme);
@@ -43,7 +55,7 @@ ThemeData _theme(ColorScheme scheme) {
     cardTheme: CardThemeData(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(CampusRadii.card),
         side: BorderSide(color: scheme.outlineVariant),
       ),
       clipBehavior: Clip.antiAlias,
@@ -52,7 +64,7 @@ ThemeData _theme(ColorScheme scheme) {
       style: FilledButton.styleFrom(
         minimumSize: const Size(0, 48),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(CampusRadii.control),
         ),
       ),
     ),
@@ -60,7 +72,7 @@ ThemeData _theme(ColorScheme scheme) {
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(0, 48),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(CampusRadii.control),
         ),
       ),
     ),
@@ -68,7 +80,9 @@ ThemeData _theme(ColorScheme scheme) {
       style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(CampusRadii.control),
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
     navigationBarTheme: NavigationBarThemeData(
@@ -79,7 +93,21 @@ ThemeData _theme(ColorScheme scheme) {
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(CampusRadii.control),
+      ),
+    ),
+    dialogTheme: DialogThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(CampusRadii.card),
+      ),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(CampusRadii.card),
+        ),
+      ),
     ),
   );
 }

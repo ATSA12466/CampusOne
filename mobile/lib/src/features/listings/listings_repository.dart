@@ -1,6 +1,7 @@
 import '../../core/api/api_client.dart';
 import '../../core/api/api_paths.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/campus_media.dart';
 import '../../core/store/personal_store.dart';
 
 /// One generic shape over the catalog listing domains.
@@ -14,6 +15,8 @@ class ListingItem {
     required this.chips,
     required this.body,
     this.extra = const {},
+    this.photo,
+    this.gallery = const <CampusMedia>[],
   });
 
   final String domain;
@@ -25,8 +28,21 @@ class ListingItem {
   final List<String> body;
   final Map<String, String> extra;
 
+  /// Lead photo (web `details.cover`), plus the full gallery where the record
+  /// has one. Records without a photo render the shared stand-in frame.
+  final CampusMedia? photo;
+  final List<CampusMedia> gallery;
+
   factory ListingItem.fromJson(String domain, Map<String, dynamic> json) {
     final details = asMap(json['details']);
+    final gallery = CampusMedia.listFrom(details['gallery']);
+    final photo = CampusMedia.firstOf([
+      details['cover'],
+      json['cover'],
+      json['photo'],
+      json['thumbnail'],
+      if (gallery.isNotEmpty) details['gallery'][0],
+    ], alt: asString(details['coverAlt']));
     final body = <String>[];
     final intro = asString(details['intro']);
     if (intro.isNotEmpty) body.add(intro);
@@ -45,6 +61,8 @@ class ListingItem {
             .toList(),
         body: body,
         extra: {'kind': asString(details['kind'])},
+        photo: photo,
+        gallery: gallery,
       ),
       'opportunities' => ListingItem(
         domain: domain,
@@ -64,6 +82,8 @@ class ListingItem {
           'applyUrl': asString(json['applyUrl'], asString(details['applyUrl'])),
           'deadline': asString(json['deadline']),
         },
+        photo: photo,
+        gallery: gallery,
       ),
       'lostFound' => ListingItem(
         domain: domain,
@@ -76,6 +96,8 @@ class ListingItem {
             .where((c) => c.isNotEmpty)
             .toList(),
         body: body,
+        photo: photo,
+        gallery: gallery,
       ),
       'media' => ListingItem(
         domain: domain,
@@ -87,7 +109,9 @@ class ListingItem {
             .where((c) => c.isNotEmpty)
             .toList(),
         body: body,
-        extra: {'source': asString(json['source'])},
+        extra: {'source': asString(json['source']), 'kind': asString(json['kind']), 'duration': asString(json['duration']), 'creator': asString(json['creator'])},
+        photo: photo,
+        gallery: gallery,
       ),
       'campaigns' => ListingItem(
         domain: domain,
@@ -100,7 +124,9 @@ class ListingItem {
             .where((c) => c.isNotEmpty)
             .toList(),
         body: body,
-        extra: {'ends': asString(json['endDate'])},
+        extra: {'ends': asString(json['endDate']), 'start': asString(json['startDate']), 'advertiser': asString(json['advertiser']), 'placement': asString(json['placement']), 'status': asString(json['status']), 'photo': photo?.src ?? ''},
+        photo: photo,
+        gallery: gallery,
       ),
       'courses' => ListingItem(
         domain: domain,
@@ -110,6 +136,8 @@ class ListingItem {
         description: asString(json['description']),
         chips: const [],
         body: body,
+        photo: photo,
+        gallery: gallery,
       ),
       'resources' => ListingItem(
         domain: domain,
@@ -122,6 +150,8 @@ class ListingItem {
             .where((c) => c.isNotEmpty)
             .toList(),
         body: body,
+        photo: photo,
+        gallery: gallery,
       ),
       'accommodation' => ListingItem(
         domain: domain,
@@ -138,7 +168,11 @@ class ListingItem {
                   ? (json['facilities'] as List).whereType<String>().toList()
                   : <String>[])
               .join(' · '),
+          'location': asString(json['location']),
+          'price': asString(json['price']),
         },
+        photo: photo,
+        gallery: gallery,
       ),
       'announcements' => ListingItem(
         domain: domain,
@@ -152,6 +186,8 @@ class ListingItem {
           if (json['pinned'] == true) 'Pinned',
         ].where((c) => c.isNotEmpty).toList(),
         body: body,
+        photo: photo,
+        gallery: gallery,
       ),
       _ => ListingItem(
         domain: domain,

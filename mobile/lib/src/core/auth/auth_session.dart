@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api/api_client.dart';
 import '../api/api_paths.dart';
+import '../media/media_resolver.dart';
 import 'user.dart';
 
 /// Owns the Bearer token (secure storage) and the signed-in user.
@@ -124,6 +125,8 @@ class AuthSession extends ChangeNotifier {
   /// without a revocation round-trip.
   Future<void> setBaseUrl(String value) async {
     _api.setBaseUrl(value);
+    // Photos are resolved against the server they came from.
+    MediaResolver.clearCache();
     await saveBaseUrl(_api.baseUrl);
     await _clearToken();
     _user = null;
@@ -194,6 +197,11 @@ class SessionScope extends InheritedNotifier<AuthSession> {
     assert(scope != null, 'SessionScope missing above this widget.');
     return scope!.api;
   }
+
+  /// Null instead of an assertion failure: shared media widgets must stay
+  /// renderable (as stand-ins) outside the signed-in shell.
+  static ApiClient? apiOrNull(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<SessionScope>()?.api;
 }
 
 /// Small JSON helpers shared by repositories.

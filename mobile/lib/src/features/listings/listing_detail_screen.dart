@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/links/app_links.dart';
 import '../../core/store/personal_store.dart';
 import '../../core/store/saves_repository.dart';
@@ -94,9 +95,19 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
           onRetry: _reload,
           builder: (context, data) {
             final item = data.item;
+            final heroImage =
+                item.photo ??
+                (item.gallery.isNotEmpty ? item.gallery.first : null) ??
+                DemoImages.campusLife;
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                CampusImage(
+                  image: heroImage,
+                  alt: item.photo?.alt ?? heroImage.alt,
+                  aspect: CampusAspect.panorama,
+                ),
+                const SizedBox(height: 16),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -160,6 +171,14 @@ class _ListingDetailScreenState extends State<ListingDetailScreen> {
                 for (final paragraph in item.body) ...[
                   const SizedBox(height: 12),
                   Text(paragraph),
+                ],
+                if (item.gallery.length > 1) ...[
+                  const SizedBox(height: 16),
+                  GalleryStrip(
+                    images: item.gallery,
+                    caption:
+                        'Demo listing imagery — not an actual property or item.',
+                  ),
                 ],
                 const SizedBox(height: 16),
                 _DomainActions(item: item),

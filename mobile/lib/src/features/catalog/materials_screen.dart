@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../listings/listing_detail_screen.dart';
 import 'catalog_repository.dart';
@@ -58,19 +59,19 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
               itemCount: materials.length,
               itemBuilder: (context, index) {
                 final material = materials[index];
-                return Card(
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    leading: const Icon(Icons.description_outlined),
-                    title: Text(material.title),
-                    subtitle: Text(
-                      '${material.course} · ${material.category}\n${material.description}',
-                    ),
-                    isThreeLine: true,
-                    trailing: const Icon(Icons.chevron_right),
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 14),
+                  child: MediaCard(
+                    image: material.cover ?? DemoImages.studyCorner,
+                    eyebrow: material.category,
+                    title: material.title,
+                    description: material.description,
+                    facts: [
+                      if (material.course.isNotEmpty)
+                        MediaFact('Course', material.course),
+                      if (material.author.isNotEmpty)
+                        MediaFact('Added by', material.author),
+                    ],
                     onTap: () => Navigator.of(context)
                         .push(
                           MaterialPageRoute(

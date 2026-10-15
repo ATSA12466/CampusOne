@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/search/search_repository.dart';
 import '../../core/store/saves_repository.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/widgets/states.dart';
 import '../clubs/club_detail_screen.dart';
 import '../events/event_detail_screen.dart';
@@ -144,14 +146,70 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       itemCount: results.hits.length,
                       itemBuilder: (context, index) {
                         final hit = results.hits[index];
-                        return Card(
-                          child: ListTile(
-                            title: Text(hit.title),
-                            subtitle: Text(
-                              '${hit.collection}${hit.subtitle.isEmpty ? '' : ' · ${hit.subtitle}'}',
+                        final art = _collectionArtwork(hit.collection);
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Card(
+                            child: InkWell(
+                              borderRadius:
+                                  BorderRadius.circular(CampusRadii.card),
+                              onTap: () => _openHit(hit),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 64,
+                                      height: 64,
+                                      child: CampusImage(
+                                        image: art,
+                                        alt: art.alt,
+                                        aspect: CampusAspect.square,
+                                        showProvenance: false,
+                                        borderRadius: BorderRadius.circular(
+                                          CampusRadii.control,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            hit.title,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            '${hit.collection}${hit.subtitle.isEmpty ? '' : ' · ${hit.subtitle}'}',
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.copyWith(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurfaceVariant,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Icon(Icons.chevron_right),
+                                  ],
+                                ),
+                              ),
                             ),
-                            trailing: const Icon(Icons.chevron_right),
-                            onTap: () => _openHit(hit),
                           ),
                         );
                       },
@@ -252,3 +310,20 @@ class _Results {
   final List<SearchHit> hits;
   final List<SavedItem> saved;
 }
+
+/// Search results have no photo of their own yet, so each hit is framed with the
+/// artwork of the collection it came from — the same rhythm the web search and
+/// directory pages use.
+CampusMedia _collectionArtwork(String collection) => switch (collection) {
+  'clubs' => DemoImages.clubMakers,
+  'events' => DemoImages.eventShowcase,
+  'announcements' => DemoImages.campusLife,
+  'accommodation' => DemoImages.housingRoom,
+  'marketplace' => DemoImages.marketDesk,
+  'opportunities' => DemoImages.campusLife,
+  'resources' => DemoImages.studyCorner,
+  'media' => DemoImages.mediaPause,
+  'posts' => DemoImages.eventSocial,
+  'lostFound' => DemoImages.eventSocial,
+  _ => DemoImages.campusLife,
+};

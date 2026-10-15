@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../src_forms/src_request_screen.dart';
 import 'catalog_repository.dart';
@@ -64,7 +65,7 @@ class _SrcOfficeScreenState extends State<SrcOfficeScreen> {
                 ...office.representatives.map(
                   (rep) => Card(
                     child: ListTile(
-                      leading: CircleAvatar(child: Text(_initials(rep.name))),
+                      leading: CampusAvatar(name: rep.name, image: rep.avatar),
                       title: Text(rep.name),
                       subtitle: Text(rep.role),
                     ),
@@ -78,21 +79,32 @@ class _SrcOfficeScreenState extends State<SrcOfficeScreen> {
                 const SizedBox(height: 8),
                 ...office.projects.map(
                   (project) => Card(
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      title: Text(project.title),
-                      subtitle: Text(project.description),
-                      trailing: StatusChip(
-                        label: project.status.replaceAll('-', ' '),
-                        tone: project.status == 'in-progress'
-                            ? ChipTone.warning
-                            : project.status == 'completed'
-                            ? ChipTone.success
-                            : ChipTone.info,
-                      ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (project.cover != null)
+                          CampusImage(
+                            image: project.cover,
+                            alt: project.cover?.alt,
+                          ),
+                        ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          title: Text(project.title),
+                          subtitle: Text(project.description),
+                          trailing: StatusChip(
+                            label: project.status.replaceAll('-', ' '),
+                            tone: project.status == 'in-progress'
+                                ? ChipTone.warning
+                                : project.status == 'completed'
+                                ? ChipTone.success
+                                : ChipTone.info,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -104,15 +116,6 @@ class _SrcOfficeScreenState extends State<SrcOfficeScreen> {
     );
   }
 
-  String _initials(String name) {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    if (parts.isEmpty) return '?';
-    if (parts.length == 1) {
-      return parts.first.characters.first.toUpperCase();
-    }
-    return '${parts.first.characters.first}${parts.last.characters.first}'
-        .toUpperCase();
-  }
 }
 
 class _SrcOffice {

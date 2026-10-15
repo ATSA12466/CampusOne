@@ -31,3 +31,6 @@ Thumbs.db
 # IDE
 .vscode/*
 !.vscode/extensions.json
+
+# Local server runtime data written by the API probes/audits
+.data-validity/

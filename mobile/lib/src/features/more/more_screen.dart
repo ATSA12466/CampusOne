@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/theme/theme_prefs.dart';
 import '../academics/gpa_screen.dart';
 import '../onboarding/welcome_prefs.dart';
@@ -12,6 +13,7 @@ import '../badges/badges_screen.dart';
 import '../catalog/accommodation_screen.dart';
 import '../catalog/announcements_screen.dart';
 import '../catalog/materials_screen.dart';
+import '../events/events_screen.dart';
 import '../catalog/src_office_screen.dart';
 import '../clubs/clubs_screen.dart';
 import '../community/community_screen.dart';
@@ -50,6 +52,75 @@ class MoreScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          HeroBanner(
+            image: DemoImages.campusLife,
+            compact: true,
+            eyebrow: 'Everything else',
+            title: session.user == null
+                ? 'Your campus, pictured.'
+                : 'Hello, ${session.user!.name.split(' ').first}.',
+            description:
+                'Campus picture shortcuts, plus every tool that lives outside '
+                'the main tabs.',
+            children: [
+              FilledButton(
+                onPressed: () => _go(context, const ClubsScreen()),
+                child: const Text('Clubs & societies'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 208,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                for (final action in <(String, String, IconData, CampusMedia, Widget)>[
+                  (
+                    'Events',
+                    'Be part of the moment',
+                    Icons.celebration_outlined,
+                    DemoImages.innovationNight,
+                    const EventsScreen(),
+                  ),
+                  (
+                    'Marketplace',
+                    'Good finds, closer',
+                    Icons.storefront_outlined,
+                    DemoImages.marketDesk,
+                    const MarketplaceScreen(),
+                  ),
+                  (
+                    'Find a room',
+                    'Make yourself at home',
+                    Icons.home_work_outlined,
+                    DemoImages.housingRoom,
+                    const AccommodationScreen(),
+                  ),
+                  (
+                    'Library',
+                    'A little head start',
+                    Icons.menu_book_outlined,
+                    DemoImages.studyCorner,
+                    const MaterialsScreen(),
+                  ),
+                ])
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: SizedBox(
+                      width: 172,
+                      child: PhotoTile(
+                        image: action.$4,
+                        title: action.$1,
+                        description: action.$2,
+                        icon: action.$3,
+                        onTap: () => _go(context, action.$5),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
           if (signedIn) ...[
             const _Heading('My campus'),
             _Row(

@@ -6,6 +6,19 @@ routes, and Flutter screens — not names alone.
 
 Legend: ✅ full · ◐ partial · ❌ missing · 🖥️ web-only by design · 📱 mobile-only
 
+**Photo parity pass (2026-10-15).** Flutter now renders the same artwork as the
+web in the same places: a shared media layer (`mobile/lib/src/core/media/`)
+mirrors `src/components/media/*` (aspect frames, hero scrim, photo tiles, media
+cards, placeholder chip, loading skeleton, reduced-motion handling), and the
+bundled demo set mirrors `src/config/images.ts` file-for-file and alt-for-alt.
+Home follows the web composition order (welcome → campus-radar carousel → clubs
+hero → today's plan → photo shortcuts → recommendations). Directories, detail
+pages, discovery, saved items, community and profile are picture-led. Screens no
+longer build their own image widgets — `scripts/mobile/mobile-media.test.mjs`
+enforces that, along with artwork existence, provenance labels and the source
+policy (relative paths only, no traversal, https + allow-list for absolute URLs,
+`data:` photos decoded in-memory).
+
 Data-path note: web defaults to **demo fixtures** (`NEXT_PUBLIC_DATA_SOURCE=demo`);
 web API mode targets a separate port-4000 platform API (unverified). Flutter
 talks to this repo's same-origin Bearer-token API (`/api/*`, `docs/MOBILE_API.md`).

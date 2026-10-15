@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/store/saves_repository.dart';
 import '../../core/widgets/states.dart';
 import '../clubs/club_detail_screen.dart';
@@ -101,17 +102,70 @@ class _SavedScreenState extends State<SavedScreen> {
                       icon: Icons.bookmark_border_outlined,
                     ),
                   for (final item in items)
-                    Card(
-                      child: ListTile(
-                        leading: const Icon(Icons.bookmark_outlined),
-                        title: Text(item.entityId),
-                        subtitle: Text(item.kind),
-                        trailing: IconButton(
-                          tooltip: 'Remove',
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () => _remove(item),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Card(
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          onTap: () => _open(item),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 64,
+                                  height: 64,
+                                  child: CampusImage(
+                                    image: _savedArtwork(item),
+                                    alt: '${item.kind} on CampusOne',
+                                    aspect: CampusAspect.square,
+                                    showProvenance: false,
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(14),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.entityId,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        item.kind,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  tooltip: 'Remove',
+                                  icon: const Icon(Icons.delete_outline),
+                                  onPressed: () => _remove(item),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        onTap: () => _open(item),
                       ),
                     ),
                 ],
@@ -152,4 +206,22 @@ class _SavedScreenState extends State<SavedScreen> {
       context,
     ).push(MaterialPageRoute(builder: (_) => screen)).then((_) => _reload());
   }
+}
+
+/// Saved records store an id, not a photo — frame each one with its collection's
+/// artwork so the list still reads as pictures, like the web saved views.
+CampusMedia _savedArtwork(SavedItem item) {
+  final domain = item.domain.isEmpty ? item.kind : item.domain;
+  return switch (domain) {
+    'club' || 'clubs' => DemoImages.clubMakers,
+    'event' || 'events' => DemoImages.eventShowcase,
+    'announcement' || 'announcements' => DemoImages.campusLife,
+    'accommodation' => DemoImages.housingRoom,
+    'marketplace' => DemoImages.marketDesk,
+    'lostFound' || 'lost-found' => DemoImages.eventSocial,
+    'opportunities' => DemoImages.campusLife,
+    'resources' => DemoImages.studyCorner,
+    'media' => DemoImages.mediaPause,
+    _ => DemoImages.campusLife,
+  };
 }

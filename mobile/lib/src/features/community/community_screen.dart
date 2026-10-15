@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/photos/app_photos.dart';
 import '../../core/store/personal_store.dart';
 import '../../core/widgets/states.dart';
@@ -291,13 +293,7 @@ class _PostCardState extends State<PostCard> {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  child: Text(
-                    post.author.isEmpty
-                        ? '?'
-                        : post.author.characters.first.toUpperCase(),
-                  ),
-                ),
+                CampusAvatar(name: post.author, size: 40),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -336,6 +332,15 @@ class _PostCardState extends State<PostCard> {
             ),
             const SizedBox(height: 8),
             Text(post.body),
+            if ((post.photo ?? '').isNotEmpty) ...[
+              const SizedBox(height: 12),
+              CampusImage(
+                image: CampusMedia.tryParse(post.photo, alt: 'Photo shared with this post'),
+                alt: 'Photo shared with this post',
+                aspect: CampusAspect.video,
+                borderRadius: BorderRadius.circular(CampusRadii.media),
+              ),
+            ],
             const SizedBox(height: 8),
             Row(
               children: [

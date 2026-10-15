@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import 'listing_detail_screen.dart';
 import 'listings_repository.dart';
@@ -174,18 +175,27 @@ class _DomainListScreenState extends State<DomainListScreen> {
                           icon: widget.icon,
                         ),
                       for (final item in data.items)
-                        Card(
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            title: Text(item.title),
-                            subtitle: Text(
-                              '${item.subtitle}${item.description.isEmpty ? '' : '\n${item.description}'}',
-                            ),
-                            isThreeLine: item.description.isNotEmpty,
-                            trailing: const Icon(Icons.chevron_right),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 14),
+                          child: MediaCard(
+                            image:
+                                item.photo ??
+                                _domainArtwork(widget.domain),
+                            eyebrow: item.chips.isEmpty
+                                ? widget.domain
+                                : item.chips.first,
+                            title: item.title,
+                            description: item.description.isEmpty
+                                ? item.subtitle
+                                : item.description,
+                            facts: [
+                              if (item.subtitle.isNotEmpty)
+                                MediaFact('Details', item.subtitle),
+                              for (final entry
+                                  in item.extra.entries.take(2))
+                                if (entry.value.isNotEmpty)
+                                  MediaFact(entry.key, entry.value),
+                            ],
                             onTap: () => Navigator.of(context)
                                 .push(
                                   MaterialPageRoute(
@@ -217,3 +227,17 @@ class _Data {
   final List<ListingItem> items;
   final List<PhotoRecord> records;
 }
+
+/// Category artwork so every domain list keeps the web's photo rhythm even for
+/// records that carry no photo of their own.
+CampusMedia _domainArtwork(String domain) => switch (domain) {
+  'marketplace' => DemoImages.marketDesk,
+  'accommodation' => DemoImages.housingRoom,
+  'opportunities' => DemoImages.campusLife,
+  'resources' => DemoImages.studyCorner,
+  'media' => DemoImages.mediaPause,
+  'lostFound' => DemoImages.eventSocial,
+  'events' => DemoImages.eventShowcase,
+  'courses' => DemoImages.studyCorner,
+  _ => DemoImages.campusLife,
+};

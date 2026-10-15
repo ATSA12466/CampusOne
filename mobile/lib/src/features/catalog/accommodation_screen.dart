@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../listings/listing_detail_screen.dart';
 import 'catalog_repository.dart';
@@ -58,19 +59,23 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
               itemCount: listings.length,
               itemBuilder: (context, index) {
                 final listing = listings[index];
-                return Card(
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    leading: const Icon(Icons.home_work_outlined),
-                    title: Text(listing.title),
-                    subtitle: Text(
-                      '${listing.location} · ${listing.price}\n${listing.facilities.join(' · ')}',
-                    ),
-                    isThreeLine: true,
-                    trailing: const Icon(Icons.chevron_right),
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 14),
+                  child: MediaCard(
+                    image: listing.cover ?? DemoImages.housingRoom,
+                    eyebrow: listing.kind.isEmpty ? 'Accommodation' : listing.kind,
+                    title: listing.title,
+                    description: listing.intro.isNotEmpty
+                        ? listing.intro
+                        : listing.facilities.join(' · '),
+                    facts: [
+                      if (listing.location.isNotEmpty)
+                        MediaFact('Location', listing.location),
+                      if (listing.price.isNotEmpty)
+                        MediaFact('Price', listing.price),
+                      if (listing.facilities.isNotEmpty)
+                        MediaFact('Facilities', listing.facilities.take(2).join(', ')),
+                    ],
                     onTap: () => Navigator.of(context)
                         .push(
                           MaterialPageRoute(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
+import '../../core/util/campus_date.dart';
 import '../../core/widgets/states.dart';
 import '../catalog/catalog_repository.dart';
 import 'event_detail_screen.dart';
@@ -215,23 +217,42 @@ class _EventsScreenState extends State<EventsScreen> {
                             ),
                           ),
                         for (final event in visible)
-                          Card(
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              title: Text(event.title),
-                              subtitle: Text(
-                                '${event.date} · ${event.venue}\n${event.registered}/${event.seats} going',
-                              ),
-                              isThreeLine: true,
-                              trailing: event.full
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: MediaCard(
+                              image:
+                                  event.cover ??
+                                  DemoImages.forCategory(event.category) ??
+                                  DemoImages.innovationNight,
+                              eyebrow: event.category,
+                              title: event.title,
+                              description: event.tagline,
+                              facts: [
+                                MediaFact(
+                                  'When',
+                                  relativeDayLabel(
+                                    parseCampusDate(event.date) ??
+                                        campusNow(),
+                                  ),
+                                ),
+                                MediaFact('Venue', event.venue),
+                                MediaFact(
+                                  'Going',
+                                  '${event.registered}/${event.seats}',
+                                ),
+                                if (event.price > 0) MediaFact('Price', 'GHS ${event.price}'),
+                              ],
+                              footer: event.cancelled
+                                  ? const StatusChip(
+                                      label: 'Cancelled',
+                                      tone: ChipTone.danger,
+                                    )
+                                  : event.full
                                   ? const StatusChip(
                                       label: 'Full',
                                       tone: ChipTone.warning,
                                     )
-                                  : const Icon(Icons.chevron_right),
+                                  : null,
                               onTap: () => Navigator.of(context)
                                   .push(
                                     MaterialPageRoute(

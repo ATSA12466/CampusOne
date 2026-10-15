@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../catalog/catalog_repository.dart';
 import 'club_detail_screen.dart';
@@ -135,17 +136,24 @@ class _ClubsScreenState extends State<ClubsScreen> {
                             ),
                           ),
                         for (final club in visible)
-                          Card(
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              title: Text(club.name),
-                              subtitle: Text(
-                                '${club.category} · ${club.memberCount} members',
-                              ),
-                              trailing: club.accepting
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 14),
+                            child: MediaCard(
+                              image:
+                                  club.cover ??
+                                  DemoImages.forCategory(club.category) ??
+                                  DemoImages.clubsHero,
+                              eyebrow: club.category,
+                              title: club.name,
+                              description: club.description,
+                              facts: [
+                                MediaFact('Members', '${club.memberCount}'),
+                                if (club.meeting.isNotEmpty)
+                                  MediaFact('Meets', club.meeting),
+                                if (club.venue.isNotEmpty)
+                                  MediaFact('Venue', club.venue),
+                              ],
+                              footer: club.accepting
                                   ? null
                                   : const StatusChip(
                                       label: 'Closed',
