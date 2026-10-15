@@ -1,5 +1,16 @@
 # CampusOne — final frontend handoff
 
+> **Branch note (2026-10-15):** every measurement below was taken on
+> `arena/aa6b22f8-campusone`, which has since been deleted (see
+> [BRANCH_CLEANUP.md](BRANCH_CLEANUP.md); that branch's patch is archived at
+> `/home/user/arena-aa6b22f8-campusone-5362fbe.patch`). Ongoing work — admin
+> backend wiring, the mobile photo/brand passes and the cross-platform parity
+> matrix — lives on `arena/7684bcd9-campusone` and is documented in
+> [ADMIN_BACKEND_WIRING.md](ADMIN_BACKEND_WIRING.md),
+> [MOBILE_PHOTO_PASS.md](MOBILE_PHOTO_PASS.md) and
+> [CROSS_PLATFORM_PARITY.md](CROSS_PLATFORM_PARITY.md). The numbers below are
+> preserved as the original frontend verification evidence, not re-run.
+
 > **Follow-up:** [release hardening](RELEASE_HARDENING.md) adds fresh-install CI, safer DB CLI configuration and 11 release tests (**221 total**), reducing development audit reports **9 → 5** with runtime still zero. Earlier measurement/summary counts below are preserved as the original frontend completion evidence.
 
 ## Completion and scope

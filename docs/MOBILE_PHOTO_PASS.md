@@ -101,10 +101,16 @@ screens, a feature directory hero on clubs/events/discover, and the
   on your behalf." The Server screen likewise keeps mobile-only wording, because
   pointing the app at a backend has no web equivalent.
 * Screens with no band on purpose: the message thread, QR scanner and live
-  check-in, session detail, executive management sheets, the student report
-  screen, account/register/forgot-password and onboarding art. They are utility
-  or auth surfaces where the corresponding web screen has no header photo
-  either.
+  check-in, session detail, executive management sheets and the student report
+  screen. They are utility surfaces where the corresponding web screen has no
+  header photo either.
+* The auth and welcome screens are photo-led too, but with the web's own
+  pictures rather than the band: `AuthStoryPanel` carries `src/config/auth.ts`
+  (story image, eyebrow, title, description, "Generated demo scene" caption) on
+  sign-in, register and reset, and each welcome-tour slide shows a labelled demo
+  scene.
+* The brand mark is the council's crest (see the brand-icons note below), with
+  no tile or frame drawn around it on either client.
 
 ## 4. Not verified here (honest limits)
 
@@ -127,3 +133,19 @@ screens, a feature directory hero on clubs/events/discover, and the
 * Still without a band by design (see §3a), and the next surfaces for the pass:
   the message thread header, QR/live check-in screens, and the photo record
   editor.
+
+## 5. Brand artwork (2026-10-15)
+
+The council supplied `SRCLogo.png` (crest, transparent) and
+`campusone_app_icon.png` (crest on the CampusOne gradient). Both masters stay at
+the repository root untouched; `node scripts/brand-icons.mjs` scales them into
+the Android legacy icons (48/72/96/144/192), the Android adaptive foregrounds
+(108/162/216/324/432 with the crest inside the safe zone over `#0B2545`), the
+full iOS icon set, `mobile/assets/{icon-1024,src-crest}.png` and
+`public/brand/{favicon-32,apple-touch-icon-180,app-icon-512,src-crest-512}.png`.
+
+`BrandMark` (web) and `CampusBrandMark`/`CrestMark` (app,
+`mobile/lib/src/core/brand/brand_mark.dart`) are the only places that load the
+artwork, and neither draws a tile, border or background behind it. Sizes are
+asserted on every platform, so a bad regeneration fails the suite rather than
+shipping a wrong icon.
