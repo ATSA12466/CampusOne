@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui";
-import { engagementService } from "@/services/demo";
+import { engagementService } from "@/services/api";
 
 export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const event = engagementService.listEvents().find((item) => item.id === id);
+  const events = await engagementService.listEvents();
+  const event = events.find((item: any) => item.id === id);
   if (!event) notFound();
 
   return (

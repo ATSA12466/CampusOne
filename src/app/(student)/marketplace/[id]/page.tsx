@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui";
-import { lifeService } from "@/services/demo";
+import { lifeService } from "@/services/api";
 
 export default async function MarketplaceDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const listing = lifeService.listMarketplace().find((item) => item.id === id);
+  const listings = await lifeService.listMarketplace();
+  const listing = listings.find((item: any) => item.id === id);
   if (!listing) notFound();
 
   return (

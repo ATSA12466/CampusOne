@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui";
-import { lifeService } from "@/services/demo";
+import { lifeService } from "@/services/api";
 
 export default async function AccommodationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const listing = lifeService.listAccommodation().find((item) => item.id === id);
+  const listings = await lifeService.listAccommodation();
+  const listing = listings.find((item: any) => item.id === id);
   if (!listing) notFound();
 
   return (
@@ -16,7 +17,7 @@ export default async function AccommodationDetailPage({ params }: { params: Prom
         <p className="mt-2 text-sm text-slate-600">{listing.location}</p>
         <p className="mt-2 text-slate-700">{listing.price}</p>
         <ul className="mt-3 list-disc pl-5 text-sm text-slate-700">
-          {listing.facilities.map((facility) => <li key={facility}>{facility}</li>)}
+          {listing.facilities.map((facility: string) => <li key={facility}>{facility}</li>)}
         </ul>
       </Card>
     </div>

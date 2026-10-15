@@ -1,10 +1,10 @@
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Card } from "@/components/ui";
-import { productivityService } from "@/services/demo";
+import { productivityService } from "@/services/api";
 
-export function TimetableFeature() {
-  const sessions = productivityService.listTimetableSessions();
+export async function TimetableFeature() {
+  const sessions = await productivityService.listTimetableSessions();
   if (!sessions.length) {
     return <EmptyState title="No timetable yet" description="Add your first class session to get started." />;
   }
@@ -24,7 +24,7 @@ export function TimetableFeature() {
               </tr>
             </thead>
             <tbody>
-              {sessions.map((session) => (
+              {sessions.map((session: any) => (
                 <tr key={session.id} className="border-b border-[var(--color-border)]">
                   <td className="py-2">{session.day}</td>
                   <td>{session.course}</td>
