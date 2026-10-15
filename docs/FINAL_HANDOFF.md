@@ -84,6 +84,9 @@ AUDIT_BASE_URL=http://127.0.0.1:3001 AUDIT_ALL_ENTITIES=1 node scripts/phase8-me
 AUDIT_BASE_URL=http://127.0.0.1:3001 node scripts/audit/interactions.mjs
 # Run Lighthouse alone, sequentially, without builds/other browser audits:
 AUDIT_BASE_URL=http://127.0.0.1:3001 node scripts/audit/lighthouse.mjs
+# Admin dashboards against the backend (see docs/ADMIN_BACKEND_WIRING.md):
+npm run audit:admin
+AUDIT_BASE_URL=http://127.0.0.1:3001 npm run audit:admin-ui
 npm audit --omit=dev
 npm audit  # Known nine development advisories; nonzero is not concealed
 ```

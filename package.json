@@ -30,6 +30,8 @@
     "audit:journey": "node scripts/audit/interactions.mjs",
     "test": "node scripts/run-native-tests.mjs",
     "test:release": "node scripts/release-tests.mjs",
+    "audit:admin": "node scripts/admin-live-check.mjs",
+    "audit:admin-ui": "node scripts/admin-ui-check.mjs",
     "audit:dependencies": "node scripts/release-dependency-audit.mjs",
     "audit:toolchain": "node scripts/release-toolchain-audit.mjs"
   },
