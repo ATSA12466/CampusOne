@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/store/personal_store.dart';
 import '../../core/study/study_planner.dart';
 import '../../core/widgets/states.dart';
@@ -216,7 +217,11 @@ class _StudyAssistantScreenState extends State<StudyAssistantScreen> {
   @override
   Widget build(BuildContext context) {
     final signedIn = SessionScope.sessionOf(context).signedIn;
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.studyCorner,
+      eyebrow: 'YOUR WEEK, WITH A LITTLE BREATHING ROOM',
+      title: 'Find your study rhythm.',
+      description: 'Make a little space for revision, practice and the breaks that keep you going. A thoughtful personal plan, one focused session at a time.',
       appBar: AppBar(title: const Text('Study assistant')),
       body: ListView(
         padding: const EdgeInsets.all(16),

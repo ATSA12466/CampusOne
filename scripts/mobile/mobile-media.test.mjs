@@ -147,13 +147,30 @@ test("every record-bearing screen shows pictures", () => {
     "lib/src/features/community/community_screen.dart",
     "lib/src/features/profile/profile_screen.dart",
     "lib/src/features/more/more_screen.dart",
+    "lib/src/features/notifications/notifications_screen.dart",
+    "lib/src/features/tasks/tasks_screen.dart",
+    "lib/src/features/schedule/timetable_screen.dart",
+    "lib/src/features/schedule/calendar_screen.dart",
+    "lib/src/features/messages/conversations_screen.dart",
+    "lib/src/features/attendance/attendance_history_screen.dart",
+    "lib/src/features/badges/badges_screen.dart",
+    "lib/src/features/study/study_assistant_screen.dart",
+    "lib/src/features/freshers/freshers_screen.dart",
+    "lib/src/features/enquiries/enquiries_screen.dart",
+    "lib/src/features/executives/executives_screen.dart",
+    "lib/src/features/executives/manage_hub_screen.dart",
+    "lib/src/features/impact/my_impact_screen.dart",
+    "lib/src/features/academics/gpa_screen.dart",
+    "lib/src/features/academics/study_notes_screen.dart",
+    "lib/src/features/src_forms/src_request_screen.dart",
+    "lib/src/features/settings/server_settings_screen.dart",
   ]) {
     const file = join(mobile, screen);
     assert.ok(existsSync(file), `missing ${screen}`);
     const source = read(file);
     assert.match(
       source,
-      /CampusImage|MediaCard|PhotoTile|HeroBanner|CampusAvatar|GalleryStrip|ClubsHeroCard|QuickActionsRow|EventFeatureCard|EventRow|AnnouncementRow|home_cards\.dart/,
+      /CampusImage|MediaCard|PhotoTile|HeroBanner|CampusAvatar|GalleryStrip|PhotoScaffold|PhotoPage|ClubsHeroCard|QuickActionsRow|EventFeatureCard|EventRow|AnnouncementRow|home_cards\.dart/,
       `${screen} has no photo surface`,
     );
     const delegates = screen.includes("home/home_screen.dart");
@@ -187,6 +204,7 @@ test("home mirrors the web composition order", () => {
     "CheckInBanner",
     "TodayOverviewCard",
     "QuickActionsRow",
+    "InstitutionalLinksCard",
     "EventFeatureCard",
     "AnnouncementRow",
   ];
@@ -219,4 +237,119 @@ test("clubs hero states its artwork is fictional", () => {
   const source = read(join(mobile, "lib/src/features/home/widgets/home_cards.dart"));
   assert.ok(source.includes("demo communities to explore"));
   assert.ok(source.includes("Generated imagery · fictional students"));
+});
+
+test("every student screen opens with the magazine photo band", () => {
+  const screens = [
+    "lib/src/features/notifications/notifications_screen.dart",
+    "lib/src/features/tasks/tasks_screen.dart",
+    "lib/src/features/schedule/timetable_screen.dart",
+    "lib/src/features/schedule/calendar_screen.dart",
+    "lib/src/features/messages/conversations_screen.dart",
+    "lib/src/features/attendance/attendance_history_screen.dart",
+    "lib/src/features/badges/badges_screen.dart",
+    "lib/src/features/settings/server_settings_screen.dart",
+    "lib/src/features/study/study_assistant_screen.dart",
+    "lib/src/features/freshers/freshers_screen.dart",
+    "lib/src/features/enquiries/enquiries_screen.dart",
+    "lib/src/features/executives/executives_screen.dart",
+    "lib/src/features/executives/manage_hub_screen.dart",
+    "lib/src/features/impact/my_impact_screen.dart",
+    "lib/src/features/academics/gpa_screen.dart",
+    "lib/src/features/academics/study_notes_screen.dart",
+    "lib/src/features/src_forms/src_request_screen.dart",
+    "lib/src/features/clubs/clubs_screen.dart",
+    "lib/src/features/events/events_screen.dart",
+    "lib/src/features/discover/discover_screen.dart",
+    "lib/src/features/community/community_screen.dart",
+    "lib/src/features/catalog/accommodation_screen.dart",
+    "lib/src/features/catalog/announcements_screen.dart",
+    "lib/src/features/catalog/materials_screen.dart",
+    "lib/src/features/catalog/src_office_screen.dart",
+    "lib/src/features/profile/profile_screen.dart",
+    "lib/src/features/more/more_screen.dart",
+    "lib/src/features/listings/domain_list_screen.dart",
+  ];
+  for (const screen of screens) {
+    const source = read(join(mobile, screen));
+    assert.match(
+      source,
+      /PhotoScaffold\(|HeroBanner\(|PhotoPage\(/,
+      `${screen} does not open with a photo band`,
+    );
+    const header = read(join(mobile, "lib/src/core/media/media_blocks.dart"));
+    assert.ok(
+      header.includes("class PhotoScaffold") &&
+        header.includes("class PhotoPageHeader") &&
+        header.includes("class PhotoPage"),
+      "the shared photo page primitives are missing",
+    );
+  }
+});
+
+test("screen headers reuse the web's own copy", () => {
+  const pairs = [
+    ["src/features/notifications/index.tsx", "lib/src/features/notifications/notifications_screen.dart"],
+    ["src/features/tasks/index.tsx", "lib/src/features/tasks/tasks_screen.dart"],
+    ["src/features/timetable/index.tsx", "lib/src/features/schedule/timetable_screen.dart"],
+    ["src/features/calendar/index.tsx", "lib/src/features/schedule/calendar_screen.dart"],
+    ["src/features/messages/index.tsx", "lib/src/features/messages/conversations_screen.dart"],
+    ["src/features/participation/index.tsx", "lib/src/features/attendance/attendance_history_screen.dart"],
+    ["src/features/study-assistant/index.tsx", "lib/src/features/study/study_assistant_screen.dart"],
+    ["src/features/freshers/index.tsx", "lib/src/features/freshers/freshers_screen.dart"],
+    ["src/features/src-office/index.tsx", "lib/src/features/catalog/src_office_screen.dart"],
+    ["src/features/community/index.tsx", "lib/src/features/community/community_screen.dart"],
+    ["src/features/announcements/index.tsx", "lib/src/features/catalog/announcements_screen.dart"],
+    ["src/features/profile/index.tsx", "lib/src/features/profile/profile_screen.dart"],
+    ["src/features/management/index.tsx", "lib/src/features/executives/executives_screen.dart"],
+  ];
+  for (const [webPath, dartPath] of pairs) {
+    const web = read(join(root, webPath));
+    const dart = read(join(mobile, dartPath)).replaceAll("\\'", "'");
+    const header = web.match(/<MagazineHeader[\s\S]*?\/>/);
+    assert.ok(header, `${webPath} has no MagazineHeader to mirror`);
+    const props = [...header[0].matchAll(/(?:eyebrow|title|description)="([^"]{4,})"/g)].map(
+      (m) => m[1].replaceAll("&apos;", "'").replaceAll("&amp;", "&"),
+    );
+    assert.ok(props.length >= 3, `${webPath} header props not parsed`);
+    for (const copy of props) {
+      assert.ok(dart.includes(copy), `${dartPath} is missing the web copy: ${copy}`);
+    }
+  }
+  // The directory heroes carry their copy in JSX text rather than props.
+  const clubs = read(join(mobile, "lib/src/features/clubs/clubs_screen.dart")).replaceAll("\\'", "'");
+  assert.ok(clubs.includes("Find your people."));
+  assert.ok(clubs.includes("For the ideas you want to try. And the friends you haven't met yet."));
+  const events = read(join(mobile, "lib/src/features/events/events_screen.dart")).replaceAll("\\'", "'");
+  assert.ok(events.includes("Find your next good plan."));
+  assert.ok(events.includes("For the ideas, the music and the people you haven't met yet."));
+  const discover = read(join(mobile, "lib/src/features/discover/discover_screen.dart")).replaceAll("\\'", "'");
+  assert.ok(discover.includes("A little curiosity goes a long way."));
+  assert.ok(discover.includes("Your next community, good idea or useful find. Take a look around."));
+  const domains = read(join(mobile, "lib/src/features/listings/domain_list_screen.dart")).replaceAll("\\'", "'");
+  for (const copy of [
+    "Good finds. New beginnings.",
+    "Useful things, passed from one student to another.",
+    "Your next door is open.",
+    "A little help finding home.",
+    "Listen. Look. Find a new perspective.",
+    "Good ideas deserve a little space.",
+  ]) {
+    assert.ok(domains.includes(copy), `domain heroes are missing: ${copy}`);
+  }
+});
+
+test("home offers the two official GCTU portals exactly as the web does", () => {
+  const cards = read(join(mobile, "lib/src/features/home/widgets/home_cards.dart"));
+  const home = read(join(mobile, "lib/src/features/home/home_screen.dart"));
+  const web = read(join(root, "src/config/home.ts"));
+  for (const token of ["https://lms.gctu.edu.gh/", "https://sip.gctu.edu.gh/"]) {
+    assert.ok(web.includes(token), `web config lost ${token}`);
+    assert.ok(cards.includes(token), `app is missing ${token}`);
+  }
+  for (const copy of ["GCTU LMS", "Course materials & assignments", "Student portal", "GCTU SIP · registration & results"]) {
+    assert.ok(cards.includes(copy), `portal card is missing: ${copy}`);
+  }
+  assert.ok(home.includes("InstitutionalLinksCard"), "home does not render the portal card");
+  assert.ok(home.includes("openExternalLink"), "portal links must open outside the app");
 });

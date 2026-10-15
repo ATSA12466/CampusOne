@@ -15,7 +15,11 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final session = SessionScope.sessionOf(context);
     final user = session.user;
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.campusLife,
+      eyebrow: 'YOUR CAMPUS, YOUR STORY',
+      title: 'A little more you.',
+      description: 'The things you care about, the people you connect with and the plans you are making.',
       appBar: AppBar(title: const Text('Profile')),
       body: ListView(
         padding: const EdgeInsets.all(16),

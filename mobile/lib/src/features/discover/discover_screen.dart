@@ -66,7 +66,11 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.campusLife,
+      eyebrow: 'ONE CAMPUS. PLENTY OF POSSIBILITIES.',
+      title: 'A little curiosity goes a long way.',
+      description: 'Your next community, good idea or useful find. Take a look around.',
       appBar: AppBar(title: const Text('Discover')),
       body: Column(
         children: [

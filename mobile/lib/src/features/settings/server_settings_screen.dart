@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 
 /// Points the app at a backend. A --dart-define CAMPUSONE_API_URL baked in at
@@ -74,7 +75,11 @@ class _ServerSettingsScreenState extends State<ServerSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.campusLife,
+      eyebrow: 'DEVICE CONNECTION',
+      title: 'Point this app at a server.',
+      description: 'Changing the backend signs you out. Release builds require an https address.',
       appBar: AppBar(title: const Text('Server')),
       body: ListView(
         padding: const EdgeInsets.all(16),

@@ -91,7 +91,12 @@ class _DomainListScreenState extends State<DomainListScreen> {
   @override
   Widget build(BuildContext context) {
     final signedIn = SessionScope.sessionOf(context).signedIn;
-    return Scaffold(
+    final hero = _domainCopy(widget.domain);
+    return PhotoScaffold(
+      image: _domainArtwork(widget.domain),
+      eyebrow: hero.eyebrow,
+      title: hero.title,
+      description: hero.description,
       appBar: AppBar(title: Text(widget.title)),
       floatingActionButton:
           widget.photoCollection != null && signedIn
@@ -230,6 +235,54 @@ class _Data {
 
 /// Category artwork so every domain list keeps the web's photo rhythm even for
 /// records that carry no photo of their own.
+/// Header copy per catalog domain, copied from the web `listingConfig`
+/// (`src/config/listings.ts`) so both clients open a screen the same way.
+class _DomainCopy {
+  const _DomainCopy(this.eyebrow, this.title, this.description);
+
+  final String eyebrow;
+  final String title;
+  final String description;
+}
+
+_DomainCopy _domainCopy(String domain) => switch (domain) {
+  'marketplace' => const _DomainCopy(
+    'MARKETPLACE',
+    'Good finds. New beginnings.',
+    'Useful things, passed from one student to another.',
+  ),
+  'accommodation' => const _DomainCopy(
+    'ACCOMMODATION',
+    'A place to call your own.',
+    'Find a little space for your next chapter.',
+  ),
+  'opportunities' => const _DomainCopy(
+    'OPPORTUNITIES',
+    'Your next door is open.',
+    'Scholarships, internships and chances to try something new.',
+  ),
+  'lostFound' => const _DomainCopy(
+    'LOST & FOUND',
+    'A little help finding home.',
+    'Careful reports and safe handovers.',
+  ),
+  'media' => const _DomainCopy(
+    'TAKE A LITTLE PAUSE',
+    'Listen. Look. Find a new perspective.',
+    'A media library with honest availability and a few licensed playback samples.',
+  ),
+  'campaigns' => const _DomainCopy(
+    'CAMPUS PARTNERS',
+    'Good ideas deserve a little space.',
+    'A transparent view of supplied promotional placements, not a publishing console.',
+  ),
+  _ => const _DomainCopy(
+    'ACADEMICS',
+    'A little more understanding.',
+    'Resources for your next bright idea.',
+  ),
+};
+
 CampusMedia _domainArtwork(String domain) => switch (domain) {
   'marketplace' => DemoImages.marketDesk,
   'accommodation' => DemoImages.housingRoom,

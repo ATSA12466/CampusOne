@@ -494,3 +494,165 @@ class CampusAvatar extends StatelessWidget {
     );
   }
 }
+
+/// Phone-sized magazine page opening, mirroring the web `MagazineHeader`
+/// (`src/components/shared/magazine-header.tsx`): the same photo, eyebrow,
+/// display title, description and provenance line that opens each web screen.
+///
+/// Web screens place it as the first block of the page, so the mobile version
+/// keeps it at the top of the body and lets the screen's own content scroll
+/// underneath.
+class PhotoPage extends StatelessWidget {
+  const PhotoPage({
+    super.key,
+    this.image,
+    required this.eyebrow,
+    required this.title,
+    required this.description,
+    required this.child,
+  });
+
+  final CampusMedia? image;
+  final String eyebrow;
+  final String title;
+  final String description;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        PhotoPageHeader(
+          image: image,
+          eyebrow: eyebrow,
+          title: title,
+          description: description,
+        ),
+        Expanded(child: child),
+      ],
+    );
+  }
+}
+
+/// The photo band itself, without the surrounding page layout.
+class PhotoPageHeader extends StatelessWidget {
+  const PhotoPageHeader({
+    super.key,
+    this.image,
+    required this.eyebrow,
+    required this.title,
+    required this.description,
+  });
+
+  final CampusMedia? image;
+  final String eyebrow;
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return SizedBox(
+      height: 232,
+      width: double.infinity,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          CampusImageFill(image: image, alt: image?.alt, showProvenance: false),
+          const Positioned.fill(child: PhotoScrim()),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  eyebrow.toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    height: 1.15,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: const Color(0xE6FFFFFF),
+                    height: 1.35,
+                  ),
+                ),
+                if (image?.isGenerated ?? false) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    'Generated demo imagery · not an actual campus photograph',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: const Color(0xB3FFFFFF),
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Scaffold that opens a screen with the magazine photo band, matching the web
+/// `MagazineHeader` that opens every student route. The platform app bar (back
+/// button, actions) and the screen's own body stay exactly as they were.
+class PhotoScaffold extends StatelessWidget {
+  const PhotoScaffold({
+    super.key,
+    this.appBar,
+    this.floatingActionButton,
+    this.image,
+    required this.eyebrow,
+    required this.title,
+    required this.description,
+    required this.body,
+  });
+
+  final PreferredSizeWidget? appBar;
+  final Widget? floatingActionButton;
+  final CampusMedia? image;
+  final String eyebrow;
+  final String title;
+  final String description;
+  final Widget body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: appBar,
+      floatingActionButton: floatingActionButton,
+      body: PhotoPage(
+        image: image,
+        eyebrow: eyebrow,
+        title: title,
+        description: description,
+        child: body,
+      ),
+    );
+  }
+}

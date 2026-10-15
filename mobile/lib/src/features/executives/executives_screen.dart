@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/media/media.dart';
 import '../clubs/clubs_screen.dart';
 import '../events/events_screen.dart';
 import 'manage_hub_screen.dart';
@@ -10,7 +11,11 @@ class ExecutivesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.clubMakers,
+      eyebrow: 'A PLACE FOR RESPONSIBILITY',
+      title: 'Clear roles. Thoughtful work.',
+      description: 'Find the existing workspaces relevant to your current profile.',
       appBar: AppBar(title: const Text('Executive tools')),
       body: ListView(
         padding: const EdgeInsets.all(16),

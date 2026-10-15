@@ -63,7 +63,11 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
   @override
   Widget build(BuildContext context) {
     final signedIn = SessionScope.sessionOf(context).signedIn;
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.clubDebate,
+      eyebrow: 'FROM AROUND CAMPUS',
+      title: 'A little news. A bigger picture.',
+      description: 'The useful updates, shared ideas and campus conversations worth knowing about.',
       appBar: AppBar(title: const Text('Announcements')),
       body: Column(
         children: [

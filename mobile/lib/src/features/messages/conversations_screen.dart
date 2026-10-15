@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import 'messages_repository.dart';
 import 'thread_screen.dart';
@@ -61,7 +62,11 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.clubDebate,
+      eyebrow: 'A LITTLE CONNECTION',
+      title: 'Good conversations start here.',
+      description: 'Make room for your study circle, your project team and the people who make campus feel like home.',
       appBar: AppBar(title: const Text('Messages')),
       body: RefreshIndicator(
         onRefresh: _reload,

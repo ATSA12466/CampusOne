@@ -42,7 +42,11 @@ class _AccommodationScreenState extends State<AccommodationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.campusLiving,
+      eyebrow: 'ACCOMMODATION',
+      title: 'A place to call your own.',
+      description: 'Find a little space for your next chapter.',
       appBar: AppBar(title: const Text('Accommodation')),
       body: RefreshIndicator(
         onRefresh: _reload,

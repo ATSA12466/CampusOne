@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/store/personal_store.dart';
 import '../../core/widgets/states.dart';
 import 'academic_tools_repository.dart';
@@ -45,7 +46,11 @@ class _StudyNotesScreenState extends State<StudyNotesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.studyCorner,
+      eyebrow: 'ACADEMICS',
+      title: 'A little more understanding.',
+      description: 'Resources for your next bright idea.',
       appBar: AppBar(title: const Text('Study notes')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _edit(),

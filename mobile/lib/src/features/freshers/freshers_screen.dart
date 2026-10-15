@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../catalog/accommodation_screen.dart';
 import '../catalog/catalog_repository.dart';
@@ -137,7 +138,11 @@ class _FreshersScreenState extends State<FreshersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.studentAma,
+      eyebrow: 'FRESHERS HUB',
+      title: 'Find your people from day one.',
+      description: 'Akwaaba to GCTU. Meet students who share your interests, join a group that feels like home, and settle into campus life one small step at a time.',
       appBar: AppBar(title: const Text('Freshers')),
       body: RefreshIndicator(
         onRefresh: _reload,

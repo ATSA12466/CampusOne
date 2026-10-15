@@ -50,7 +50,7 @@ and use the web dark-mode brand tint.
 ## 3. Verification actually run
 
 ```bash
-node scripts/mobile-tests.mjs      # 28 structural + 12 media assertions, all pass
+node scripts/mobile-tests.mjs      # 28 structural + 15 media assertions, all pass
 node scripts/run-native-tests.mjs  # all 16 isolated native suites pass
 ```
 
@@ -67,7 +67,44 @@ node scripts/run-native-tests.mjs  # all 16 isolated native suites pass
    editor may build raw image widgets);
 8. every record-bearing screen has a photo surface;
 9. models parse the cover/gallery fields the API sends;
-10. home keeps the web composition order, shortcut copy and artwork.
+10. home keeps the web composition order, shortcut copy and artwork;
+11. every student screen opens with the magazine photo band
+    (`PhotoScaffold`/`HeroBanner`/`PhotoPage`);
+12. screen headers reuse the web's own copy — the audit reads the eye brows,
+    titles and descriptions straight out of the web `MagazineHeader` props (and
+    the clubs/events/discover directory heroes) and fails if a Dart screen does
+    not carry the same wording;
+13. home offers the same two official GCTU portals as the web, with the same
+    labels, descriptions and https targets.
+
+## 3a. Photo-opening pass (2026-10-15)
+
+Every student route on the web opens with a picture: `MagazineHeader` on most
+screens, a feature directory hero on clubs/events/discover, and the
+`listingConfig` header on the catalog domains. The app now mirrors that.
+
+* New shared primitives in `mobile/lib/src/core/media/media_blocks.dart`:
+  `PhotoPage`, `PhotoPageHeader` (232px photo band, eyebrow, display title,
+  description, generated-imagery line) and `PhotoScaffold` (app bar + floating
+  action button + photo band above the screen's own body, which keeps scrolling
+  and refreshing exactly as before).
+* 28 screens now open with the band and the web's wording: home portals,
+  notifications, tasks, timetable, calendar, messages, attendance history,
+  badges, study assistant, freshers, enquiries, executives, manage hub, impact,
+  GPA, study notes, SRC requests, clubs, events, discover, community,
+  accommodation, announcements, materials, SRC office, profile, more and the
+  shared catalog list (marketplace, opportunities, lost & found, media,
+  courses, campaigns inherit it through `DomainListScreen`).
+* Badges is the one screen without a web counterpart of its own (the web folds
+  it into /participation), so it reuses that eyebrow with its own honest line:
+  "Every badge is tied to a verified ticket check-in, so nothing here is claimed
+  on your behalf." The Server screen likewise keeps mobile-only wording, because
+  pointing the app at a backend has no web equivalent.
+* Screens with no band on purpose: the message thread, QR scanner and live
+  check-in, session detail, executive management sheets, the student report
+  screen, account/register/forgot-password and onboarding art. They are utility
+  or auth surfaces where the corresponding web screen has no header photo
+  either.
 
 ## 4. Not verified here (honest limits)
 
@@ -80,7 +117,13 @@ node scripts/run-native-tests.mjs  # all 16 isolated native suites pass
 * The bundled artwork is AI-generated demo material; nothing here claims GCTU
   photography. Records without a photo intentionally show collection artwork
   labelled as demo imagery.
-* Not yet photo-led: messages/threads, notifications, tasks, timetable/calendar,
-  attendance, badges, SRC forms, study assistant, exec/admin tools. They are the
-  next screens in the pass (they are list/utility surfaces with little or no
-  imagery on the web either).
+* The photo band is fixed above each screen's own scrolling content rather than
+  scrolling away with it (the web hero scrolls with the page). On a short phone
+  the band costs ~232px of list height. Worth revisiting once a device run is
+  possible.
+* Header copy is asserted against the web source strings, not against a
+  rendered screenshot, so line wrapping and type scale on the band are
+  unverified until `flutter analyze`/device runs happen.
+* Still without a band by design (see §3a), and the next surfaces for the pass:
+  the message thread header, QR/live check-in screens, and the photo record
+  editor.

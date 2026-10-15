@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/store/personal_store.dart';
 import '../../core/widgets/states.dart';
 import 'tasks_repository.dart';
@@ -74,7 +75,11 @@ class _TasksScreenState extends State<TasksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.studyCorner,
+      eyebrow: 'A LITTLE FOCUS GOES A LONG WAY',
+      title: 'Make room for what matters.',
+      description: 'The big assignment. The little errand. Your next good idea. Give your day a plan that feels like yours.',
       appBar: AppBar(title: const Text('Tasks')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _edit(),

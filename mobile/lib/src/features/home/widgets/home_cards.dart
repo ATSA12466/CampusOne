@@ -1035,3 +1035,96 @@ class AnnouncementRow extends StatelessWidget {
   }
 }
 
+
+/// Official GCTU portals, mirroring `src/config/home.ts` →
+/// `institutionalLinks` and the web `InstitutionalLinks` card on /home. These
+/// open outside CampusOne, so they carry an external-link affordance.
+class InstitutionalLink {
+  const InstitutionalLink({
+    required this.title,
+    required this.description,
+    required this.url,
+    required this.icon,
+  });
+
+  final String title;
+  final String description;
+  final String url;
+  final IconData icon;
+}
+
+const institutionalLinks = <InstitutionalLink>[
+  InstitutionalLink(
+    title: 'GCTU LMS',
+    description: 'Course materials & assignments',
+    url: 'https://lms.gctu.edu.gh/',
+    icon: Icons.menu_book_outlined,
+  ),
+  InstitutionalLink(
+    title: 'Student portal',
+    description: 'GCTU SIP · registration & results',
+    url: 'https://sip.gctu.edu.gh/',
+    icon: Icons.school_outlined,
+  ),
+];
+
+class InstitutionalLinksCard extends StatelessWidget {
+  const InstitutionalLinksCard({super.key, required this.onOpen});
+
+  final ValueChanged<InstitutionalLink> onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'The important tabs, right here.',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                Text(
+                  'External portals',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            for (final link in institutionalLinks)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    side: BorderSide(color: theme.colorScheme.outlineVariant),
+                  ),
+                  tileColor: theme.colorScheme.surfaceContainerHighest,
+                  leading: Icon(link.icon, color: theme.colorScheme.primary),
+                  title: Text(
+                    link.title,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  subtitle: Text(link.description),
+                  trailing: const Icon(Icons.open_in_new, size: 18),
+                  onTap: () => onOpen(link),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}

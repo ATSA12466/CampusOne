@@ -45,7 +45,11 @@ class _SrcOfficeScreenState extends State<SrcOfficeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.clubService,
+      eyebrow: 'STUDENT VOICES',
+      title: 'A campus that listens.',
+      description: 'Meet the responsibilities, follow the work and keep track of your requests.',
       appBar: AppBar(title: const Text('SRC office')),
       body: RefreshIndicator(
         onRefresh: _reload,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import 'attendance_repository.dart';
 import 'scan_screen.dart';
@@ -38,7 +39,11 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.clubSport,
+      eyebrow: 'YOUR PLACE IN CAMPUS LIFE',
+      title: 'Small steps. Shared experiences.',
+      description: 'See membership progress and saved event plans without inventing awards or attendance.',
       appBar: AppBar(title: const Text('My attendance')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.of(

@@ -42,7 +42,11 @@ class _MaterialsScreenState extends State<MaterialsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.studyCorner,
+      eyebrow: 'ACADEMICS',
+      title: 'A little more understanding.',
+      description: 'Resources for your next bright idea.',
       appBar: AppBar(title: const Text('Study materials')),
       body: RefreshIndicator(
         onRefresh: _reload,

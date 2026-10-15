@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/store/personal_store.dart';
 import '../../core/widgets/states.dart';
 import '../catalog/catalog_repository.dart';
@@ -72,7 +73,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     final signedIn = SessionScope.sessionOf(context).signedIn;
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.eventSocial,
+      eyebrow: 'Calendar',
+      title: 'Make space for the good things.',
+      description: 'Classes, public events and your own plans — one calm place to see the week.',
       appBar: AppBar(title: const Text('Calendar')),
       floatingActionButton: signedIn
           ? FloatingActionButton.extended(

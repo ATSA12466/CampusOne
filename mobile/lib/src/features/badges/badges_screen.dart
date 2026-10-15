@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import 'badges_repository.dart';
 
@@ -33,7 +34,11 @@ class _BadgesScreenState extends State<BadgesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.clubSport,
+      eyebrow: 'YOUR PLACE IN CAMPUS LIFE',
+      title: 'Earned in person, never invented.',
+      description: 'Every badge is tied to a verified ticket check-in, so nothing here is claimed on your behalf.',
       appBar: AppBar(title: const Text('My badges')),
       body: RefreshIndicator(
         onRefresh: _reload,

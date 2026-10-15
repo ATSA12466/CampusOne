@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/store/personal_store.dart';
 import '../../core/widgets/states.dart';
 
@@ -83,7 +84,11 @@ class _SrcRequestScreenState extends State<SrcRequestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.clubService,
+      eyebrow: 'STUDENT VOICES',
+      title: 'A campus that listens.',
+      description: 'Meet the responsibilities, follow the work and keep track of your requests.',
       appBar: AppBar(title: const Text('SRC requests')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _compose,

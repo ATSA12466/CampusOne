@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../listings/listings_repository.dart';
 
@@ -37,7 +38,11 @@ class _EnquiriesScreenState extends State<EnquiriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.clubService,
+      eyebrow: 'STUDENT VOICES',
+      title: 'A campus that listens.',
+      description: 'Meet the responsibilities, follow the work and keep track of your requests.',
       appBar: AppBar(title: const Text('My enquiries')),
       body: RefreshIndicator(
         onRefresh: _reload,

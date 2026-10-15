@@ -50,7 +50,11 @@ class _ClubsScreenState extends State<ClubsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.clubsHero,
+      eyebrow: 'CAMPUS COMMUNITIES',
+      title: 'Find your people.',
+      description: 'For the ideas you want to try. And the friends you haven\'t met yet.',
       appBar: AppBar(title: const Text('Clubs')),
       body: Column(
         children: [

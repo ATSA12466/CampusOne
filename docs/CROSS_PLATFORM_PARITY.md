@@ -12,12 +12,29 @@ mirrors `src/components/media/*` (aspect frames, hero scrim, photo tiles, media
 cards, placeholder chip, loading skeleton, reduced-motion handling), and the
 bundled demo set mirrors `src/config/images.ts` file-for-file and alt-for-alt.
 Home follows the web composition order (welcome → campus-radar carousel → clubs
-hero → today's plan → photo shortcuts → recommendations). Directories, detail
-pages, discovery, saved items, community and profile are picture-led. Screens no
-longer build their own image widgets — `scripts/mobile/mobile-media.test.mjs`
-enforces that, along with artwork existence, provenance labels and the source
-policy (relative paths only, no traversal, https + allow-list for absolute URLs,
-`data:` photos decoded in-memory).
+hero → today's plan → photo shortcuts → official GCTU portals → recommendations).
+Directories, detail pages, discovery, saved items, community and profile are
+picture-led. Screens no longer build their own image widgets —
+`scripts/mobile/mobile-media.test.mjs` enforces that, along with artwork
+existence, provenance labels and the source policy (relative paths only, no
+traversal, https + allow-list for absolute URLs, `data:` photos decoded
+in-memory).
+
+**Photo-opening pass (2026-10-15, second part).** Every student screen now opens
+with the same picture band the web opens routes with: `PhotoScaffold` /
+`PhotoPageHeader` in the media layer render a 232px photo band, eyebrow, display
+title, description and, for generated artwork, the "Generated demo imagery"
+line. 28 screens carry it — notifications, tasks, timetable, calendar, messages,
+attendance, badges, study assistant, freshers, enquiries, executives, manage
+hub, impact, GPA, study notes, SRC requests, clubs, events, discover, community,
+accommodation, announcements, materials, SRC office, profile, more and the
+shared catalog list (marketplace, opportunities, lost & found, media, courses,
+campaigns). The wording is not invented: the media audit reads the eyebrows,
+titles and descriptions out of the web `MagazineHeader` props and the
+clubs/events/discover directory heroes and fails if a Dart screen differs.
+Home also now renders the two official GCTU portals (`https://lms.gctu.edu.gh/`,
+`https://sip.gctu.edu.gh/`) with the web's labels and descriptions, opening
+externally.
 
 Data-path note: web defaults to **demo fixtures** (`NEXT_PUBLIC_DATA_SOURCE=demo`);
 web API mode targets a separate port-4000 platform API (unverified). Flutter

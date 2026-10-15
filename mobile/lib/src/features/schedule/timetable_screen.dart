@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/store/personal_store.dart';
 import '../../core/widgets/states.dart';
 import 'schedule_repository.dart';
@@ -67,7 +68,11 @@ class _TimetableScreenState extends State<TimetableScreen> {
   @override
   Widget build(BuildContext context) {
     final signedIn = SessionScope.sessionOf(context).signedIn;
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.studyCorner,
+      eyebrow: 'Timetable',
+      title: 'Your week, with room to breathe.',
+      description: 'A clear view of your classes. Keep the official timetable close, too.',
       appBar: AppBar(title: const Text('Timetable')),
       floatingActionButton: signedIn
           ? FloatingActionButton.extended(

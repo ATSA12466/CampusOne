@@ -96,7 +96,11 @@ class _EventsScreenState extends State<EventsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.eventSocial,
+      eyebrow: 'BEYOND THE LECTURE HALL',
+      title: 'Find your next good plan.',
+      description: 'For the ideas, the music and the people you haven\'t met yet.',
       appBar: AppBar(title: const Text('Events')),
       body: Column(
         children: [

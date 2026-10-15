@@ -74,7 +74,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
   @override
   Widget build(BuildContext context) {
     final signedIn = SessionScope.sessionOf(context).signedIn;
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.eventSocial,
+      eyebrow: 'GOOD COMPANY, GOOD CONVERSATION',
+      title: 'A campus full of stories.',
+      description: 'A useful idea. A little question. A moment worth sharing. Make room for your campus community.',
       appBar: AppBar(title: const Text('Community')),
       floatingActionButton: signedIn
           ? FloatingActionButton.extended(

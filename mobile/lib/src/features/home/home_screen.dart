@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/links/app_links.dart';
 import '../../core/media/media.dart';
 import '../../core/util/campus_date.dart';
 import '../../core/widgets/states.dart';
@@ -127,6 +128,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _open(Widget screen) =>
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+
+  Future<void> _openPortal(InstitutionalLink link) =>
+      openExternalLink(context, link.url);
 
   void _openFeatured(FeaturedItem item) {
     switch (item.destination) {
@@ -267,6 +271,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 24),
+                InstitutionalLinksCard(onOpen: _openPortal),
                 const SizedBox(height: 24),
                 if (data.events.isNotEmpty) ...[
                   EventFeatureCard(

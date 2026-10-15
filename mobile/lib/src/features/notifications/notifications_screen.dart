@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import 'notifications_repository.dart';
 
@@ -60,7 +61,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.innovationNight,
+      eyebrow: 'YOUR CAMPUS, IN THE LOOP',
+      title: 'A little heads-up.',
+      description: 'Useful reminders and campus updates. Keep what matters in view, without the noise.',
       appBar: AppBar(
         title: const Text('Notifications'),
         actions: [

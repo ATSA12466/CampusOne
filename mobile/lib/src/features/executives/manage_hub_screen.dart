@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_session.dart';
+import '../../core/media/media.dart';
 import '../../core/widgets/states.dart';
 import '../clubs/club_detail_screen.dart';
 import '../clubs/club_manage_screen.dart';
@@ -40,7 +41,11 @@ class _ManageHubScreenState extends State<ManageHubScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PhotoScaffold(
+      image: DemoImages.clubMakers,
+      eyebrow: 'A PLACE FOR RESPONSIBILITY',
+      title: 'Clear roles. Thoughtful work.',
+      description: 'Find the existing workspaces relevant to your current profile.',
       appBar: AppBar(title: const Text('Manage hub')),
       body: RefreshIndicator(
         onRefresh: _reload,
