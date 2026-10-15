@@ -55,7 +55,8 @@ class AuthStoryPanel extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(CampusRadii.media),
       child: AspectRatio(
-        aspectRatio: const CampusAspect.portrait(4 / 5).ratio ?? 0.8,
+        // Web `PhotoStory` uses the portrait frame (4:5); the child reads the theme.
+        aspectRatio: 4 / 5,
         child: Stack(
           fit: StackFit.expand,
           children: [
