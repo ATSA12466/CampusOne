@@ -122,4 +122,4 @@ Local/demo state is **never** presented as cross-client sync.
 - [x] Tablet shell: `NavigationRail` + capped content on ≥600dp; pushed detail screens still stretch (verify on a real tablet).
 - [x] Save-kind normalization: announcements save under the `announcement` kind.
 - [ ] Start-new-conversation UI: **blocked, no user-lookup API** (row 10). Web's starter is demo-local; nothing real to mirror.
-- [ ] Home composition extras (next-class card, task preview): phone home covers entry-point function; magazine extras intentionally trimmed (row 1).
+- [x] Home composition: `TodayOverviewCard` shows the next class (any of the next 7 days, Accra time) and the open/done task count with a tasks link, matching the web's today panel; the remaining magazine extras are picture carousels sized for a wide screen (row 1).
