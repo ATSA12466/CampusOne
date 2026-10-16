@@ -1,14 +1,19 @@
-import express, { type Request, type Response, type NextFunction } from "express";
+import "dotenv/config";
+import { createHash, randomUUID } from "node:crypto";
 import cors from "cors";
+import express, { type Request, type Response } from "express";
+import { and, eq, sql } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
+import { db } from "./db/index.js";
+import { meStore, sessions, users } from "./db/schema.js";
 
 const app = express();
 const PORT = Number(process.env.PORT ?? 4000);
 const JWT_SECRET = process.env.JWT_SECRET ?? "campusone-dev-secret";
-const JWT_TTL_MS = 1000 * 60 * 60 * 12;
+const JWT_TTL_MS = 12 * 60 * 60 * 1000;
 
-const userSchema = z.object({
+const userResponseSchema = z.object({
   id: z.string(),
   email: z.string().email(),
   name: z.string(),
@@ -21,18 +26,49 @@ const userSchema = z.object({
   avatar: z.string().nullable().default(null),
 });
 
-type User = z.infer<typeof userSchema>;
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
 
-type StoreItem = {
-  id: string;
-  collection: string;
-  item: Record<string, unknown>;
-};
+const profilePatchSchema = z.object({
+  name: z.string().trim().min(1).optional(),
+  programme: z.string().trim().nullable().optional(),
+  level: z.string().trim().nullable().optional(),
+  avatar: z.string().nullable().optional(),
+});
 
-const users: User[] = [
-  {
+function serializeUser(user: typeof users.$inferSelect) {
+  return userResponseSchema.parse({
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+    roles: Array.isArray(user.roles) ? user.roles : [],
+    permissions: Array.isArray(user.permissions) ? user.permissions : [],
+    programme: user.programme ?? null,
+    level: user.level ?? null,
+    verifiedStudent: user.verifiedStudent,
+    avatar: user.avatar ?? null,
+  });
+}
+
+function hashPassword(value: string) {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+async function ensureSeedUser() {
+  const seedEmail = "demo@campusone.test";
+  const existing = await db.query.users.findFirst({
+    where: eq(users.email, seedEmail),
+  });
+
+  if (existing) return existing;
+
+  const user = {
     id: "user-1",
-    email: "demo@campusone.test",
+    email: seedEmail,
+    passwordHash: hashPassword("password123"),
     name: "CampusOne Demo User",
     role: "student",
     roles: ["student"],
@@ -41,12 +77,56 @@ const users: User[] = [
     level: "Level 200",
     verifiedStudent: true,
     avatar: null,
-  },
-];
+  };
 
-const meStore = new Map<string, Record<string, StoreItem[]>>();
+  await db.insert(users).values(user);
+  return user;
+}
 
-function issueToken(user: User) {
+async function ensureDatabase() {
+  try {
+    await db.execute(sql`SELECT 1`);
+    await ensureSeedUser();
+    console.log("PostgreSQL connection ready.");
+  } catch (error) {
+    console.error("PostgreSQL connection failed.", error);
+    process.exit(1);
+  }
+}
+
+function getBearerToken(req: Request) {
+  const authHeader = req.headers.authorization ?? "";
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  return match?.[1] ?? null;
+}
+
+async function currentUserFromRequest(req: Request) {
+  const token = getBearerToken(req);
+  if (!token) return null;
+
+  try {
+    const payload = jwt.verify(token, JWT_SECRET) as { sub?: string; email?: string };
+    const subject = payload.sub ?? payload.email;
+    if (!subject) return null;
+
+    const user = await db.query.users.findFirst({
+      where: and(eq(users.id, subject), eq(users.email, subject)),
+    });
+
+    if (!user) {
+      const byEmail = await db.query.users.findFirst({
+        where: eq(users.email, subject),
+      });
+      return byEmail ? serializeUser(byEmail) : null;
+    }
+
+    return serializeUser(user);
+  } catch {
+    return null;
+  }
+}
+
+function issueToken(user: typeof users.$inferSelect) {
   const token = jwt.sign({ sub: user.id, email: user.email }, JWT_SECRET, {
     expiresIn: JWT_TTL_MS / 1000,
   });
@@ -57,169 +137,153 @@ function issueToken(user: User) {
   };
 }
 
-function getBearerToken(req: Request) {
-  const authHeader = req.headers.authorization ?? "";
-  const [, token] = authHeader.match(/^Bearer\s+(.+)$/i) ?? [];
-  return token ?? null;
-}
-
-function getUserFromRequest(req: Request): User | null {
-  const token = getBearerToken(req);
-  if (!token) return null;
-
-  try {
-    const payload = jwt.verify(token, JWT_SECRET) as { sub?: string; email?: string };
-    const sub = payload.sub ?? payload.email ?? null;
-    if (!sub) return null;
-    const candidate = users.find((user) => user.id === sub || user.email === sub);
-    return candidate ?? null;
-  } catch {
-    return null;
-  }
-}
-
-function authRequired(req: Request, res: Response, next: NextFunction) {
-  const user = getUserFromRequest(req);
-  if (!user) {
-    return res.status(401).json({ error: "Please sign in to continue." });
-  }
-
-  (req as Request & { user?: User }).user = user;
-  next();
-}
-
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "2mb" }));
 
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true });
+app.get("/api/health", async (_req, res) => {
+  try {
+    await db.execute(sql`SELECT 1`);
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error("Health check failed:", error);
+    return res.status(503).json({ ok: false });
+  }
 });
 
-app.post("/api/auth/token", (req, res) => {
-  const loginSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
-  });
-
+app.post("/api/auth/token", async (req, res) => {
   const parsed = loginSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(401).json({ error: "Email or password is incorrect." });
   }
 
   const { email, password } = parsed.data;
-  const user = users.find((entry) => entry.email === email && password.length >= 6);
-  if (!user) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, email),
+  });
+
+  if (!user || user.passwordHash !== hashPassword(password)) {
     return res.status(401).json({ error: "Email or password is incorrect." });
   }
 
   const tokenData = issueToken(user);
-  return res.json({ token: tokenData.token, expiresAt: tokenData.expiresAt, user });
+  await db.insert(sessions).values({
+    id: randomUUID(),
+    userId: user.id,
+    tokenHash: createHash("sha256").update(tokenData.token).digest("hex"),
+    expiresAt: new Date(Date.now() + JWT_TTL_MS),
+  }).onConflictDoNothing();
+
+  return res.json({ token: tokenData.token, expiresAt: tokenData.expiresAt, user: serializeUser(user) });
 });
 
-app.get("/api/auth/token", (req, res) => {
-  const user = getUserFromRequest(req);
-  if (!user) {
-    return res.status(401).json({ error: "Please sign in to continue." });
-  }
-
+app.get("/api/auth/token", async (req, res) => {
+  const user = await currentUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: "Please sign in to continue." });
   return res.json({ user });
 });
 
-app.delete("/api/auth/token", (req, res) => {
+app.delete("/api/auth/token", async (req, res) => {
   const token = getBearerToken(req);
-  if (!token) {
-    return res.status(200).json({ ok: true });
-  }
+  if (!token) return res.json({ ok: true });
 
-  try {
-    jwt.verify(token, JWT_SECRET);
-    return res.json({ ok: true });
-  } catch {
-    return res.json({ ok: true });
-  }
+  const hash = createHash("sha256").update(token).digest("hex");
+  await db.delete(sessions).where(eq(sessions.tokenHash, hash));
+  return res.json({ ok: true });
 });
 
-app.get("/api/users/me", authRequired, (req, res) => {
-  const user = (req as Request & { user?: User }).user;
+app.get("/api/users/me", async (req, res) => {
+  const user = await currentUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: "Please sign in to continue." });
   return res.json({ user });
 });
 
-app.patch("/api/users/me", authRequired, (req, res) => {
-  const user = (req as Request & { user?: User }).user;
-  const patchSchema = z.object({
-    name: z.string().trim().min(1).optional(),
-    programme: z.string().trim().nullable().optional(),
-    level: z.string().trim().nullable().optional(),
-    avatar: z.string().nullable().optional(),
-  });
+app.patch("/api/users/me", async (req, res) => {
+  const user = await currentUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: "Please sign in to continue." });
 
-  const parsed = patchSchema.safeParse(req.body);
+  const parsed = profilePatchSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: "Profile details are invalid." });
   }
 
-  const target = users.find((entry) => entry.id === user?.id);
-  if (!target) {
-    return res.status(404).json({ error: "Account not found." });
-  }
+  const updated = await db.update(users)
+    .set({
+      name: parsed.data.name ?? user.name,
+      programme: parsed.data.programme ?? user.programme ?? null,
+      level: parsed.data.level ?? user.level ?? null,
+      avatar: parsed.data.avatar ?? user.avatar ?? null,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, user.id))
+    .returning();
 
-  Object.assign(target, parsed.data);
-  return res.json({ user: target });
+  if (!updated[0]) return res.status(404).json({ error: "Account not found." });
+  return res.json({ user: serializeUser(updated[0]) });
 });
 
-app.get("/api/me/store", authRequired, (req, res) => {
+app.get("/api/me/store", async (req, res) => {
+  const user = await currentUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: "Please sign in to continue." });
+
   const collection = String(req.query.collection ?? "").trim();
-  const user = (req as Request & { user?: User }).user;
+  const rows = collection
+    ? await db.select().from(meStore).where(and(eq(meStore.userId, user.id), eq(meStore.collection, collection)))
+    : await db.select().from(meStore).where(eq(meStore.userId, user.id));
 
-  if (!user) {
-    return res.status(401).json({ error: "Please sign in to continue." });
-  }
-
-  const store = meStore.get(user.id) ?? {};
-  const items = collection ? (store[collection] ?? []) : Object.values(store).flat();
-
-  return res.json({ items: items.map((entry) => entry.item), total: items.length, page: 1, pageSize: 20 });
+  return res.json({
+    items: rows.map((row) => row.item),
+    total: rows.length,
+    page: 1,
+    pageSize: rows.length || 20,
+  });
 });
 
-app.put("/api/me/store", authRequired, (req, res) => {
-  const user = (req as Request & { user?: User }).user;
+app.put("/api/me/store", async (req, res) => {
+  const user = await currentUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: "Please sign in to continue." });
+
   const putSchema = z.object({
     collection: z.string().min(1),
     item: z.record(z.string(), z.unknown()),
   });
 
   const parsed = putSchema.safeParse(req.body);
-  if (!parsed.success) {
-    return res.status(400).json({ error: "Invalid request body." });
-  }
+  if (!parsed.success) return res.status(400).json({ error: "Invalid request body." });
 
-  if (!user) {
-    return res.status(401).json({ error: "Please sign in to continue." });
-  }
-
-  const collectionName = parsed.data.collection;
-  const entry: StoreItem = {
-    id: String((parsed.data.item.id as string | undefined) ?? cryptoId()),
-    collection: collectionName,
+  const id = String(parsed.data.item.id ?? randomUUID());
+  const row = {
+    id,
+    userId: user.id,
+    collection: parsed.data.collection,
     item: parsed.data.item,
+    updatedAt: new Date(),
   };
 
-  const existing = meStore.get(user.id) ?? {};
-  const next = existing[collectionName] ?? [];
-  const index = next.findIndex((item) => item.id === entry.id);
-  if (index >= 0) {
-    next[index] = entry;
-  } else {
-    next.push(entry);
+  const existing = await db.query.meStore.findFirst({
+    where: and(eq(meStore.userId, user.id), eq(meStore.id, id)),
+  });
+
+  if (existing) {
+    const updated = await db.update(meStore)
+      .set(row)
+      .where(and(eq(meStore.userId, user.id), eq(meStore.id, id)))
+      .returning();
+    return res.json({ item: updated[0]?.item ?? parsed.data.item });
   }
 
-  existing[collectionName] = next;
-  meStore.set(user.id, existing);
+  const inserted = await db.insert(meStore).values({
+    id,
+    userId: user.id,
+    collection: parsed.data.collection,
+    item: parsed.data.item,
+  }).returning();
 
-  return res.json({ item: entry.item });
+  return res.json({ item: inserted[0]?.item ?? parsed.data.item });
 });
 
-app.get("/api/saves", authRequired, (_req, res) => {
+app.get("/api/saves", async (req, res) => {
+  const user = await currentUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: "Please sign in to continue." });
   return res.json({ items: [], total: 0, page: 1, pageSize: 20 });
 });
 
@@ -237,10 +301,11 @@ app.use((req, res) => {
   res.status(404).json({ error: `Route not found: ${req.originalUrl}` });
 });
 
-app.listen(PORT, () => {
-  console.log(`CampusOne backend listening on http://localhost:${PORT}`);
-});
-
-function cryptoId() {
-  return `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+if (!process.env.DATABASE_URL) {
+  console.warn("DATABASE_URL is not set; create a local Postgres instance and configure the environment before running the app.");
 }
+
+app.listen(PORT, async () => {
+  await ensureDatabase();
+  console.log(`CampusOne PostgreSQL backend listening on http://localhost:${PORT}`);
+});

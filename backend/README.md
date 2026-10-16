@@ -1,24 +1,33 @@
 # CampusOne backend
 
-This is the matching Node/TypeScript backend for the CampusOne frontend. It follows the frontend contract already used by the Next.js app, especially the session and auth endpoints expected by the mobile/web clients.
+This backend is built for PostgreSQL and uses Drizzle ORM to match the CampusOne frontend contract.
 
-## Why this backend
+## Why PostgreSQL
 
-The frontend is a Next.js + React app and its own API contract expects a Node service with endpoints like:
+The frontend repo already includes a Drizzle/Postgres setup and expects a server-side database-backed API. This backend uses the same model, without depending on the older PHP branch.
 
-- `GET /api/health` -> `{ ok: true }`
-- `POST /api/auth/token` -> `{ token, expiresAt, user }`
-- `GET /api/auth/token` -> `{ user }`
-- `DELETE /api/auth/token` -> `{ ok: true }`
-- `GET /api/users/me` -> `{ user }`
+## Environment
 
-This backend is designed to satisfy that contract without depending on the legacy PHP scaffold.
+Copy `.env.example` to `.env` and configure your Postgres instance:
+
+```bash
+cp .env.example .env
+```
+
+Required values:
+
+```env
+PORT=4000
+JWT_SECRET=campusone-dev-secret
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/campusone
+```
 
 ## Run locally
 
 ```bash
 cd backend
 npm install
+npm run db:push
 npm run dev
 ```
 
