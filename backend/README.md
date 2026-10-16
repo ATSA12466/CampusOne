@@ -1,43 +1,41 @@
-# CampusOne backend
+# CampusOne PHP backend
 
-This backend is built for PostgreSQL and uses Drizzle ORM to match the CampusOne frontend contract.
+This backend is a PHP/PostgreSQL implementation for the CampusOne app and follows the frontend contract expected by the current Next.js app.
 
-## Why PostgreSQL
+## Why PHP
 
-The frontend repo already includes a Drizzle/Postgres setup and expects a server-side database-backed API. This backend uses the same model, without depending on the older PHP branch.
+The requirement is that the whole app uses a PHP backend. This implementation is built to satisfy that requirement while matching the project API contract, including:
 
-## Environment
+- `GET /api/health` -> `{ "ok": true }`
+- `POST /api/auth/token` -> `{ token, expiresAt, user }`
+- `GET /api/auth/token` -> `{ user }`
+- `DELETE /api/auth/token` -> `{ ok: true }`
+- `GET /api/users/me` -> `{ user }`
+- `PATCH /api/users/me` -> `{ user }`
+- `GET /api/me/store` / `PUT /api/me/store` -> `{ items, total, ... }`
 
-Copy `.env.example` to `.env` and configure your Postgres instance:
+## Setup
 
-```bash
-cp .env.example .env
-```
-
-Required values:
-
-```env
-PORT=4000
-JWT_SECRET=campusone-dev-secret
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/campusone
-```
-
-## Run locally
+1. Copy `.env.example` to `.env`.
+2. Create a PostgreSQL database named `campusone`.
+3. Make sure the PHP PDO PostgreSQL extension is enabled.
+4. Start the PHP server:
 
 ```bash
 cd backend
-npm install
-npm run db:push
-npm run dev
+php -S 0.0.0.0:4000 -t public
 ```
 
-The service listens on port `4000` by default.
+## Database schema
 
-## Production build
+The schema is in:
 
 ```bash
-cd backend
-npm install
-npm run build
-npm start
+backend/database/schema.sql
 ```
+
+This file creates the `users`, `sessions`, and `me_store` tables.
+
+## Notes
+
+This is a PHP backend matching the app’s current contract, rather than the older PHP branch that was not aligned with the frontend.
