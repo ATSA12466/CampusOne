@@ -1,0 +1,22 @@
+# Flutter/Dart standard ignores (scoped to mobile/).
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Runner/GeneratedPluginRegistrant.*
+.idea/
+*.iml
+.DS_Store
+# Local Firebase config is workstation-specific until the project exists.
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+# Release signing stays on the release workstation.
+android/key.properties
+*.jks
+*.keystore

@@ -1,0 +1,18 @@
+{
+  "name": "campusone-admin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "CampusOne admin web app: Super Admin and SRC consoles plus the API the mobile app uses.",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning src/server/main.ts",
+    "dev": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning --watch src/server/main.ts",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.8.0"
+  }
+}
